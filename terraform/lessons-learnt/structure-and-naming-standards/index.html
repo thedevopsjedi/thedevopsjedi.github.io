@@ -1,0 +1,188 @@
+<!DOCTYPE html><html itemscope itemtype="https://schema.org/WebPage" class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="siteBaseUrl" content="https://www.thedevopsjedi.co.uk/">
+    <meta name="author" content="thedevopsjedi">
+    <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
+    <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
+    <meta name="generator" content="Hugo 0.115.4"><title>How I Structure Terraform Folders &amp; Apply Naming Standards&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta itemprop="name" content="How I Structure Terraform Folders &amp; Apply Naming Standards">
+    <meta itemprop="description" content="Having a consistent and structured approach to managing your Terraform configurations is key to scaling successfully. This is how I do it.">
+    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:title" content="How I Structure Terraform Folders &amp; Apply Naming Standards" />
+<meta property="og:description" content="Having a consistent and structured approach to managing your Terraform configurations is key to scaling successfully. This is how I do it." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/" /><meta property="article:section" content="terraform" />
+<meta property="article:published_time" content="2023-01-07T09:00:00+00:00" />
+<meta property="article:modified_time" content="2023-01-07T09:00:00+00:00" />
+<meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/" /><meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/" /><meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/" /><meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/" /><meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/" /><meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/what-i-include-in-every-terraform-configuration/" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+<link rel="manifest" href="/favicon/site.webmanifest">
+<link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<script src="/modernizr-simple.js"></script><link rel="canonical" href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/theme.css"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/cookieconsent.min.css">
+</head>
+
+<body class="bilberry-hugo-theme">
+<nav><div class="container">
+        <ul class="topnav"><li><a href="/about" target="">About</a></li></ul><div id="search-box" class="search">
+                <i class="fas fa-search"></i>
+                <input id="search" type="text" placeholder="Search ...">
+            </div></div>
+</nav>
+<header><div class="container">
+        <div class="logo">
+            <a href="/" class="logo"><img src="/images/LinkedIn.jpeg" alt=""><span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title">
+                <a href="/">The DevOps Jedi</a>
+            </h3><span class="subtitle">Taking the cloud by storm one line of code at a time....</span></div><div class="toggler"><i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+    </div>
+</header>
+<div class="main container"><div class="article-wrapper u-cf single"><a class="bubble" href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article"><div class="content">
+    <h1 class="article-title">
+        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/">How I Structure Terraform Folders &amp; Apply Naming Standards</a>
+    </h1>
+
+    <div class="meta"><span class="date moment">2023-01-07</span><span class="readingTime">5 min read</span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><p>When I started using Terraform in 2018 the content online was mainly written from a developer&rsquo;s perspective and was based on deploying resources into AWS.  This was a great starting point, but the key messages in the blogs I read were all fairly consistent and seemed to align to the excellent 
+<a href="https://blog.gruntwork.io/a-comprehensive-guide-to-terraform-b3d32832baca"target="_blank" rel="nofollow noopener noreferrer">blog series by Yevgeniy Brikman</a>
+ from 2016 which is well worth a read.</p>
+<p>So, I read the series, took all the key messages onboard and started deploying resources into Azure.  However, as our environment began to scale and more engineers came onboard, it was soon clear I needed to formalise our ways of working to ensure everyone followed a standard approach as we wouldn&rsquo;t be operating the &lsquo;you build it you run it&rsquo; model.  This meant that once cloud services were provisioned and live, they needed to be handed over to operations who would also need to understand the Terraform configuration.</p>
+<h3 id="configuration-folder">Configuration Folder</h3>
+<p>A lot of the early online tutorials showed terraform configurations that followed a 
+<a href="https://developer.hashicorp.com/terraform/language/modules/develop/structure"target="_blank" rel="nofollow noopener noreferrer">standard module structure</a>
+ and placed all resources into a single <code>main.tf</code> file.</p>
+<p>One drawback with this approach is that you would then need to read the whole configuration to understand what is being built and managed.  Take a look at the example-blog folder.</p>
+<pre tabindex="0"><code>example-blog/
+├── main.tf
+└── variables.tf
+</code></pre><p>A simpler way is to break up the resources into logical groups of resources that need to be deployed, managed and destroyed together into separately named files.  Terraform doesn&rsquo;t care what the files are named and processes all <code>.tf</code> files in the folder as if they were a single file.</p>
+<pre tabindex="0"><code>how-i-do-it/
+├── backend.tf
+├── datasources.tf
+├── resource-group.tf
+├── storage-account.tf
+├── terraform.tf
+├── variables.tf
+└── windows-vm.tf
+</code></pre><p>From looking at my standard folder structure, we can see that the following are part of the configuration:</p>
+<ul>
+<li><em><strong>backend.tf</strong></em> - the terraform backend state file storage</li>
+<li><em><strong>datasources.tf</strong></em> - any existing resources referenced in the configuration as data sources</li>
+<li><em><strong>resource-group.tf</strong></em> - the resource group containing the Azure resources</li>
+<li><em><strong>storage-account.tf</strong></em> - an Azure storage account</li>
+<li><em><strong>terraform.tf</strong></em> - the terraform and provider versions required, and any provider specific configuration</li>
+<li><em><strong>variables.tf</strong></em> - variables used within the configuration</li>
+<li><em><strong>windows-vm.tf</strong></em> - a windows virtual machine resource as well as any other resources that lifecycle with the vm such as network interfaces or extra disks</li>
+</ul>
+<p>Another benefit of this approach is that should I want to remove a resource (or set of resources) I can simply rename the <code>.tf</code> file to something terraform will not process.  I normally use <code>.ig</code> which stands for ignore.</p>
+<h3 id="parent-folders">Parent Folders</h3>
+<p>My parent folder structure for my terraform repository is also kept simple.  I have a folder per cloud provider (<code>az</code> for Azure), with a subfolder per service I am building (<code>blog</code>), followed by a final subfolder for the environment I am building in (<code>msdn</code>).</p>
+<p>Putting this all together it looks like this:</p>
+<pre tabindex="0"><code>az/
+└── blog
+    └── msdn
+        ├── backend.tf
+        ├── resource-group.tf
+        ├── storage-account.tf
+        ├── terraform.tf
+        ├── variables.tf
+        └── windows-vm.tf
+</code></pre><p>I keep the folder names as a single word to reflect tags wherever possible.  If I have to specify multiple words, I separate them by a hyphen.</p>
+<h3 id="naming-standards">Naming Standards</h3>
+<p>I&rsquo;ve explained how I name my configuration files already, but within the files I also ensure I standardise how I name the resources too.</p>
+<p>Terraform resources are made up of standard components.  Each resource type is implemented by a provider and has to be named as per the 
+<a href="https://developer.hashicorp.com/terraform/plugin/sdkv2/best-practices/naming#resource-names"target="_blank" rel="nofollow noopener noreferrer">Terraform developer best practices</a>
+ which states that &ldquo;Resource names must always start with their containing provider&rsquo;s name followed by an underscore&rdquo;.</p>
+<p>Each resource is also given a user-defined name which must be unique for the resource type within the configuration.  Resources are addressed within the configuration in the format of <code>resource_type.resource_name</code> as 
+<a href="https://developer.hashicorp.com/terraform/cli/state/resource-addressing#resource-spec"target="_blank" rel="nofollow noopener noreferrer">documented</a>
+.</p>
+<p>I always keep the user-defined name standard across the configuration and separate any words with an underscore in the same way as the resource names do to ensure consistency.  I never repeat the resource type in the user-defined name to keep the resource address concise and the name is normally specified in the format of <code>service_environment</code>.</p>
+<p>A good example would be:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;azurerm_resource_group&#34; &#34;blog_msdn&#34;</span> {}
+</span></span></code></pre></div><p>Where a bad example would look like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;azurerm_resource_group&#34; &#34;my-resource-group&#34;</span> {}
+</span></span></code></pre></div><p>I use a slight variation of this if the resource links 2 defined resources together, such as assigning a role to an object.  I try and make this clear by using the format of <code>service_environment_role_object</code>.  So, this would look as follows:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;azurerm_role_assignment&#34; &#34;automation_msdn_contributor_rg&#34;</span> {}
+</span></span></code></pre></div><p>Finally, when multiple resources of the same type are defined, I set the user-defined name to match the resource name, so it is easy to identify which resource code block matches which resource.  An example here would be for 2 windows virtual machines:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;azurerm_windows_virtual_machine&#34; &#34;domain_controller_1&#34;</span> {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;azurerm_windows_virtual_machine&#34; &#34;web_server_3&#34;</span> {}
+</span></span></code></pre></div><h3 id="other-files-referenced-by-terraform">Other Files Referenced By Terraform</h3>
+<p>If I have files that are referenced by Terraform but are not part of the actual terraform configuration itself, I always put them in their own sub folder so it is clear what they are for.  For example, custom scripts go in a <code>/scripts</code> folder.</p>
+<blockquote>
+<p><strong>Key Takeaway</strong>: Each environment is considered as a separate service and has its own code folder and state file.  This means changes in one environment will not affect another.</p>
+</blockquote>
+</div>
+<div class="footer"><div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/hashicorp/">HashiCorp</a><a href="https://www.thedevopsjedi.co.uk/tags/iac/">IaC</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a></div>
+        </div></div>
+</article>
+</div><div id="comments-container"></div></div><footer>
+    <div class="container"><div class="recent-posts">
+            <strong>Latest Posts</strong>
+            <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/">How I Minimise Terraform Admin Effort &amp; Manage The Constant Change</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/">Use Of Terraform Child Modules</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/">How To Generate JSON With Terraform Without Using Heredoc Strings</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/">How I Keep Terraform Simple</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/what-i-include-in-every-terraform-configuration/">What I Include In Every Terraform Configuration</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/">How I Structure Terraform Folders &amp; Apply Naming Standards</a>
+                    </li></ul>
+        </div><div class="right"><div class="external-profiles">
+                <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
+            </div><div class="archive"><a href="https://www.thedevopsjedi.co.uk/archive/"><strong>Archive</strong></a></div></div>
+    </div>
+</footer><div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
+                &copy;&nbsp;2023&nbsp;The DevOps Jedi&nbsp;
+            </a></div>
+        <div class="disclaimer">
+            <a href="/disclaimer">Disclaimer</a>
+        </div>
+    </div>
+</div>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-RKD17G86VJ', { 'anonymize_ip': false });
+}
+</script>
+<script src="https://www.thedevopsjedi.co.uk/theme.js"></script><script src="https://www.thedevopsjedi.co.uk/cookieconsent.min.js" type="application/javascript"></script><script src="https://www.thedevopsjedi.co.uk/init-cookieconsent.js" type="application/javascript"></script><div id="activate-algolia-search" class="hidden">
+  <input type="hidden" id="algolia-search-appId" value="XRNYV3MMH2">
+  <input type="hidden" id="algolia-search-apiKey" value="5ba5776bc76690c95b70fcfe58371072">
+  <input type="hidden" id="algolia-search-indexName" value="www.thedevopsjedi.co.uk">
+  <input type="hidden" id="algolia-search-noSearchResults" value="Nothing Found..."><input type="hidden" id="algolia-search-currentLanguageOnly"></div>
+
+</body>
+
+</html>

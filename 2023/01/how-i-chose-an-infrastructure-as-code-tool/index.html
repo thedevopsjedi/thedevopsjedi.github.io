@@ -1,0 +1,358 @@
+<!DOCTYPE html><html itemscope itemtype="https://schema.org/WebPage" class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="siteBaseUrl" content="https://www.thedevopsjedi.co.uk/">
+    <meta name="author" content="thedevopsjedi">
+    <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
+    <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
+    <meta name="generator" content="Hugo 0.115.4"><title>How I Chose An Infrastructure As Code Tool&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta itemprop="name" content="How I Chose An Infrastructure As Code Tool">
+    <meta itemprop="description" content="This post looks into how, and why, I selected my current Infrastructure as Code tool of choice for my organisation.">
+    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:title" content="How I Chose An Infrastructure As Code Tool" />
+<meta property="og:description" content="This post looks into how, and why, I selected my current Infrastructure as Code tool of choice for my organisation." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool/" /><meta property="article:section" content="iac" />
+<meta property="article:published_time" content="2023-01-06T18:00:00+00:00" />
+<meta property="article:modified_time" content="2023-01-06T18:00:00+00:00" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+<link rel="manifest" href="/favicon/site.webmanifest">
+<link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<script src="/modernizr-simple.js"></script><link rel="canonical" href="https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool/"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/theme.css"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/cookieconsent.min.css">
+</head>
+
+<body class="bilberry-hugo-theme">
+<nav><div class="container">
+        <ul class="topnav"><li><a href="/about" target="">About</a></li></ul><div id="search-box" class="search">
+                <i class="fas fa-search"></i>
+                <input id="search" type="text" placeholder="Search ...">
+            </div></div>
+</nav>
+<header><div class="container">
+        <div class="logo">
+            <a href="/" class="logo"><img src="/images/LinkedIn.jpeg" alt=""><span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title">
+                <a href="/">The DevOps Jedi</a>
+            </h3><span class="subtitle">Taking the cloud by storm one line of code at a time....</span></div><div class="toggler"><i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+    </div>
+</header>
+<div class="main container"><div class="article-wrapper u-cf single"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article"><div class="content">
+    <h1 class="article-title">
+        <a href="https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool/">How I Chose An Infrastructure As Code Tool</a>
+    </h1>
+
+    <div class="meta"><span class="date moment">2023-01-06</span><span class="readingTime">11 min read</span><span class="categories"><a href="https://www.thedevopsjedi.co.uk/categories/iac/">IaC</a></span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#background">Background</a></li>
+        <li><a href="#imperative-vs-declarative-which-approach-was-best">Imperative vs Declarative Which Approach Was Best?</a>
+          <ul>
+            <li><a href="#imperative-approach">Imperative Approach</a></li>
+            <li><a href="#declarative-approach">Declarative Approach</a></li>
+          </ul>
+        </li>
+        <li><a href="#which-file-format-was-easiest-to-understand">Which File Format Was Easiest To Understand?</a>
+          <ul>
+            <li><a href="#json">JSON</a></li>
+            <li><a href="#yaml">YAML</a></li>
+            <li><a href="#hcl">HCL</a></li>
+          </ul>
+        </li>
+        <li><a href="#which-tool-met-the-requirements-best">Which Tool Met The Requirements Best?</a></li>
+        <li><a href="#which-tool-was-the-easiest-to-troubleshoot">Which Tool Was The Easiest To Troubleshoot?</a>
+          <ul>
+            <li><a href="#arm-template">ARM Template</a></li>
+            <li><a href="#terraform-configuration">Terraform Configuration</a></li>
+          </ul>
+        </li>
+        <li><a href="#what-support-was-available">What Support Was Available?</a></li>
+        <li><a href="#what-were-my-industry-peers-using-for-iac">What Were My Industry Peers Using For IaC?</a></li>
+        <li><a href="#final-decision">Final Decision</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+<h3 id="background">Background</h3>
+<p>Let me set the scene so I can explain the journey I have been on and the rationale behind some key decisions made along the way.</p>
+<p>My journey with Infrastructure as Code (IaC) started at the end of 2018 when I was involved with a large scale data centre exit project.  The goal was to move all infrastructure to a cloud provider and hit a contractual deadline, but working in a regulated business meant we had to go through a request for proposal (RFP) process to ensure we selected the right strategic partner.</p>
+<p>Our strategy was clear that we weren&rsquo;t just going to lift and shift all our virtual machines as they were, and we planned to adopt modern cloud practices and techniques so IaC was firmly on the agenda.</p>
+<p>I took it upon myself to research the tools available in the IaC space so that once we had completed the RFP we could hit the ground running.  At this time the key options were to use one of the big 3 cloud providers&rsquo; native solutions, or look for something independent.  Azure had ARM templates, Amazon Web Services (AWS) had CloudFormation and Google Cloud (GCP) had Deployment Manager.  All 3 of these solutions used varying combinations of JSON, YAML &amp; Python.</p>
+<p>Next I looked to see what independent tools were out there, which led me to research HashiCorp Terraform.  This tool used a proprietary language called HCL, and was cloud agnostic so worked across multiple providers including Azure, AWS &amp; GCP.</p>
+<p>Anything was on the table at this early stage, so I looked into using the native CLI options for each provider as well.</p>
+<p>Before I continue, it&rsquo;s important to point out that the engineers that would be working on this project all had traditional infrastructure backgrounds, and none of them had development skills.  Servers were built using CDs/VM images, and almost all configuration work was done using the GUI.  This meant I needed to select a tool with the right capabilities to deliver value, and the fewest blockers to adoption.</p>
+<blockquote>
+<p><strong>NOTE:</strong> In 2018 Bicep did not exist for Azure, so wasn&rsquo;t included in this process.</p>
+</blockquote>
+<h3 id="imperative-vs-declarative-which-approach-was-best">Imperative vs Declarative Which Approach Was Best?</h3>
+<p>Scripting languages such as PowerShell, VBScript &amp; Python are imperative.  This means they tell you <strong>HOW</strong> they are going to get to the end result, and require a good level of understanding of the syntax and functions used in order to figure out what the end result will be.</p>
+<p>By contrast, formats such as JSON, YAML &amp; HCL are declarative.  This means they show you <strong>WHAT</strong> the end result will be, which makes them simpler to read and understand.</p>
+<p>To illustrate this, I&rsquo;ll show 2 simple examples of the same outcome using the different approaches.</p>
+<h4 id="imperative-approach">Imperative Approach</h4>
+<ol>
+<li>At 5pm take a steak out of the fridge to get to room temperature.</li>
+<li>Peel some potatoes and cut them into chips.</li>
+<li>Put a pan on the hob to heat and turn on the fryer/oven.</li>
+<li>Cook the steak in the pan until it is done.</li>
+<li>Take the steak out to rest.</li>
+<li>Cook the chips until done.</li>
+<li>Serve up on a plate at 6pm.</li>
+<li>Eat dinner.</li>
+</ol>
+<h4 id="declarative-approach">Declarative Approach</h4>
+<ul>
+<li>Cook steak and chips for dinner and eat at 6pm</li>
+</ul>
+<blockquote>
+<p><strong>WINNER: Declarative Approach</strong> The declarative approach was a better fit for engineers in my organisation who didn&rsquo;t have a development background.  This meant that using the native CLI tools to provision infrastructure was ruled out.</p>
+</blockquote>
+<h3 id="which-file-format-was-easiest-to-understand">Which File Format Was Easiest To Understand?</h3>
+<p>With different options on the table, I wanted to investigate the pros and cons of the different file formats associated with the available tools.</p>
+<h4 id="json">JSON</h4>
+<p>JavaScript Object Notation (JSON) is a format for storing and transmitting data in a key-value pair format and is stored in objects.  It is most commonly interpreted by applications but can be read by humans too.</p>
+<p>Each object is surrounded by curly brackets <code>{}</code> (also known as curly braces), each key-value pair consists of a key and a corresponding value, and each key-value pair is separated by a comma <code>,</code>.</p>
+<p>When elements are added to an array they are surrounded by square brackets <code>[]</code> and separated by a comma.  The order in which the key value pairs are listed in the object is irrelevant.</p>
+<p>If a multi line value is required, such as commands that need to be run, each value will need to be separated by <code>\n</code>.  Values that have double quotes <code>&quot;</code> around them need to be escaped using backslash <code>\</code>.</p>
+<p>An example of JSON using different data types is below:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">&#34;string&#34;</span>: <span style="color:#e6db74">&#34;some text that can contain spaces&#34;</span>,
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">&#34;number&#34;</span>: <span style="color:#ae81ff">10</span>,
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">&#34;boolean&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">&#34;emptyValue&#34;</span>: <span style="color:#66d9ef">null</span>,
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">&#34;nestedObject&#34;</span>: {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;firstname&#34;</span>: <span style="color:#e6db74">&#34;darren&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;surname&#34;</span>: <span style="color:#e6db74">&#34;johnson&#34;</span>
+</span></span><span style="display:flex;"><span>   },
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">&#34;nestedArray&#34;</span>: [
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;friday night&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">6</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;january&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>   ],
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">&#34;commands&#34;</span>: <span style="color:#e6db74">&#34;$message = \&#34;Hello World\&#34;\nWrite-Host $message&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The JSON syntax requires good attention to detail as it is prone to validation errors, but using editors such as VS Code will help highlight any syntax issues.  JSON is often collapsed into a single line of text for API calls, but can be linted to make it easier to read using VS Code or online tools such as 
+<a href="https://jsonlint.com/"target="_blank" rel="nofollow noopener noreferrer">JSONLint</a>
+.</p>
+<h4 id="yaml">YAML</h4>
+<p>Yet Another Markup Language or YAML Ain&rsquo;t Markup Language (YAML) is a popular human readable format used for configuration files for any programming language.  YAML is a superset of JSON meaning a YAML file can also contain JSON within it.  It uses indentations to specify its structure and it&rsquo;s syntax is also prone to validation errors.</p>
+<p>YAML is made up of maps and lists and always begins with 3 dashes <code>---</code>.</p>
+<p>A map allows you to specify key-value pairs just like in JSON and a new map can be created by increasing the indentation level.  The <em><strong>order of the keys does not matter</strong></em>.  If the value of a map&rsquo;s key is a multi line string, you can use the &lsquo;pipe&rsquo; character <code>|</code> to specify a literal block which is very useful when specifying CLI commands.</p>
+<p>A list, which is in fact an array, includes values <em><strong>listed in a specific order</strong></em> and starts with a dash followed by a space.</p>
+<p>Most YAML values do not require quotes, however when you need to specify any special characters such as <code>:-{}[]!#|&gt;&amp;%@</code> you will need to quote them.  I use double quotes for this purpose, but if I have a value that contains double quotes I can escape it using a backslash.</p>
+<p>An example of a YAML file using the same data types as the JSON file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">string</span>: <span style="color:#ae81ff">some text that can contain spaces</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">number</span>: <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">boolean</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">emptyValue</span>:
+</span></span><span style="display:flex;"><span><span style="color:#f92672">nestedObject</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">firstname</span>: <span style="color:#ae81ff">darren</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">surname</span>: <span style="color:#ae81ff">johnson</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">nestedArray</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#ae81ff">friday night</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#ae81ff">6</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#ae81ff">january</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">command</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  $message = &#34;Hello World&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  Write-Host $message</span>  
+</span></span></code></pre></div><p>Note that the empty value above could also be specified as <code>emptyValue: null</code></p>
+<h4 id="hcl">HCL</h4>
+<p>HashiCorp Configuration Language (HCL) is a proprietary configuration language made up of Arguments &amp; Blocks.</p>
+<p>An argument assigns a value to a name much in the same way as a key value pair.  An argument can have a list as a value and this is surrounded by square brackets.</p>
+<p>A block is a container for other content and each block type defines how many labels must follow the block keyword. The block body is surrounded by curly brackets.</p>
+<p>Strings need to be surrounded by double quotes, however numbers and boolean values don&rsquo;t.  Multi line strings support using the &lsquo;heredoc&rsquo; style of string.</p>
+<p>An example of a <strong>fictitious resource</strong> defined in Terraform using the same data types would look as follows:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;provider_resource_type&#34; &#34;resource_name&#34;</span> {
+</span></span><span style="display:flex;"><span>  string     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;some text that can contain spaces&#34;</span>
+</span></span><span style="display:flex;"><span>  number     <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>  boolean    <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  emptyValue <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">nestedObject</span> {
+</span></span><span style="display:flex;"><span>    firstname <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;darren&#34;</span>
+</span></span><span style="display:flex;"><span>    surname   <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;johnson&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  nestedArray <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;friday night&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;6&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;january&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>  command <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&lt;&lt;</span><span style="color:#66d9ef">POWERSHELL</span>
+</span></span><span style="display:flex;"><span>  $message <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello World&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">Write</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">Host</span> <span style="color:#960050;background-color:#1e0010">$</span><span style="color:#66d9ef">message</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">POWERSHELL</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>A key benefit of using HCL is that Terraform will ignore bad linting and continue to function normally if you get indentations wrong.  There is also a built in command <code>terraform fmt</code> that will automatically lint your code into the correct canonical format and style as well as removing any legacy syntax which is cool and saves valuable time!</p>
+<blockquote>
+<p><strong>NO WINNER:</strong> All 3 formats had syntax checking and tools available to lint them correctly, so I couldn&rsquo;t separate them.</p>
+</blockquote>
+<h3 id="which-tool-met-the-requirements-best">Which Tool Met The Requirements Best?</h3>
+<p>Initially I didn&rsquo;t have any hard requirements to adhere to for implementing an IaC tool, other than ensuring it was secure, scalable and worked with the cloud provider we needed up selecting.  I wanted any tool to be extensible so I could use it to manage multiple cloud resource types and not just virtual machines.</p>
+<p>As we still had to complete the RFP process and select a cloud provider I couldn&rsquo;t rule out any tool based solely on requirements, but only Terraform worked across multiple providers including some on premises technologies such as VMware.</p>
+<blockquote>
+<p><strong>NO WINNER:</strong> Terraform was the leader here, but I couldn&rsquo;t rule out other tools just because of extensibility.</p>
+</blockquote>
+<h3 id="which-tool-was-the-easiest-to-troubleshoot">Which Tool Was The Easiest To Troubleshoot?</h3>
+<p>I&rsquo;m not going to compare all the tools here, as we ended up selecting Azure as our cloud provider via the RFP process, so I will just compare ARM Templates against Terraform.</p>
+<p>To illustrate this, I&rsquo;ll compare the content of the files required to deploy an empty resource group named &lsquo;resourcegroupname&rsquo; in the West Europe region having a single tag of &rsquo;tagkey: tagvalue&rsquo; via both an ARM template and via a Terraform configuration.</p>
+<h4 id="arm-template">ARM Template</h4>
+<p>2 files are required to deploy an ARM template in a reusable manner:</p>
+<ul>
+<li>template.json - the template of the resources to be deployed</li>
+<li>parameters.json - the parameters that are fed into the template that are unique to the deployment</li>
+</ul>
+<p><strong>template.json</strong> contains:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.1&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;parameters&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;rgName&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;rgLocation&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;tags&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;object&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;defaultValue&#34;</span>: {}
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;variables&#34;</span>: {},
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;resources&#34;</span>: [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Resources/resourceGroups&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;2018-05-01&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;location&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;rgLocation&#39;)]&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;rgName&#39;)]&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;properties&#34;</span>: {},
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;tags&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;tags&#39;)]&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;outputs&#34;</span>: {}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>parameters.json</strong> contains:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;parameters&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;rgName&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;resourcegroupname&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;rgLocation&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;westeurope&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;tags&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;value&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;tagkey&#34;</span>: <span style="color:#e6db74">&#34;tagvalue&#34;</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="terraform-configuration">Terraform Configuration</h4>
+<p>To deploy the same resource group via Terraform the following code is required:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;azurerm_resource_group&#34; &#34;resource_group_name&#34;</span> {
+</span></span><span style="display:flex;"><span>  name     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;resourcegroupname&#34;</span>
+</span></span><span style="display:flex;"><span>  location <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;westeurope&#34;</span>
+</span></span><span style="display:flex;"><span>  tags <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    tagkey <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;tagvalue&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>I hope you agree that the Terraform configuration file is a lot simpler to read and understand.  This is due to the fact that Terraform uses the concept of providers which know exactly which API has to be used, and what version it needs to be, so this extra information does not need to be specified in the configuration.  This results in the number of lines of text being far less than the JSON equivalent that is required for ARM template deployments, which get exponentially more complex as more resources are deployed.</p>
+<blockquote>
+<p><strong>WINNER: Terraform</strong>: From simply looking at the code, Terraform was the easier to understand and had a lot less text to review.  Both solutions achieved the same business outcome.</p>
+</blockquote>
+<h3 id="what-support-was-available">What Support Was Available?</h3>
+<p>This was also key to my organisation as we were starting from scratch.  I wanted to ensure when the project was complete, the engineers responsible for running the system could get access to sufficient support resources.  I also wanted to minimise any support costs.</p>
+<p>A lot of the community content around ARM templates at the time as either too basic, or super advanced, and I didn&rsquo;t feel like there was a sweet spot.  I tried deploying a few resources in ARM, and when I hit issues they took me a long time to resolve.  I&rsquo;m sure this would have got easier in time, but it felt like a steep learning curve for someone with an automation background.</p>
+<p>With Terraform, there was plenty of content out there including sample code I could easily understand.  It might not have all been authored in line with best practices at the time, but within minutes of starting I was able to successfully deploy resources!  I also checked out the 
+<a href="https://github.com/hashicorp/terraform"target="_blank" rel="nofollow noopener noreferrer">GitHub repository</a>
+ and noticed the community were very active in helping to solve issues and bugs.</p>
+<blockquote>
+<p><strong>WINNER: Terraform</strong>: Cloud enables business agility, and spending too long debugging ARM templates could slow the project down and increase the time to deliver value back to the business.</p>
+</blockquote>
+<h3 id="what-were-my-industry-peers-using-for-iac">What Were My Industry Peers Using For IaC?</h3>
+<p>I was fortunate enough to attend a couple of cloud conferences before we had to make a final decision, and whilst I was there I caught up with some old colleagues I hadn&rsquo;t seen for years who had been working for different companies deploying and managing cloud infrastructure using IaC.  When asking their preference on the available tools. there was one common answer - Terraform!</p>
+<p>After the conferences, I setup a couple of sessions with them and they kindly walked me through how they were managing their cloud infrastructure using Terraform and it just clicked.</p>
+<h3 id="final-decision">Final Decision</h3>
+<p>After gathering some material from Gartner, I made a recommendation that we adopt Terraform as our IaC tool of choice.  This was approved and we haven&rsquo;t looked back since.  I quickly built out a landing zone in Azure to enable us to prove some key design concepts, and we were able to deploy services in Azure with a consistent configuration in minutes.</p>
+<p>After working with Terraform for over 4 years now, I know I made the right choice as its capabilities have been enhanced significantly and it supports a whole range of cloud services, not just infrastructure.</p>
+<blockquote>
+<p><strong>OVERALL WINNER: Terraform</strong></p>
+</blockquote>
+</div>
+<div class="footer"><div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/arm-templates/">ARM Templates</a><a href="https://www.thedevopsjedi.co.uk/tags/aws/">AWS</a><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/cloudformation/">CloudFormation</a><a href="https://www.thedevopsjedi.co.uk/tags/hashicorp/">HashiCorp</a><a href="https://www.thedevopsjedi.co.uk/tags/iac/">IaC</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a></div>
+        </div></div>
+</article>
+</div><div id="comments-container"></div></div><footer>
+    <div class="container"><div class="recent-posts">
+            <strong>Latest Posts</strong>
+            <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/">How I Minimise Terraform Admin Effort &amp; Manage The Constant Change</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/">Use Of Terraform Child Modules</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/">How To Generate JSON With Terraform Without Using Heredoc Strings</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/">How I Keep Terraform Simple</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/what-i-include-in-every-terraform-configuration/">What I Include In Every Terraform Configuration</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/">How I Structure Terraform Folders &amp; Apply Naming Standards</a>
+                    </li></ul>
+        </div><div class="right"><div class="external-profiles">
+                <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
+            </div><div class="archive"><a href="https://www.thedevopsjedi.co.uk/archive/"><strong>Archive</strong></a></div></div>
+    </div>
+</footer><div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
+                &copy;&nbsp;2023&nbsp;The DevOps Jedi&nbsp;
+            </a></div>
+        <div class="disclaimer">
+            <a href="/disclaimer">Disclaimer</a>
+        </div>
+    </div>
+</div>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-RKD17G86VJ', { 'anonymize_ip': false });
+}
+</script>
+<script src="https://www.thedevopsjedi.co.uk/theme.js"></script><script src="https://www.thedevopsjedi.co.uk/cookieconsent.min.js" type="application/javascript"></script><script src="https://www.thedevopsjedi.co.uk/init-cookieconsent.js" type="application/javascript"></script><div id="activate-algolia-search" class="hidden">
+  <input type="hidden" id="algolia-search-appId" value="XRNYV3MMH2">
+  <input type="hidden" id="algolia-search-apiKey" value="5ba5776bc76690c95b70fcfe58371072">
+  <input type="hidden" id="algolia-search-indexName" value="www.thedevopsjedi.co.uk">
+  <input type="hidden" id="algolia-search-noSearchResults" value="Nothing Found..."><input type="hidden" id="algolia-search-currentLanguageOnly"></div>
+
+</body>
+
+</html>

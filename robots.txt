@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /author/
+Disallow: /categories/
+Disallow: /series/
+Disallow: /tags/
+
+Sitemap: https://www.thedevopsjedi.co.uk/sitemap.xml

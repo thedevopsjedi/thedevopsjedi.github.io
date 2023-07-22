@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Template on The DevOps Jedi</title>
+    <link>https://www.thedevopsjedi.co.uk/tags/template/</link>
+    <description>Recent content in Template on The DevOps Jedi</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 20 Jan 2023 17:00:00 +0000</lastBuildDate><atom:link href="https://www.thedevopsjedi.co.uk/tags/template/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How I Minimise Terraform Admin Effort &amp; Manage The Constant Change</title>
+      <link>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/</link>
+      <pubDate>Fri, 20 Jan 2023 17:00:00 +0000</pubDate>
+      
+      <guid>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/</guid>
+      <description>&lt;p&gt;In a previous post I explained why I don&amp;rsquo;t advocate the use of child modules, but I wanted to quickly explain how I keep Terraform admin overhead to a minimum when creating standard resources whilst also working with the constant rate of change that cloud brings.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

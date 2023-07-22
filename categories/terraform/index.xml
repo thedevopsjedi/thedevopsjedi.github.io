@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Terraform on The DevOps Jedi</title>
+    <link>https://www.thedevopsjedi.co.uk/categories/terraform/</link>
+    <description>Recent content in Terraform on The DevOps Jedi</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 07 Jan 2023 08:00:00 +0000</lastBuildDate><atom:link href="https://www.thedevopsjedi.co.uk/categories/terraform/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Terraform Lessons Learnt</title>
+      <link>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/</link>
+      <pubDate>Sat, 07 Jan 2023 08:00:00 +0000</pubDate>
+      
+      <guid>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/</guid>
+      <description>In my previous post I explained why I chose Terraform as my IaC tool. In this series of posts I want to look at how I use Terraform and how I structure the code in a way to maximise the benefits of a declarative configuration.
+Table of Contents How I Structure Terraform Folders &amp;amp; Apply Naming Standards What I Include In Every Terraform Configuration How I Keep Terraform Simple Use Of Terraform Child Modules How I Minimise Terraform Admin Effort &amp;amp; Manage The Constant Change How I Protect Secrets In Terraform Configurations </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,229 @@
+<!DOCTYPE html><html itemscope itemtype="https://schema.org/WebPage" class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="siteBaseUrl" content="https://www.thedevopsjedi.co.uk/">
+    <meta name="author" content="thedevopsjedi">
+    <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
+    <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
+    <meta name="generator" content="Hugo 0.115.4"><title>How To Generate JSON With Terraform Without Using Heredoc Strings&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta itemprop="name" content="How To Generate JSON With Terraform Without Using Heredoc Strings">
+    <meta itemprop="description" content="How I let Terraform generate JSON for me.">
+    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:title" content="How To Generate JSON With Terraform Without Using Heredoc Strings" />
+<meta property="og:description" content="How I let Terraform generate JSON for me." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/" /><meta property="article:section" content="terraform" />
+<meta property="article:published_time" content="2023-01-08T15:00:00+00:00" />
+<meta property="article:modified_time" content="2023-01-08T15:00:00+00:00" />
+<meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/" /><meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/" /><meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/" /><meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/" /><meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/what-i-include-in-every-terraform-configuration/" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+<link rel="manifest" href="/favicon/site.webmanifest">
+<link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<script src="/modernizr-simple.js"></script><link rel="canonical" href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/theme.css"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/cookieconsent.min.css">
+</head>
+
+<body class="bilberry-hugo-theme">
+<nav><div class="container">
+        <ul class="topnav"><li><a href="/about" target="">About</a></li></ul><div id="search-box" class="search">
+                <i class="fas fa-search"></i>
+                <input id="search" type="text" placeholder="Search ...">
+            </div></div>
+</nav>
+<header><div class="container">
+        <div class="logo">
+            <a href="/" class="logo"><img src="/images/LinkedIn.jpeg" alt=""><span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title">
+                <a href="/">The DevOps Jedi</a>
+            </h3><span class="subtitle">Taking the cloud by storm one line of code at a time....</span></div><div class="toggler"><i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+    </div>
+</header>
+<div class="main container"><div class="article-wrapper u-cf single"><a class="bubble" href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article"><div class="content">
+    <h1 class="article-title">
+        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/">How To Generate JSON With Terraform Without Using Heredoc Strings</a>
+    </h1>
+
+    <div class="meta"><span class="date moment">2023-01-08</span><span class="readingTime">4 min read</span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><p>This is something I&rsquo;ve only recently discovered but thought it was worth sharing here.</p>
+<p>I have a few configurations where I need to pass JSON to Terraform to process.  The most used resource where I do this is azurerm_virtual_machine_extension.  The example 
+<a href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension"target="_blank" rel="nofollow noopener noreferrer">HashiCorp documentation</a>
+ still shows the use of Heredoc strings which is probably why I hadn&rsquo;t picked up on it until now.</p>
+<p>I recently discovered a 
+<a href="https://developer.hashicorp.com/terraform/language/expressions/strings#generating-json-or-yaml"target="_blank" rel="nofollow noopener noreferrer">HashiCorp article</a>
+ where they tell you that by using the jsonencode and yamlencode functions &ldquo;Terraform can be responsible for guaranteeing valid JSON or YAML syntax&rdquo;.  This sounded good to me as JSON syntax is not very forgiving, and it is designed to be read and processed by machines (not humans).  If you put a comma or a bracket in the wrong place, you will soon be in a whole world of pain.  The same is true for YAML and indentations.</p>
+<p>Let me show you an example on how I used to previously do this, and how I do it now.</p>
+<p>Here is a block from a configuration I use to deploy an &lsquo;Microsoft.Azure.Diagnostics&rsquo; extension.  The JSON syntax requires dynamic values derived from other parts of the configuration, in this case it is from a data source for a storage account azurerm_storage_account.vm_diags.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span>  protected_settings <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&lt;&lt;</span><span style="color:#66d9ef">PROTECTED_SETTINGS</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;storageAccountName&#34;: &#34;${data.azurerm_storage_account.vm_diags.name}&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;storageAccountKey&#34;: &#34;${data.azurerm_storage_account.vm_diags.primary_access_key}&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">PROTECTED_SETTINGS</span>
+</span></span></code></pre></div><p>You can see that the JSON block uses the 
+<a href="https://developer.hashicorp.com/terraform/language/expressions/strings#interpolation"target="_blank" rel="nofollow noopener noreferrer">Interpolation Syntax</a>
+ to evaluate the dynamic data source expressions and convert the results into strings.  All key value pairs must be written surrounded by double quotes, which mandates the use of the interpolation syntax and adds extra complexity.</p>
+<p>Conversely, when using the jsonencode function you can simply use standard HCL syntax which no longer requires the interpolation syntax or double quotes which is simpler to read and interpret.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span>protected_settings <span style="color:#f92672">=</span> <span style="color:#66d9ef">jsonencode</span>({
+</span></span><span style="display:flex;"><span>  storageAccountName <span style="color:#f92672">=</span> <span style="color:#66d9ef">data</span>.<span style="color:#66d9ef">azurerm_storage_account</span>.<span style="color:#66d9ef">vm_diags</span>.<span style="color:#66d9ef">name</span>,
+</span></span><span style="display:flex;"><span>  storageAccountKey  <span style="color:#f92672">=</span> <span style="color:#66d9ef">data</span>.<span style="color:#66d9ef">azurerm_storage_account</span>.<span style="color:#66d9ef">vm_diags</span>.<span style="color:#66d9ef">primary_access_key</span>
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><p>I don&rsquo;t let Terraform create YAML files for me as I like to control the order of the entries within the file for readability reasons.  I also think the Terraform syntax required to handle the indentations and lists is more complicated than the YAML syntax, which for me, defeats the purpose of using Terraform to generate it.</p>
+<p>Below is an edited example of an Azure DevOps Pipeline written in YAML to show the different indentation levels involved.  You can see it is 20 lines long and is fairly simple to read and understand.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">Run$(Rev:rr)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">pool</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Azure Pipelines</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">vmImage</span>: <span style="color:#ae81ff">ubuntu-latest</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">trigger</span>: <span style="color:#ae81ff">none</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">variables</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">system.debug</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">stages</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">stage</span>: <span style="color:#ae81ff">build_stage</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">displayName</span>: <span style="color:#ae81ff">Build Stage</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">jobs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">job</span>: <span style="color:#ae81ff">first_build_job</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">displayName</span>: <span style="color:#ae81ff">First Build Job</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">task</span>: <span style="color:#ae81ff">PublishPipelineArtifact@1</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">displayName</span>: <span style="color:#ae81ff">Publish Pipeline Artifact</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">inputs</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">targetPath</span>: <span style="color:#ae81ff">$(Build.ArtifactStagingDirectory)</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">artifact</span>: <span style="color:#ae81ff">$(buildArtifactName)</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">publishLocation</span>: <span style="color:#ae81ff">pipeline</span>
+</span></span></code></pre></div><p>Now compare this to the equivilent HCL syntax required to create a sample-pipeline.yaml file in the current folder.  The content section of the file requires 32 lines of code and the syntax adds extra complexity.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;local_file&#34; &#34;sample_pipeline&#34;</span> {
+</span></span><span style="display:flex;"><span>  filename <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;./sample-pipeline.yaml&#34;</span>
+</span></span><span style="display:flex;"><span>  content <span style="color:#f92672">=</span> <span style="color:#66d9ef">yamlencode</span>({
+</span></span><span style="display:flex;"><span>    &#34;name&#34; <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Run$(Rev:rr)&#34;</span>
+</span></span><span style="display:flex;"><span>    &#34;pool&#34; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>      &#34;name&#34;    <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Azure Pipelines&#34;</span>
+</span></span><span style="display:flex;"><span>      &#34;vmImage&#34; <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ubuntu-latest&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    &#34;trigger&#34; <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;none&#34;</span>
+</span></span><span style="display:flex;"><span>    &#34;variables&#34; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>      &#34;system.debug&#34; <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    &#34;stages&#34; <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        &#34;stage&#34;       <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;build_stage&#34;</span>
+</span></span><span style="display:flex;"><span>        &#34;displayName&#34; <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Build Stage&#34;</span>
+</span></span><span style="display:flex;"><span>        &#34;jobs&#34; <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>          {
+</span></span><span style="display:flex;"><span>            &#34;job&#34;         <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;first_build_job&#34;</span>
+</span></span><span style="display:flex;"><span>            &#34;displayName&#34; <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;First Build Job&#34;</span>
+</span></span><span style="display:flex;"><span>            &#34;steps&#34; <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>              {
+</span></span><span style="display:flex;"><span>                &#34;task&#34;        <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;PublishPipelineArtifact@1&#34;</span>
+</span></span><span style="display:flex;"><span>                &#34;displayName&#34; <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Publish Pipeline Artifact&#34;</span>
+</span></span><span style="display:flex;"><span>                &#34;inputs&#34; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>                  &#34;targetPath&#34;      <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;$(Build.ArtifactStagingDirectory)&#34;</span>
+</span></span><span style="display:flex;"><span>                  &#34;artifact&#34;        <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;$(buildArtifactName)&#34;</span>
+</span></span><span style="display:flex;"><span>                  &#34;publishLocation&#34; <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;pipeline&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>              },
+</span></span><span style="display:flex;"><span>            ]
+</span></span><span style="display:flex;"><span>          },
+</span></span><span style="display:flex;"><span>        ]
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>When rendering the YAML, Terraform also reorders the content alphabetically, resulting in a sample-pipeline.yaml file that looks different:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">&#34;name&#34;: </span><span style="color:#e6db74">&#34;Run$(Rev:rr)&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;pool&#34;</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;name&#34;: </span><span style="color:#e6db74">&#34;Azure Pipelines&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;vmImage&#34;: </span><span style="color:#e6db74">&#34;ubuntu-latest&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;stages&#34;</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">&#34;displayName&#34;: </span><span style="color:#e6db74">&#34;Build Stage&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;jobs&#34;</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">&#34;displayName&#34;: </span><span style="color:#e6db74">&#34;First Build Job&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;job&#34;: </span><span style="color:#e6db74">&#34;first_build_job&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;steps&#34;</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">&#34;displayName&#34;: </span><span style="color:#e6db74">&#34;Publish Pipeline Artifact&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;inputs&#34;</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;artifact&#34;: </span><span style="color:#e6db74">&#34;$(buildArtifactName)&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;publishLocation&#34;: </span><span style="color:#e6db74">&#34;pipeline&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;targetPath&#34;: </span><span style="color:#e6db74">&#34;$(Build.ArtifactStagingDirectory)&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;task&#34;: </span><span style="color:#e6db74">&#34;PublishPipelineArtifact@1&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;stage&#34;: </span><span style="color:#e6db74">&#34;build_stage&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&#34;trigger&#34;: </span><span style="color:#e6db74">&#34;none&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;variables&#34;</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;system.debug&#34;: </span><span style="color:#66d9ef">false</span>
+</span></span></code></pre></div><p>For this reason I prefer to author my YAML files in VSCode and then use an online service such as 
+<a href="https://www.yamllint.com"target="_blank" rel="nofollow noopener noreferrer">YAML Lint</a>
+ to check the validity of the YAML file.  If you do use YAML Lint be sure to uncheck the <code>Reformat (strips comments)</code> so your file order doesn&rsquo;t change.</p>
+<blockquote>
+<p><strong>Key Takeaway</strong>: Use the Terraform jsonencode function to generate JSON where required. But it&rsquo;s not best suited for generating YAML.</p>
+</blockquote>
+</div>
+<div class="footer"><div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/hashicorp/">HashiCorp</a><a href="https://www.thedevopsjedi.co.uk/tags/iac/">IaC</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a></div>
+        </div></div>
+</article>
+</div><div id="comments-container"></div></div><footer>
+    <div class="container"><div class="recent-posts">
+            <strong>Latest Posts</strong>
+            <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/">How I Minimise Terraform Admin Effort &amp; Manage The Constant Change</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/">Use Of Terraform Child Modules</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/">How To Generate JSON With Terraform Without Using Heredoc Strings</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/">How I Keep Terraform Simple</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/what-i-include-in-every-terraform-configuration/">What I Include In Every Terraform Configuration</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/">How I Structure Terraform Folders &amp; Apply Naming Standards</a>
+                    </li></ul>
+        </div><div class="right"><div class="external-profiles">
+                <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
+            </div><div class="archive"><a href="https://www.thedevopsjedi.co.uk/archive/"><strong>Archive</strong></a></div></div>
+    </div>
+</footer><div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
+                &copy;&nbsp;2023&nbsp;The DevOps Jedi&nbsp;
+            </a></div>
+        <div class="disclaimer">
+            <a href="/disclaimer">Disclaimer</a>
+        </div>
+    </div>
+</div>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-RKD17G86VJ', { 'anonymize_ip': false });
+}
+</script>
+<script src="https://www.thedevopsjedi.co.uk/theme.js"></script><script src="https://www.thedevopsjedi.co.uk/cookieconsent.min.js" type="application/javascript"></script><script src="https://www.thedevopsjedi.co.uk/init-cookieconsent.js" type="application/javascript"></script><div id="activate-algolia-search" class="hidden">
+  <input type="hidden" id="algolia-search-appId" value="XRNYV3MMH2">
+  <input type="hidden" id="algolia-search-apiKey" value="5ba5776bc76690c95b70fcfe58371072">
+  <input type="hidden" id="algolia-search-indexName" value="www.thedevopsjedi.co.uk">
+  <input type="hidden" id="algolia-search-noSearchResults" value="Nothing Found..."><input type="hidden" id="algolia-search-currentLanguageOnly"></div>
+
+</body>
+
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html><html itemscope itemtype="https://schema.org/WebPage" class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="siteBaseUrl" content="https://www.thedevopsjedi.co.uk/">
+    <meta name="author" content="thedevopsjedi">
+    <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
+    <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
+    <meta name="generator" content="Hugo 0.115.4"><title>How I Minimise Terraform Admin Effort &amp; Manage The Constant Change&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta itemprop="name" content="How I Minimise Terraform Admin Effort &amp; Manage The Constant Change">
+    <meta itemprop="description" content="How I keep Terraform admin overhead to a minimum when creating standard resources whilst also working with the constant rate of change that cloud brings.">
+    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:title" content="How I Minimise Terraform Admin Effort &amp; Manage The Constant Change" />
+<meta property="og:description" content="How I keep Terraform admin overhead to a minimum when creating standard resources whilst also working with the constant rate of change that cloud brings." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/" /><meta property="article:section" content="terraform" />
+<meta property="article:published_time" content="2023-01-20T17:00:00+00:00" />
+<meta property="article:modified_time" content="2023-01-20T17:00:00+00:00" />
+<meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/" /><meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/" /><meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/" /><meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/" /><meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/what-i-include-in-every-terraform-configuration/" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+<link rel="manifest" href="/favicon/site.webmanifest">
+<link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<script src="/modernizr-simple.js"></script><link rel="canonical" href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/theme.css"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/cookieconsent.min.css">
+</head>
+
+<body class="bilberry-hugo-theme">
+<nav><div class="container">
+        <ul class="topnav"><li><a href="/about" target="">About</a></li></ul><div id="search-box" class="search">
+                <i class="fas fa-search"></i>
+                <input id="search" type="text" placeholder="Search ...">
+            </div></div>
+</nav>
+<header><div class="container">
+        <div class="logo">
+            <a href="/" class="logo"><img src="/images/LinkedIn.jpeg" alt=""><span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title">
+                <a href="/">The DevOps Jedi</a>
+            </h3><span class="subtitle">Taking the cloud by storm one line of code at a time....</span></div><div class="toggler"><i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+    </div>
+</header>
+<div class="main container"><div class="article-wrapper u-cf single"><a class="bubble" href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article"><div class="content">
+    <h1 class="article-title">
+        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/">How I Minimise Terraform Admin Effort &amp; Manage The Constant Change</a>
+    </h1>
+
+    <div class="meta"><span class="date moment">2023-01-20</span><span class="readingTime">2 min read</span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><p>In a previous post I explained why I don&rsquo;t advocate the use of child modules, but I wanted to quickly explain how I keep Terraform admin overhead to a minimum when creating standard resources whilst also working with the constant rate of change that cloud brings.</p>
+<p>When writing a terraform configuration I am specifying how I want the resources to be configured at that point in time.  Between major versions of the providers there are few changes to how the resources are configured so I want to be able to reuse all code where possible.  I do this by having some standard template code to define resources, and then copying this code using a PowerShell wrapper and substituting in all parts that need to be unique.</p>
+<p>This approach allows me to have self-contained &rsquo;execution folders&rsquo; that do not affect other services outside of my environment but ensures I use a consistent approach to deploying resources.</p>
+<p>When there are major version changes, I am able to fully test the template code to ensure its compatibility and update the template accordingly without affecting any existing resources that have been deployed.</p>
+<p>To illustrate this, here is some template code for a resource group within a file named <code>resource-group.tf</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;azurerm_resource_group&#34; &#34;zzservice_zzenvironment&#34;</span> {
+</span></span><span style="display:flex;"><span>  name     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;zzservice-zzenvironment-rg&#34;</span>
+</span></span><span style="display:flex;"><span>  location <span style="color:#f92672">=</span> <span style="color:#66d9ef">zzlocation</span>
+</span></span><span style="display:flex;"><span>  tags     <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">tags</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Here is a snippet from the PowerShell script I use to update the template code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>$location = <span style="color:#e6db74">&#34;westeurope&#34;</span>
+</span></span><span style="display:flex;"><span>$service = <span style="color:#e6db74">&#34;blog&#34;</span>
+</span></span><span style="display:flex;"><span>$environment = <span style="color:#e6db74">&#34;msdn&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(Get-Content -Path ./resource-group.tf).Replace(<span style="color:#e6db74">&#34;zzservice&#34;</span>, $service) | Set-Content -Path ./resource-group.tf -Force
+</span></span><span style="display:flex;"><span>(Get-Content -Path ./resource-group.tf).Replace(<span style="color:#e6db74">&#34;zzenvironment&#34;</span>, $environment) | Set-Content -Path ./resource-group.tf -Force
+</span></span><span style="display:flex;"><span>(Get-Content -Path ./resource-group.tf).Replace(<span style="color:#e6db74">&#34;zzlocation&#34;</span>, $location) | Set-Content -Path ./resource-group.tf -Force
+</span></span></code></pre></div><p>This would then update the template code, so it reads:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;azurerm_resource_group&#34; &#34;blog_msdn&#34;</span> {
+</span></span><span style="display:flex;"><span>  name     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;blog-msdn-rg&#34;</span>
+</span></span><span style="display:flex;"><span>  location <span style="color:#f92672">=</span> <span style="color:#66d9ef">westeurope</span>
+</span></span><span style="display:flex;"><span>  tags     <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">tags</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><blockquote>
+<p><strong>Key Takeaway</strong>: Using template code with a PowerShell wrapper allows me to deploy standard configurations for every service I build whilst not depending on any code outside my execution folder.</p>
+</blockquote></div>
+<div class="footer"><div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/hashicorp/">HashiCorp</a><a href="https://www.thedevopsjedi.co.uk/tags/iac/">IaC</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a><a href="https://www.thedevopsjedi.co.uk/tags/template/">Template</a></div>
+        </div></div>
+</article>
+</div><div id="comments-container"></div></div><footer>
+    <div class="container"><div class="recent-posts">
+            <strong>Latest Posts</strong>
+            <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/">How I Minimise Terraform Admin Effort &amp; Manage The Constant Change</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/">Use Of Terraform Child Modules</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/">How To Generate JSON With Terraform Without Using Heredoc Strings</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/">How I Keep Terraform Simple</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/what-i-include-in-every-terraform-configuration/">What I Include In Every Terraform Configuration</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/">How I Structure Terraform Folders &amp; Apply Naming Standards</a>
+                    </li></ul>
+        </div><div class="right"><div class="external-profiles">
+                <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
+            </div><div class="archive"><a href="https://www.thedevopsjedi.co.uk/archive/"><strong>Archive</strong></a></div></div>
+    </div>
+</footer><div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
+                &copy;&nbsp;2023&nbsp;The DevOps Jedi&nbsp;
+            </a></div>
+        <div class="disclaimer">
+            <a href="/disclaimer">Disclaimer</a>
+        </div>
+    </div>
+</div>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-RKD17G86VJ', { 'anonymize_ip': false });
+}
+</script>
+<script src="https://www.thedevopsjedi.co.uk/theme.js"></script><script src="https://www.thedevopsjedi.co.uk/cookieconsent.min.js" type="application/javascript"></script><script src="https://www.thedevopsjedi.co.uk/init-cookieconsent.js" type="application/javascript"></script><div id="activate-algolia-search" class="hidden">
+  <input type="hidden" id="algolia-search-appId" value="XRNYV3MMH2">
+  <input type="hidden" id="algolia-search-apiKey" value="5ba5776bc76690c95b70fcfe58371072">
+  <input type="hidden" id="algolia-search-indexName" value="www.thedevopsjedi.co.uk">
+  <input type="hidden" id="algolia-search-noSearchResults" value="Nothing Found..."><input type="hidden" id="algolia-search-currentLanguageOnly"></div>
+
+</body>
+
+</html>
