@@ -6,7 +6,16 @@
     <description>Recent content in Terraform on The DevOps Jedi</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 21 Jan 2023 17:00:00 +0000</lastBuildDate><atom:link href="https://www.thedevopsjedi.co.uk/tags/terraform/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 10 Sep 2023 16:00:00 +0000</lastBuildDate><atom:link href="https://www.thedevopsjedi.co.uk/tags/terraform/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Creating A Working Powershell Based Azure Function With Terraform</title>
+      <link>https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/</link>
+      <pubDate>Sun, 10 Sep 2023 16:00:00 +0000</pubDate>
+      
+      <guid>https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/</guid>
+      <description>&lt;p&gt;This is a post I’ve wanted to write for a while, but was one of those side projects I’ve picked up and put down a few times due to other priorities getting in the way.  This idea came about because I wrote a PowerShell script to perform some housekeeping actions in Azure and I wanted it to run unattended on a scheduled basis.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>How I Protect Secrets In Terraform Configurations</title>
       <link>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/</link>

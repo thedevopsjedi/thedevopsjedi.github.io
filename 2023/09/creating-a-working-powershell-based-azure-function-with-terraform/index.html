@@ -1,0 +1,270 @@
+<!DOCTYPE html><html itemscope itemtype="https://schema.org/WebPage" class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="siteBaseUrl" content="https://www.thedevopsjedi.co.uk/">
+    <meta name="author" content="thedevopsjedi">
+    <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
+    <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
+    <meta name="generator" content="Hugo 0.115.4"><title>Creating A Working Powershell Based Azure Function With Terraform&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta itemprop="name" content="Creating A Working Powershell Based Azure Function With Terraform">
+    <meta itemprop="description" content="How I created a working Azure PowerShell Function Using Just Terraform">
+    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:title" content="Creating A Working Powershell Based Azure Function With Terraform" />
+<meta property="og:description" content="How I created a working Azure PowerShell Function Using Just Terraform" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/" /><meta property="article:section" content="iac" />
+<meta property="article:published_time" content="2023-09-10T16:00:00+00:00" />
+<meta property="article:modified_time" content="2023-09-10T16:00:00+00:00" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+<link rel="manifest" href="/favicon/site.webmanifest">
+<link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<script src="/modernizr-simple.js"></script><link rel="canonical" href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/theme.css"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/cookieconsent.min.css">
+</head>
+
+<body class="bilberry-hugo-theme">
+<nav><div class="container">
+        <ul class="topnav"><li><a href="/about" target="">About</a></li></ul><div id="search-box" class="search">
+                <i class="fas fa-search"></i>
+                <input id="search" type="text" placeholder="Search ...">
+            </div></div>
+</nav>
+<header><div class="container">
+        <div class="logo">
+            <a href="/" class="logo"><img src="/images/LinkedIn.jpeg" alt=""><span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title">
+                <a href="/">The DevOps Jedi</a>
+            </h3><span class="subtitle">Taking the cloud by storm one line of code at a time....</span></div><div class="toggler"><i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+    </div>
+</header>
+<div class="main container"><div class="article-wrapper u-cf single"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article"><div class="content">
+    <h1 class="article-title">
+        <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
+    </h1>
+
+    <div class="meta"><span class="date moment">2023-09-10</span><span class="readingTime">7 min read</span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><p>This is a post I’ve wanted to write for a while, but was one of those side projects I’ve picked up and put down a few times due to other priorities getting in the way.  This idea came about because I wrote a PowerShell script to perform some housekeeping actions in Azure and I wanted it to run unattended on a scheduled basis.</p>
+<p>I considered a couple of options:</p>
+<ul>
+<li>Configure the PowerShell script to run under an Azure Automation Account</li>
+<li>Create an Azure Function to run the PowerShell script</li>
+</ul>
+<p>I decided to explore the latter, as I had deployed empty functions before, but configuring the actual code to run had been done by the developers requesting the app.</p>
+<h2 id="how-i-approached-this">How I Approached This</h2>
+<p>I couldn’t find a working example of how to achieve this online, so I decided to manually deploy an Azure Function App via the portal to see exactly what resources were deployed and how they were linked together.</p>
+<p>I selected the options to create a function configured to run PowerShell Core 7.2 code using a Windows Consumption plan.  The Consumption Plan was important as I wanted the solution to be cost effective and having a dedicated App Service Plan sat there doing nothing would incur cost.</p>
+<p>I was prompted to create a storage account, and whether I wanted to permit public network access for function.  As this function was making calls directly to Azure and had no VNet requirements, I left this enabled as I wanted to avoid the cost of the alternative which was implementing Private Link.</p>
+<p>I was then asked to create an application insights instance which I did.  Finally, I left the GitHub Actions settings as Disabled as I didn’t plan to integrate this at this time.</p>
+<blockquote>
+<p>NOTE: If you’re wondering why I chose Windows over Linux, I tested both and found little to no performance difference, and wanted to use the Microsoft recommended WEBSITE_RUN_FROM_PACKAGE value (more on this later).</p>
+</blockquote>
+<h2 id="reverse-engineering-the-portal-deployment">Reverse Engineering The Portal Deployment</h2>
+<p>After the resources were deployed, I compared them to a blank function app I had previously deployed via Terraform to see what the differences were.</p>
+<p>Other than the odd cosmetic setting, there was one big difference as under the App files resource menu item were now 3 new files:</p>
+<ul>
+<li>host.json</li>
+<li>profile.ps1</li>
+<li>requirements.psd1</li>
+</ul>
+<p>Were these the missing gap I was looking for? Well let’s find out what each file does.</p>
+<h3 id="hostjson">host.json</h3>
+<p>I found the 
+<a href="https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference-powershell?tabs=portal#folder-structure"target="_blank" rel="nofollow noopener noreferrer">Microsoft Documentation</a>
+ for this which explained this file is used to configure the Function App.  I reviewed the contents of this and didn’t see the need to change anything.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;version&#34;</span>: <span style="color:#e6db74">&#34;2.0&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;managedDependency&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;Enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;extensionBundle&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Azure.Functions.ExtensionBundle&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;version&#34;</span>: <span style="color:#e6db74">&#34;[3.*, 4.0.0)&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="profileps1">profile.ps1</h3>
+<p>The description in this file did a good job of explaining what it does so I just removed some commented out lines that weren’t relevant to me.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Azure Functions profile.ps1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># This profile.ps1 will get executed every &#34;cold start&#34; of your Function App.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &#34;cold start&#34; occurs when:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># * A Function App starts up for the very first time</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># * A Function App starts up after being de-allocated due to inactivity</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># You can define helper functions, run commands, or specify environment variables</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NOTE: any variables defined that are not environment variables will get reset after the first execution</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Authenticate with Azure PowerShell using MSI.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> ($env:MSI_SECRET) {
+</span></span><span style="display:flex;"><span>    Disable-AzContextAutosave -Scope <span style="color:#66d9ef">Process</span> | Out-Null
+</span></span><span style="display:flex;"><span>    Connect-AzAccount -Identity
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="requirementspsd1">requirements.psd1</h3>
+<p>This file does what it says, it ensure you have the requirements installed for your script to run and allows you to pin specific versions.  I removed a commented out line and configured mine to use the Az.Storage modules my commands required.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#75715e"># This file enables modules to be automatically managed by the Functions service.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># See https://aka.ms/functionsmanageddependency for additional information.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># For latest supported version, go to &#39;https://www.powershellgallery.com/packages/Az&#39;.</span>
+</span></span><span style="display:flex;"><span>@{
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;Az.Storage&#39;</span> = <span style="color:#e6db74">&#39;5.3.0&#39;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="what-about-the-powershell-script">What About The PowerShell Script?</h2>
+<p>This now felt like I’d got the pre-reqs ready to go, but what about the functions themselves?  The key was in the 
+<a href="https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference-powershell?tabs=portal#folder-structure"target="_blank" rel="nofollow noopener noreferrer">Microsoft Documentation</a>
+ as it mentioned the folder structure and showed how multiple functions could be created in folders underneath the root.</p>
+<p>Because no existing functions had been created, I was able to create a sample function within the portal that used a Timer Trigger.  This then created a folder with 3 more files in it:</p>
+<ul>
+<li>function.json</li>
+<li>readme.md</li>
+<li>run.ps1</li>
+</ul>
+<p>So what did these files do?</p>
+<h3 id="functionjson">function.json</h3>
+<p>This defines how the function behaves, such as how it&rsquo;s triggered and its input and output parameters.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;bindings&#34;</span>: [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;Timer&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;timerTrigger&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;direction&#34;</span>: <span style="color:#e6db74">&#34;in&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;schedule&#34;</span>: <span style="color:#e6db74">&#34;0 */5 * * * *&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The schedule uses a cron expression which is explained in the readme.md file.</p>
+<h3 id="readmemd">readme.md</h3>
+<p>This explains what the function does, and was populated with the content below.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span># TimerTrigger - PowerShell
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>The <span style="color:#e6db74">`TimerTrigger`</span> makes it incredibly easy to have your functions executed on a schedule. This sample demonstrates a simple use case of calling your function every 5 minutes.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## How it works
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>For a <span style="color:#e6db74">`TimerTrigger`</span> to work, you provide a schedule in the form of a [<span style="color:#f92672">cron expression</span>](<span style="color:#a6e22e">https://en.wikipedia.org/wiki/Cron#CRON_expression</span>)(See the link for full details). A cron expression is a string with 6 separate expressions which represent a given schedule via patterns. The pattern we use to represent every 5 minutes is <span style="color:#e6db74">`0 */5 * * * *`</span>. This, in plain text, means: &#34;When seconds is equal to 0, minutes is divisible by 5, for any hour, day of the month, month, and day of the week&#34;.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## Learn more
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">TODO</span>&gt; Documentation
+</span></span></code></pre></div><h3 id="runps1">run.ps1</h3>
+<p>This is the script to be executed, the reason for provisioning the function app in the first place.  The sample content was below:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#75715e"># Input bindings are passed in via param block.</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">param</span>($Timer)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Get the current universal time in the default string format.</span>
+</span></span><span style="display:flex;"><span>$currentUTCtime = (Get-Date).ToUniversalTime()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># The &#39;IsPastDue&#39; property is &#39;true&#39; when the current function invocation is later than scheduled.</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> ($Timer.IsPastDue) {
+</span></span><span style="display:flex;"><span>    Write-Host <span style="color:#e6db74">&#34;PowerShell timer is running late!&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Write an information log with the current time.</span>
+</span></span><span style="display:flex;"><span>Write-Host <span style="color:#e6db74">&#34;PowerShell timer trigger function ran! TIME: </span>$currentUTCtime<span style="color:#e6db74">&#34;</span>
+</span></span></code></pre></div><h2 id="so-how-did-i-bring-this-all-together--automate-this">So How Did I Bring This All Together &amp; Automate This?</h2>
+<p>The 
+<a href="https://learn.microsoft.com/en-us/azure/azure-functions/run-functions-from-deployment-package#enable-functions-to-run-from-a-package"target="_blank" rel="nofollow noopener noreferrer">Microsoft Documentation</a>
+ highly recommended the <code>WEBSITE_RUN_FROM_PACKAGE</code> deployment option so I looked how to achieve this in Terraform.</p>
+<p>The HashiCorp documentation for 
+<a href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/windows_function_app"target="_blank" rel="nofollow noopener noreferrer">azurerm_windows_function_app</a>
+ indicated there was an argument named <code>zip_deploy_file</code> that could be used when configuring <code>WEBSITE_RUN_FROM_PACKAGE=1</code> within the <code>app_settings</code> block, so I gave it a go by creating a zip file with the required content and setting the argument <code>zip_deploy_file = &quot;./function.zip&quot;</code></p>
+<blockquote>
+<p>NOTE: When I started this project the <code>zip_deploy_file</code> wasn’t available, and I had to use curl to upload the zip.  This option was introduced in 
+<a href="https://github.com/hashicorp/terraform-provider-azurerm/blob/main/CHANGELOG-v3.md#3500-march-30-2023"target="_blank" rel="nofollow noopener noreferrer">azurerm 3.50.0</a>
+ and this newer method is much slicker.</p>
+</blockquote>
+<p>Before I could deploy the zip file I needed to create it.  I did this by creating the required folder structure to host 2 functions <code>midday</code> &amp; <code>midnight</code>.  Multiple folders are required as a function can only have a single trigger.</p>
+<pre tabindex="0"><code>├── function
+│   ├── host.json
+│   ├── midday
+│   │   ├── function.json
+│   │   ├── readme.md
+│   │   └── run.ps1
+│   ├── midnight
+│   │   ├── function.json
+│   │   ├── readme.md
+│   │   └── run.ps1
+│   ├── profile.ps1
+│   └── requirements.psd1
+</code></pre><p>Within these folders were the required files for each function which were modified as follows:</p>
+<p><code>function.json - midday: &quot;schedule&quot;: &quot;0 0 0 * * *&quot;</code><br>
+<code>function.json - midnight: &quot;schedule&quot;: &quot;0 0 12 * * *&quot;</code></p>
+<p><code>run.ps1</code> was identical in both folders and contained the original script I had written which required authenticating before running it.  The authentication was now handled at the function level by <code>profile.ps1</code> but I did need to add the line below to the top for the script for it to execute successfully:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#66d9ef">param</span>($Timer)
+</span></span></code></pre></div><p>Finally, I zipped up the function folder using PowerShell as part of the Terraform configuration:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>Compress-Archive -Path <span style="color:#e6db74">&#34;./function/*&#34;</span> -DestinationPath <span style="color:#e6db74">&#34;./function.zip&#34;</span>
+</span></span></code></pre></div><p>This then deployed a fully working Azure Function running a PowerShell script that triggered every day at Midnight (00:00) and Midday (12:00).</p>
+<p>When I get time I’ll sanitise the code and pop it on GitHub for you to have a look at. But as always, I hope this helps.</p></div>
+<div class="footer"><div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/hashicorp/">HashiCorp</a><a href="https://www.thedevopsjedi.co.uk/tags/iac/">IaC</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a><a href="https://www.thedevopsjedi.co.uk/tags/function/">Function</a><a href="https://www.thedevopsjedi.co.uk/tags/powershell/">PowerShell</a></div>
+        </div></div>
+</article>
+</div><div id="comments-container"></div></div><footer>
+    <div class="container"><div class="recent-posts">
+            <strong>Latest Posts</strong>
+            <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/">How I Minimise Terraform Admin Effort &amp; Manage The Constant Change</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/">Use Of Terraform Child Modules</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/">How To Generate JSON With Terraform Without Using Heredoc Strings</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/">How I Keep Terraform Simple</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/what-i-include-in-every-terraform-configuration/">What I Include In Every Terraform Configuration</a>
+                    </li></ul>
+        </div><div class="right"><div class="external-profiles">
+                <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
+            </div><div class="archive"><a href="https://www.thedevopsjedi.co.uk/archive/"><strong>Archive</strong></a></div></div>
+    </div>
+</footer><div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
+                &copy;&nbsp;2023&nbsp;The DevOps Jedi&nbsp;
+            </a></div>
+        <div class="disclaimer">
+            <a href="/disclaimer">Disclaimer</a>
+        </div>
+    </div>
+</div>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-RKD17G86VJ', { 'anonymize_ip': false });
+}
+</script>
+<script src="https://www.thedevopsjedi.co.uk/theme.js"></script><script src="https://www.thedevopsjedi.co.uk/cookieconsent.min.js" type="application/javascript"></script><script src="https://www.thedevopsjedi.co.uk/init-cookieconsent.js" type="application/javascript"></script><div id="activate-algolia-search" class="hidden">
+  <input type="hidden" id="algolia-search-appId" value="XRNYV3MMH2">
+  <input type="hidden" id="algolia-search-apiKey" value="5ba5776bc76690c95b70fcfe58371072">
+  <input type="hidden" id="algolia-search-indexName" value="www.thedevopsjedi.co.uk">
+  <input type="hidden" id="algolia-search-noSearchResults" value="Nothing Found..."><input type="hidden" id="algolia-search-currentLanguageOnly"></div>
+
+</body>
+
+</html>
