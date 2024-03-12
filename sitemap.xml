@@ -6,39 +6,54 @@
     <lastmod>2023-01-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/author/</loc>
-    <lastmod>2023-09-10T16:00:00+00:00</lastmod>
+    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/azure/</loc>
-    <lastmod>2023-09-10T16:00:00+00:00</lastmod>
+    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/</loc>
-    <lastmod>2023-09-10T16:00:00+00:00</lastmod>
+    <loc>https://www.thedevopsjedi.co.uk/categories/</loc>
+    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/author/darren-johnson/</loc>
+    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/</loc>
+    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/governance/</loc>
+    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/hashicorp/</loc>
+    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/iac/</loc>
+    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/categories/iac/</loc>
+    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/iac/</loc>
+    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/security/</loc>
+    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/</loc>
+    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/terraform/</loc>
+    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/</loc>
+    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/</loc>
     <lastmod>2023-09-10T16:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/function/</loc>
     <lastmod>2023-09-10T16:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/tags/hashicorp/</loc>
-    <lastmod>2023-09-10T16:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/tags/iac/</loc>
-    <lastmod>2023-09-10T16:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/iac/</loc>
-    <lastmod>2023-09-10T16:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/powershell/</loc>
-    <lastmod>2023-09-10T16:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/tags/</loc>
-    <lastmod>2023-09-10T16:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/tags/terraform/</loc>
-    <lastmod>2023-09-10T16:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/</loc>
     <lastmod>2023-09-10T16:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/</loc>
@@ -74,9 +89,6 @@
     <loc>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/</loc>
     <lastmod>2023-01-07T09:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/categories/</loc>
-    <lastmod>2023-01-07T08:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://www.thedevopsjedi.co.uk/categories/terraform/</loc>
     <lastmod>2023-01-07T08:00:00+00:00</lastmod>
   </url><url>
@@ -93,9 +105,6 @@
     <lastmod>2023-01-06T18:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool/</loc>
-    <lastmod>2023-01-06T18:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/categories/iac/</loc>
     <lastmod>2023-01-06T18:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/about/</loc>

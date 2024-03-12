@@ -5,10 +5,25 @@
     <description>Recent content on The DevOps Jedi</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 10 Sep 2023 16:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 12 Mar 2024 06:00:00 +0000</lastBuildDate>
     
         <atom:link href="https://www.thedevopsjedi.co.uk/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Exporting Azure Management Group Activity Logs</title>
+      <link>https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/</link>
+      <pubDate>Tue, 12 Mar 2024 06:00:00 +0000</pubDate>
+      
+      <guid>https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/</guid>
+      <description>&lt;!-- Summary of Article (70 Words)  
+
+# Table Of Contents  
+
+&lt;nav id=&#34;TableOfContents&#34;&gt;&lt;/nav&gt;  
+ --&gt;
+&lt;p&gt;I&amp;rsquo;ve been working with Management Groups a lot recently in my day job and have really seen the benefit of being able to enforce governance by assigning RBAC roles and policies once, and have all new subscriptions inherit them. However, I soon realised there was no way in the Azure Portal or the native Azure RM Terraform provider to export the Activity Logs to a Log Analytics Workspace for use with Sentinel, so I decided to figure out a solution to this.&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Creating A Working Powershell Based Azure Function With Terraform</title>

@@ -6,24 +6,21 @@
     <description>Recent content in Categories on The DevOps Jedi</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 07 Jan 2023 08:00:00 +0000</lastBuildDate><atom:link href="https://www.thedevopsjedi.co.uk/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 12 Mar 2024 06:00:00 +0000</lastBuildDate>
+    <atom:link href="https://www.thedevopsjedi.co.uk/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>IaC</title>
+      <link>https://www.thedevopsjedi.co.uk/categories/iac/</link>
+      <pubDate>Tue, 12 Mar 2024 06:00:00 +0000</pubDate>
+      <guid>https://www.thedevopsjedi.co.uk/categories/iac/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Terraform</title>
       <link>https://www.thedevopsjedi.co.uk/categories/terraform/</link>
       <pubDate>Sat, 07 Jan 2023 08:00:00 +0000</pubDate>
-      
       <guid>https://www.thedevopsjedi.co.uk/categories/terraform/</guid>
       <description></description>
     </item>
-    
-    <item>
-      <title>IaC</title>
-      <link>https://www.thedevopsjedi.co.uk/categories/iac/</link>
-      <pubDate>Fri, 06 Jan 2023 18:00:00 +0000</pubDate>
-      
-      <guid>https://www.thedevopsjedi.co.uk/categories/iac/</guid>
-      <description></description>
-    </item>
-    
   </channel>
 </rss>

@@ -6,15 +6,14 @@
     <description>Recent content in ARM Templates on The DevOps Jedi</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 06 Jan 2023 18:00:00 +0000</lastBuildDate><atom:link href="https://www.thedevopsjedi.co.uk/tags/arm-templates/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 06 Jan 2023 18:00:00 +0000</lastBuildDate>
+    <atom:link href="https://www.thedevopsjedi.co.uk/tags/arm-templates/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>How I Chose An Infrastructure As Code Tool</title>
       <link>https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool/</link>
       <pubDate>Fri, 06 Jan 2023 18:00:00 +0000</pubDate>
-      
       <guid>https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool/</guid>
       <description>This post looks into how, and why, I selected my current Infrastructure as Code tool of choice for my organisation.</description>
     </item>
-    
   </channel>
 </rss>
