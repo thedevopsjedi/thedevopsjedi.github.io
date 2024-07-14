@@ -4,22 +4,36 @@
     <title>Tags on The DevOps Jedi</title>
     <link>https://www.thedevopsjedi.co.uk/tags/</link>
     <description>Recent content in Tags on The DevOps Jedi</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 12 Mar 2024 06:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 14 Jul 2024 11:00:00 +0100</lastBuildDate>
     <atom:link href="https://www.thedevopsjedi.co.uk/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Azure</title>
       <link>https://www.thedevopsjedi.co.uk/tags/azure/</link>
-      <pubDate>Tue, 12 Mar 2024 06:00:00 +0000</pubDate>
+      <pubDate>Sun, 14 Jul 2024 11:00:00 +0100</pubDate>
       <guid>https://www.thedevopsjedi.co.uk/tags/azure/</guid>
       <description></description>
     </item>
     <item>
       <title>Governance</title>
       <link>https://www.thedevopsjedi.co.uk/tags/governance/</link>
-      <pubDate>Tue, 12 Mar 2024 06:00:00 +0000</pubDate>
+      <pubDate>Sun, 14 Jul 2024 11:00:00 +0100</pubDate>
       <guid>https://www.thedevopsjedi.co.uk/tags/governance/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Policy</title>
+      <link>https://www.thedevopsjedi.co.uk/tags/policy/</link>
+      <pubDate>Sun, 14 Jul 2024 11:00:00 +0100</pubDate>
+      <guid>https://www.thedevopsjedi.co.uk/tags/policy/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>PowerShell</title>
+      <link>https://www.thedevopsjedi.co.uk/tags/powershell/</link>
+      <pubDate>Sun, 14 Jul 2024 11:00:00 +0100</pubDate>
+      <guid>https://www.thedevopsjedi.co.uk/tags/powershell/</guid>
       <description></description>
     </item>
     <item>
@@ -55,13 +69,6 @@
       <link>https://www.thedevopsjedi.co.uk/tags/function/</link>
       <pubDate>Sun, 10 Sep 2023 16:00:00 +0000</pubDate>
       <guid>https://www.thedevopsjedi.co.uk/tags/function/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>PowerShell</title>
-      <link>https://www.thedevopsjedi.co.uk/tags/powershell/</link>
-      <pubDate>Sun, 10 Sep 2023 16:00:00 +0000</pubDate>
-      <guid>https://www.thedevopsjedi.co.uk/tags/powershell/</guid>
       <description></description>
     </item>
     <item>

@@ -6,21 +6,42 @@
     <lastmod>2023-01-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/author/</loc>
-    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+    <lastmod>2024-07-14T11:00:00+01:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/azure/</loc>
-    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+    <lastmod>2024-07-14T11:00:00+01:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/categories/</loc>
-    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+    <lastmod>2024-07-14T11:00:00+01:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/author/darren-johnson/</loc>
-    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/</loc>
-    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
+    <lastmod>2024-07-14T11:00:00+01:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/governance/</loc>
+    <lastmod>2024-07-14T11:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/categories/governance/</loc>
+    <lastmod>2024-07-14T11:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/governance/</loc>
+    <lastmod>2024-07-14T11:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/</loc>
+    <lastmod>2024-07-14T11:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/policy/</loc>
+    <lastmod>2024-07-14T11:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/powershell/</loc>
+    <lastmod>2024-07-14T11:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/</loc>
+    <lastmod>2024-07-14T11:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/</loc>
+    <lastmod>2024-07-14T11:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/</loc>
     <lastmod>2024-03-12T06:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/hashicorp/</loc>
@@ -38,22 +59,13 @@
     <loc>https://www.thedevopsjedi.co.uk/tags/security/</loc>
     <lastmod>2024-03-12T06:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/tags/</loc>
-    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/terraform/</loc>
-    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/</loc>
     <lastmod>2024-03-12T06:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/</loc>
     <lastmod>2023-09-10T16:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/function/</loc>
-    <lastmod>2023-09-10T16:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/tags/powershell/</loc>
     <lastmod>2023-09-10T16:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/</loc>

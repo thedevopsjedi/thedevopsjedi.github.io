@@ -7,18 +7,28 @@
     <meta name="author" content="thedevopsjedi">
     <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
     <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
-    <meta name="generator" content="Hugo 0.123.3"><title>How I Structure Terraform Folders &amp; Apply Naming Standards&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta name="generator" content="Hugo 0.128.2"><title>How I Structure Terraform Folders &amp; Apply Naming Standards&nbsp;&vert;&nbsp;The DevOps Jedi</title>
     <meta itemprop="name" content="How I Structure Terraform Folders &amp; Apply Naming Standards">
     <meta itemprop="description" content="Having a consistent and structured approach to managing your Terraform configurations is key to scaling successfully. This is how I do it.">
-    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:title" content="How I Structure Terraform Folders &amp; Apply Naming Standards" />
-<meta property="og:description" content="Having a consistent and structured approach to managing your Terraform configurations is key to scaling successfully. This is how I do it." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/" /><meta property="article:section" content="terraform" />
-<meta property="article:published_time" content="2023-01-07T09:00:00+00:00" />
-<meta property="article:modified_time" content="2023-01-07T09:00:00+00:00" />
-
-
-
+    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/">
+  <meta property="og:site_name" content="The DevOps Jedi">
+  <meta property="og:title" content="How I Structure Terraform Folders &amp; Apply Naming Standards">
+  <meta property="og:description" content="Having a consistent and structured approach to managing your Terraform configurations is key to scaling successfully. This is how I do it.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="terraform">
+    <meta property="article:published_time" content="2023-01-07T09:00:00+00:00">
+    <meta property="article:modified_time" content="2023-01-07T09:00:00+00:00">
+    <meta property="article:tag" content="Azure">
+    <meta property="article:tag" content="HashiCorp">
+    <meta property="article:tag" content="IaC">
+    <meta property="article:tag" content="Terraform">
+      <meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">
+      <meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/">
+      <meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/">
+      <meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/">
+      <meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/">
+      <meta property="og:see_also" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/what-i-include-in-every-terraform-configuration/">
 
 <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
@@ -137,6 +147,8 @@
     <div class="container"><div class="recent-posts">
             <strong>Latest Posts</strong>
             <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">Modifying An Existing Azure Policy</a>
+                    </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
@@ -148,8 +160,6 @@
                         <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/">Use Of Terraform Child Modules</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/">How To Generate JSON With Terraform Without Using Heredoc Strings</a>
-                    </li><li>
-                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/">How I Keep Terraform Simple</a>
                     </li></ul>
         </div><div class="right"><div class="external-profiles">
                 <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
@@ -168,16 +178,25 @@
 </div>
 
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
-<script>
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.dataLayer = window.dataLayer || [];
-	function gtag(){dataLayer.push(arguments);}
-	gtag('js', new Date());
-	gtag('config', 'G-RKD17G86VJ', { 'anonymize_ip': false });
-}
-</script>
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-RKD17G86VJ');
+        }
+      </script>
+    
+  
+
 <script src="https://www.thedevopsjedi.co.uk/theme.js"></script><script src="https://www.thedevopsjedi.co.uk/cookieconsent.min.js" type="application/javascript"></script><script src="https://www.thedevopsjedi.co.uk/init-cookieconsent.js" type="application/javascript"></script><div id="activate-algolia-search" class="hidden">
   <input type="hidden" id="algolia-search-appId" value="XRNYV3MMH2">
   <input type="hidden" id="algolia-search-apiKey" value="5ba5776bc76690c95b70fcfe58371072">

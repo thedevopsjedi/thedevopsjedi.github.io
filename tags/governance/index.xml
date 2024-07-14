@@ -4,10 +4,17 @@
     <title>Governance on The DevOps Jedi</title>
     <link>https://www.thedevopsjedi.co.uk/tags/governance/</link>
     <description>Recent content in Governance on The DevOps Jedi</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 12 Mar 2024 06:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 14 Jul 2024 11:00:00 +0100</lastBuildDate>
     <atom:link href="https://www.thedevopsjedi.co.uk/tags/governance/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Modifying An Existing Azure Policy</title>
+      <link>https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/</link>
+      <pubDate>Sun, 14 Jul 2024 11:00:00 +0100</pubDate>
+      <guid>https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/</guid>
+      <description>&lt;!-- Summary of Article (70 Words)  &#xA;&#xA;# Table Of Contents  &#xA;&#xA;&lt;nav id=&#34;TableOfContents&#34;&gt;&#xA;  &lt;ul&gt;&#xA;    &lt;li&gt;&lt;a href=&#34;#source-policy-definition-id&#34;&gt;Source Policy Definition ID&lt;/a&gt;&lt;/li&gt;&#xA;    &lt;li&gt;&lt;a href=&#34;#duplicating-the-policy-to-be-modified&#34;&gt;Duplicating The Policy To Be Modified&lt;/a&gt;&lt;/li&gt;&#xA;    &lt;li&gt;&lt;a href=&#34;#modifying-the-properties&#34;&gt;Modifying The Properties&lt;/a&gt;&lt;/li&gt;&#xA;    &lt;li&gt;&lt;a href=&#34;#modifying-the-policy-rule&#34;&gt;Modifying The Policy Rule&lt;/a&gt;&lt;/li&gt;&#xA;    &lt;li&gt;&lt;a href=&#34;#modifying-the-parameters&#34;&gt;Modifying The Parameters&lt;/a&gt;&lt;/li&gt;&#xA;    &lt;li&gt;&lt;a href=&#34;#putting-it-all-together&#34;&gt;Putting It All Together&lt;/a&gt;&lt;/li&gt;&#xA;    &lt;li&gt;&lt;a href=&#34;#creating-the-custom-policy-definition&#34;&gt;Creating The Custom Policy Definition&lt;/a&gt;&lt;/li&gt;&#xA;  &lt;/ul&gt;&#xA;&lt;/nav&gt;  &#xA; --&gt;&#xA;&lt;p&gt;There may well come a time when there isn&amp;rsquo;t a Built In Azure Policy that meets your needs, and you need to either modify an existing policy, or create new a policy from scratch.  Creating custom policies should always be a last resort, as the BuiltIn policies Azure provides are kept up to date and version controlled by Microsoft.  As soon as you create a custom policy, you are responsible for maintaining it when capability is added or deprecated.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Exporting Azure Management Group Activity Logs</title>
       <link>https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/</link>

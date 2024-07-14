@@ -7,15 +7,15 @@
     <meta name="author" content="thedevopsjedi">
     <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
     <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
-    <meta name="generator" content="Hugo 0.123.3"><title>Governance&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta name="generator" content="Hugo 0.128.2"><title>Governance&nbsp;&vert;&nbsp;The DevOps Jedi</title>
     <meta itemprop="name" content="Governance">
     <meta itemprop="description" content="Governance - The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
-    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:title" content="Governance" />
-<meta property="og:description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://www.thedevopsjedi.co.uk/tags/governance/" />
-
-
+    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/tags/governance/">
+  <meta property="og:site_name" content="The DevOps Jedi">
+  <meta property="og:title" content="Governance">
+  <meta property="og:description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="website">
 
 <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
@@ -48,7 +48,38 @@
             </div>
     </div>
 </header>
-<div class="main container"><div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">
+<div class="main container"><div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article"><div class="content">
+    <h1 class="article-title">
+        <a href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">Modifying An Existing Azure Policy</a>
+    </h1>
+
+    <div class="meta"><span class="date moment">2024-07-14</span><span class="readingTime">10 min read</span><span class="categories"><a href="https://www.thedevopsjedi.co.uk/categories/governance/">Governance</a></span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><!-- Summary of Article (70 Words)  
+
+# Table Of Contents  
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#source-policy-definition-id">Source Policy Definition ID</a></li>
+    <li><a href="#duplicating-the-policy-to-be-modified">Duplicating The Policy To Be Modified</a></li>
+    <li><a href="#modifying-the-properties">Modifying The Properties</a></li>
+    <li><a href="#modifying-the-policy-rule">Modifying The Policy Rule</a></li>
+    <li><a href="#modifying-the-parameters">Modifying The Parameters</a></li>
+    <li><a href="#putting-it-all-together">Putting It All Together</a></li>
+    <li><a href="#creating-the-custom-policy-definition">Creating The Custom Policy Definition</a></li>
+  </ul>
+</nav>  
+ -->
+<p>There may well come a time when there isn&rsquo;t a Built In Azure Policy that meets your needs, and you need to either modify an existing policy, or create new a policy from scratch.  Creating custom policies should always be a last resort, as the BuiltIn policies Azure provides are kept up to date and version controlled by Microsoft.  As soon as you create a custom policy, you are responsible for maintaining it when capability is added or deprecated.</p><a href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/" class="more">Continue Reading...</a></div>
+<div class="footer"><div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/governance/">Governance</a><a href="https://www.thedevopsjedi.co.uk/tags/policy/">Policy</a><a href="https://www.thedevopsjedi.co.uk/tags/powershell/">PowerShell</a></div>
+        </div></div>
+</article>
+</div><div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">
     <i class="fas fa-fw fa-pencil-alt"></i>
 </a>
 
@@ -73,6 +104,8 @@
     <div class="container"><div class="recent-posts">
             <strong>Latest Posts</strong>
             <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">Modifying An Existing Azure Policy</a>
+                    </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
@@ -84,8 +117,6 @@
                         <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/">Use Of Terraform Child Modules</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/">How To Generate JSON With Terraform Without Using Heredoc Strings</a>
-                    </li><li>
-                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/">How I Keep Terraform Simple</a>
                     </li></ul>
         </div><div class="right"><div class="external-profiles">
                 <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
@@ -105,16 +136,25 @@
 </div>
 
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
-<script>
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.dataLayer = window.dataLayer || [];
-	function gtag(){dataLayer.push(arguments);}
-	gtag('js', new Date());
-	gtag('config', 'G-RKD17G86VJ', { 'anonymize_ip': false });
-}
-</script>
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-RKD17G86VJ');
+        }
+      </script>
+    
+  
+
 <script src="https://www.thedevopsjedi.co.uk/theme.js"></script><script src="https://www.thedevopsjedi.co.uk/cookieconsent.min.js" type="application/javascript"></script><script src="https://www.thedevopsjedi.co.uk/init-cookieconsent.js" type="application/javascript"></script><div id="activate-algolia-search" class="hidden">
   <input type="hidden" id="algolia-search-appId" value="XRNYV3MMH2">
   <input type="hidden" id="algolia-search-apiKey" value="5ba5776bc76690c95b70fcfe58371072">

@@ -1,0 +1,385 @@
+<!DOCTYPE html><html itemscope itemtype="https://schema.org/WebPage" class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="siteBaseUrl" content="https://www.thedevopsjedi.co.uk/">
+    <meta name="author" content="thedevopsjedi">
+    <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
+    <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
+    <meta name="generator" content="Hugo 0.128.2"><title>Modifying An Existing Azure Policy&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta itemprop="name" content="Modifying An Existing Azure Policy">
+    <meta itemprop="description" content="In this post I explain how to duplicate and modify a BuiltIn Azure Policy to enhance its functionality and add the capability to exclude resources via tags.">
+    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">
+  <meta property="og:site_name" content="The DevOps Jedi">
+  <meta property="og:title" content="Modifying An Existing Azure Policy">
+  <meta property="og:description" content="In this post I explain how to duplicate and modify a BuiltIn Azure Policy to enhance its functionality and add the capability to exclude resources via tags.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="governance">
+    <meta property="article:published_time" content="2024-07-14T11:00:00+01:00">
+    <meta property="article:modified_time" content="2024-07-14T11:00:00+01:00">
+    <meta property="article:tag" content="Azure">
+    <meta property="article:tag" content="Governance">
+    <meta property="article:tag" content="Policy">
+    <meta property="article:tag" content="PowerShell">
+
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+<link rel="manifest" href="/favicon/site.webmanifest">
+<link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<script src="/modernizr-simple.js"></script><link rel="canonical" href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/theme.css"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/cookieconsent.min.css">
+</head>
+
+<body class="bilberry-hugo-theme">
+<nav><div class="container">
+        <ul class="topnav"><li><a href="/about" target="">About</a></li></ul><div id="search-box" class="search">
+                <i class="fas fa-search"></i>
+                <input id="search" type="text" placeholder="Search ...">
+            </div></div>
+</nav>
+<header><div class="container">
+        <div class="logo">
+            <a href="/" class="logo"><img src="/images/LinkedIn.jpeg" alt=""><span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title">
+                <a href="/">The DevOps Jedi</a>
+            </h3><span class="subtitle">Taking the cloud by storm one line of code at a time....</span></div><div class="toggler"><i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+    </div>
+</header>
+<div class="main container"><div class="article-wrapper u-cf single"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article"><div class="content">
+    <h1 class="article-title">
+        <a href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">Modifying An Existing Azure Policy</a>
+    </h1>
+
+    <div class="meta"><span class="date moment">2024-07-14</span><span class="readingTime">10 min read</span><span class="categories"><a href="https://www.thedevopsjedi.co.uk/categories/governance/">Governance</a></span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><!-- Summary of Article (70 Words)  
+
+# Table Of Contents  
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#source-policy-definition-id">Source Policy Definition ID</a></li>
+    <li><a href="#duplicating-the-policy-to-be-modified">Duplicating The Policy To Be Modified</a></li>
+    <li><a href="#modifying-the-properties">Modifying The Properties</a></li>
+    <li><a href="#modifying-the-policy-rule">Modifying The Policy Rule</a></li>
+    <li><a href="#modifying-the-parameters">Modifying The Parameters</a></li>
+    <li><a href="#putting-it-all-together">Putting It All Together</a></li>
+    <li><a href="#creating-the-custom-policy-definition">Creating The Custom Policy Definition</a></li>
+  </ul>
+</nav>  
+ -->
+<p>There may well come a time when there isn&rsquo;t a Built In Azure Policy that meets your needs, and you need to either modify an existing policy, or create new a policy from scratch.  Creating custom policies should always be a last resort, as the BuiltIn policies Azure provides are kept up to date and version controlled by Microsoft.  As soon as you create a custom policy, you are responsible for maintaining it when capability is added or deprecated.</p>
+<p>This post will look at how to modify an existing policy to enhance its functionality.  I will be working in my own Azure subscription with just 2 Management Groups, but if you are in a large Enterprise you may want to check out the 
+<a href="https://aka.ms/epac"target="_blank" rel="nofollow noopener noreferrer">Enterprise Azure Policy as Code (EPAC)</a>
+ solution created by Microsoft.</p>
+<h1 id="modifying-an-existing-policy">Modifying An Existing Policy</h1>
+<p>I&rsquo;m going to modify a fairly simple policy named <code>Storage accounts should restrict network access</code> to <code>Deny</code> the creation of storage accounts that do not have the firewall enabled.  I want to add the capability to exclude resources from this policy via tags if unknown internet endpoints need to access the storage account, for example if I was hosting a static website.</p>
+<blockquote>
+<p>NOTE: The <strong>Deny</strong> effect applies when attempting to create a new uncompliant resource, therefore preventing it&rsquo;s creation, but also when attempting to modify an uncompliant resource, therefore preventing its modification.  If you have a resource that cannot be made compliant without redeploying the resource don&rsquo;t get caught out by this.  Always remember to test ANY policy throughly at a narrowed scope before deploying wider.</p>
+</blockquote>
+<h2 id="source-policy-definition-id">Source Policy Definition ID</h2>
+<p>The source policy has the Definition ID of <code>/providers/Microsoft.Authorization/policyDefinitions/34c877ad-507e-4c82-993e-3452a6e0ad3c</code>.  It is important to note the structure of Definition ID, as this tells us where in Azure the policy is defined.  The fact that neither <code>managementGroups</code> or <code>subscriptions</code> are present in it&rsquo;s path tells me this is a BuiltIn policy created by Microsoft.  This is important as this means the policy can be assigned anywhere within the tenant.</p>
+<blockquote>
+<p><strong>Key Takeaway</strong>: Ensure you are only defining your policy once within your tenant. If you have followed 
+<a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-management-groups#:~:text=Configure%20a%20default%2C%20dedicated%20management%20group%20for%20new%20subscriptions"target="_blank" rel="nofollow noopener noreferrer">Microsoft&rsquo;s Management Group Recommendations</a>
+ and configured a dedicated management group under the <code>Tenant Root Group</code> for all new subscriptions, then configure all policies there so they can be used anywhere within the tenant.  If not, then configure them at the <code>Tenant Root Group</code> level as policies can only be assigned underneath where they have been defined.</p>
+</blockquote>
+<h2 id="duplicating-the-policy-to-be-modified">Duplicating The Policy To Be Modified</h2>
+<p>You cannot modify BuiltIn policies, so you need to duplicate them first.  In the portal I selected the policy and clicked <code>Duplicate Definition</code>.  Lets have a look at the JSON it generated:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;mode&#34;</span>: <span style="color:#e6db74">&#34;Indexed&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;policyRule&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;if&#34;</span>: {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;allOf&#34;</span>: [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;type&#34;</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;equals&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Storage/storageAccounts&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Storage/storageAccounts/networkAcls.defaultAction&#34;</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;notEquals&#34;</span>: <span style="color:#e6db74">&#34;Deny&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>      ]
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;then&#34;</span>: {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;effect&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;effect&#39;)]&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;parameters&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;effect&#34;</span>: {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;String&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;metadata&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;displayName&#34;</span>: <span style="color:#e6db74">&#34;Effect&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;The effect determines what happens when the policy rule is evaluated to match&#34;</span>
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;allowedValues&#34;</span>: [
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Audit&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Deny&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Disabled&#34;</span>
+</span></span><span style="display:flex;"><span>      ],
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;defaultValue&#34;</span>: <span style="color:#e6db74">&#34;Audit&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>You will notice that there are 3 top level objects:</p>
+<ol>
+<li><code>mode</code> is part of the policy properties which I will look at later</li>
+<li><code>policyRule</code> is the conditional logic that needs to be matched for the policy to apply and is made up of <code>if</code> and <code>then</code> blocks</li>
+<li><code>parameters</code> are values that can be set when assigning the policy and reduce the number of policies that need to be defined</li>
+</ol>
+<p>Lets look at the policy definition in more detail.</p>
+<p>The <strong>Policy Rule</strong> states <em>if</em> <em>allOf</em> the conditions are met, <em>then</em> the <em>effect</em> will be applied.  I won&rsquo;t dive into all the details here as the 
+<a href="https://learn.microsoft.com/en-us/azure/governance/policy/concepts/definition-structure-policy-rule"target="_blank" rel="nofollow noopener noreferrer">Microsoft Docs</a>
+ covers this well.  For this policy, the resource <em>type</em> needs to be equal to <code>Microsoft.Storage/storageAccounts</code> and the <code>networkAcls.defaultAction</code> must not equal <em>Deny</em>.  This means the Firewall on the storage account is Disabled and access is permitted from all networks, including the internet.</p>
+<blockquote>
+<p>NOTE: With this configuration any changes that are made at the <code>Microsoft.Storage/storageAccounts</code> level will be Denied if the Firewall hasn&rsquo;t been enabled!</p>
+</blockquote>
+<p>The <strong>Parameters</strong> control the <em>effect</em> of the <em>policyRule</em> which is a string that is supplied to the <em>policyRule</em> section of the definition.  However there is extra data here too.  The <em>metadata</em> controls the <em>displayName</em> and <em>description</em> of the parameter as seen in the portal.  The <em>allowedValues</em> is a list of values that the <em>parameter</em> will accept when the policy is assigned.  These values are case sensitive so be sure to be consistent when defining them in your policy.  The <em>defaultValue</em> is optional and sets the parameter if no value is specified when the policy is assigned.  When using <em>allowedValues</em> this must exactly match.</p>
+<p>The <strong>Mode</strong> is actually part of the properties section of the definition.  The properties section isn&rsquo;t required within the JSON definition, but I like to keep my configurations declarative and include as much information as possible instead of supplying it via the command line.  By populating this I can supply the policy <code>Display Name</code> and <code>Description</code> as well as including <code>metadata</code> to provide additional information about the policy.</p>
+<h2 id="modifying-the-properties">Modifying The Properties</h2>
+<p>I&rsquo;ll start by showing how I modify the properties section:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;properties&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;mode&#34;</span>: <span style="color:#e6db74">&#34;All&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;displayName&#34;</span>: <span style="color:#e6db74">&#34;Policy Display Name 64 Characters Maximum&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Policy Detailed Description 512 Characters Maximum&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;metadata&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;category&#34;</span>: <span style="color:#e6db74">&#34;Policy Category&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;source&#34;</span>: <span style="color:#e6db74">&#34;Definition ID or Web URL&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;policyRule&#34;</span>: {<span style="color:#960050;background-color:#1e0010">...</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;parameters&#34;</span>: {<span style="color:#960050;background-color:#1e0010">...</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>If it is not already set, I change the <code>mode</code> to <code>All</code> as 
+<a href="https://learn.microsoft.com/en-us/azure/governance/policy/concepts/definition-structure-basics#:~:text=We%20recommend%20that%20you%20set%20mode%20to%20all%20in%20most%20cases."target="_blank" rel="nofollow noopener noreferrer">recommended by Microsoft</a>
+.</p>
+<p>Next I include both the <code>displayName</code> and <code>description</code> as these fields shouldn&rsquo;t need to change when the policy is assigned.  The Display Name can actually be up to 128 characters, but I use this to generate the policy assignment name which has a maximum length of 64 characters so I stay within this limit.</p>
+<p>I then add some <code>metadata</code> and specify the <code>category</code>.  It&rsquo;s good practice to keep the category the same as the policy this was duplicated from, but if you are creating a completely custom policy from scratch, you may want to specify your own bespoke category so the policy stands out.  This is outside the scope of this post.  Finally I include the <code>source</code> of the policy so any changes can be compared in the future.  If this was from a BuiltIn policy, I set this value to the Definition ID, but if it was a custom policy I include the URL to the repository where the JSON file is stored.  You really should be storing all your custom and modified policies in a repository so they can be version controlled.</p>
+<h2 id="modifying-the-policy-rule">Modifying The Policy Rule</h2>
+<p>I mentioned before that I wanted to add a capability to exclude resources when this policy is applied.  I could do this when assigning the policy by adding exclusions, but as this is my environment I wanted to experiment with excluding resources by adding tags to them.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;policyRule&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;if&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;allOf&#34;</span>: [
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;type&#34;</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;equals&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Storage/storageAccounts&#34;</span>
+</span></span><span style="display:flex;"><span>                    },
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Storage/storageAccounts/encryption.requireInfrastructureEncryption&#34;</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;notEquals&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>                    },
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;[concat(&#39;tags[&#39;, parameters(&#39;tagName&#39;), &#39;]&#39;)]&#34;</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;notEquals&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;tagValue&#39;)]&#34;</span>
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                ]
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;then&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;effect&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;effect&#39;)]&#34;</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span></code></pre></div><p>The capability was fairly simple to implement.  I found some 
+<a href="https://learn.microsoft.com/en-us/azure/governance/policy/samples/pattern-tags#:~:text=%22field%22%3A%20%22%5Bconcat%28%27tags%5B%27%2C%20parameters%28%27tagName%27%29%2C%20%27%5D%27%29%5D%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22notEquals%22%3A%20%22%5Bparameters%28%27tagValue%27%29%5D%22"target="_blank" rel="nofollow noopener noreferrer">sample code</a>
+ in the Microsoft Docs that covered my use case and added this in the <code>allOf</code> conditional checks block.  If the specified tag name and value were present the policy wouldn&rsquo;t apply.</p>
+<h2 id="modifying-the-parameters">Modifying The Parameters</h2>
+<p>Now I had the conditional logic configured I just needed to add the new parameters for <code>tagName</code> and <code>tagValue</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;parameters&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;effect&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;String&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;metadata&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;displayName&#34;</span>: <span style="color:#e6db74">&#34;Effect&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;&#39;Audit&#39; allows a non-compliant resource to be created or updated, but flags it as non-compliant. &#39;Deny&#39; blocks the non-compliant resource creation or update. &#39;Disabled&#39; turns off the policy.&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;portalReview&#34;</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                },
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;allowedValues&#34;</span>: [
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;Audit&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;Deny&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;Disabled&#34;</span>
+</span></span><span style="display:flex;"><span>                ],
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;defaultValue&#34;</span>: <span style="color:#e6db74">&#34;Audit&#34;</span>
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;tagName&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;String&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;metadata&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;displayName&#34;</span>: <span style="color:#e6db74">&#34;Tag Name&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Name of the tag, such as &#39;environment&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;tagValue&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;String&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;metadata&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;displayName&#34;</span>: <span style="color:#e6db74">&#34;Tag Value&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Value of the tag, such as &#39;production&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span></code></pre></div><p>Again I lifted this code straight from the sample code and I was good to go.  I kept in line with the sample code by not specifying a <code>defaultValue</code> for the tag name and value as this would allow me to reuse this code in other environments if I needed to.  By not setting this the user would always be prompted to specify a value when assigning the policy.</p>
+<p>However you may notice a couple of extra changes above.  Whilst testing both creating and assigning policies I discovered a couple of tweaks I could make to the definition.</p>
+<p>I had been looking at the <code>Temp disks and cache for agent node pools in Azure Kubernetes Service clusters should be encrypted at host</code> policy, and spotted they had updated the description to clearly articulate how the effect worked, and also they had added a <code>portalReview</code> attribute.  This meant that when the policy was assigned via the portal the person assigning it would always see the <code>Effect</code> displayed on screen.  The default behaviour is to <code>Only show parameters that need input or review</code> which I don&rsquo;t like, so I added this in.</p>
+<blockquote>
+<p>NOTE: I always set the <code>defaultValue</code> of the <code>effect</code> to <code>Audit</code> so that when the policy is assigned its takes no effect unless someone specifies a different value.  This means you have to opt in to making changes.</p>
+</blockquote>
+<h2 id="putting-it-all-together">Putting It All Together</h2>
+<p>I was now ready to deploy the policy so I combined the sections into a single JSON file with my actual values:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;properties&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;mode&#34;</span>: <span style="color:#e6db74">&#34;All&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;displayName&#34;</span>: <span style="color:#e6db74">&#34;Require Storage Account Firewall Exclude Via Tag&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Network access to storage accounts should be restricted. Configure network rules so only applications from allowed networks can access the storage account. To allow connections from specific internet or on-premises clients, access can be granted to traffic from specific Azure virtual networks or to public internet IP address ranges.  To exclude resources from this policy ensure to tag them correctly.&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;metadata&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;category&#34;</span>: <span style="color:#e6db74">&#34;Storage&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;source&#34;</span>: <span style="color:#e6db74">&#34;/providers/Microsoft.Authorization/policyDefinitions/34c877ad-507e-4c82-993e-3452a6e0ad3c&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;policyRule&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;if&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;allOf&#34;</span>: [
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;type&#34;</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;equals&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Storage/storageAccounts&#34;</span>
+</span></span><span style="display:flex;"><span>                    },
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Storage/storageAccounts/encryption.requireInfrastructureEncryption&#34;</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;notEquals&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>                    },
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;[concat(&#39;tags[&#39;, parameters(&#39;tagName&#39;), &#39;]&#39;)]&#34;</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;notEquals&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;tagValue&#39;)]&#34;</span>
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                ]
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;then&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;effect&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;effect&#39;)]&#34;</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;parameters&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;effect&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;String&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;metadata&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;displayName&#34;</span>: <span style="color:#e6db74">&#34;Effect&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;&#39;Audit&#39; allows a non-compliant resource to be created or updated, but flags it as non-compliant. &#39;Deny&#39; blocks the non-compliant resource creation or update. &#39;Disabled&#39; turns off the policy.&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;portalReview&#34;</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                },
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;allowedValues&#34;</span>: [
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;Audit&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;Deny&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;Disabled&#34;</span>
+</span></span><span style="display:flex;"><span>                ],
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;defaultValue&#34;</span>: <span style="color:#e6db74">&#34;Audit&#34;</span>
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;tagName&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;String&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;metadata&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;displayName&#34;</span>: <span style="color:#e6db74">&#34;Tag Name&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Name of the tag, such as &#39;environment&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;tagValue&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;String&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;metadata&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;displayName&#34;</span>: <span style="color:#e6db74">&#34;Tag Value&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Value of the tag, such as &#39;production&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>I set the Display Name to something more descriptive and took the description form the original policy but expanded it to include the exclusions.</p>
+<p>Now all that was left to do was save the JSON file and create the new definition.  I decided to follow the rough naming convention the team over at 
+<a href="https://github.com/Azure/Enterprise-Scale"target="_blank" rel="nofollow noopener noreferrer">Enterprise Scale</a>
+ were using, which is along the lines of <code>Effect-Resource-Description.json</code> so I named the file <code>Deny-StorageAccount-WithoutFirewall-ExcludeByTag.json</code>.</p>
+<h2 id="creating-the-custom-policy-definition">Creating The Custom Policy Definition</h2>
+<p>The final task was to create the policy definition so it could be assigned.  I did this with PowerShell using the <code>New-AzPolicyDefinition</code> Cmdlet which actually creates or updates an existing definition.  There are a number of 
+<a href="https://learn.microsoft.com/en-us/powershell/module/az.resources/new-azpolicydefinition?view=azps-12.0.0"target="_blank" rel="nofollow noopener noreferrer">different parameters</a>
+ that can be passed on the command line here, but as I&rsquo;ve kept all the required information in the definition JSON file I don&rsquo;t need to specify those.</p>
+<p>I decided to extract the Policy Definition Name from the file name for consistency.  The BuiltIn policies normally use a GUID for this as the name forms part of the definition ID, which needs to be unique within your organisation.  The file name should not be longer than 64 characters (excluding the .json extension) and shouldn&rsquo;t contain spaces.</p>
+<p>I needed to specify the Management Group ID where the policy will be defined.  For this example I have left this as <code>Tenant Root Group</code> which actually has a GUID as it&rsquo;s ID.</p>
+<blockquote>
+<p>NOTE: The PowerShell Cmdlet Parameter is named <code>ManagementGroupName</code> but it actually requires the ID.</p>
+</blockquote>
+<p>The commands I used to define this as are follows:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>$policyDefinitionFile = <span style="color:#e6db74">&#34;./Deny-StorageAccount-WithoutFirewall-ExcludeByTag.json&#34;</span>
+</span></span><span style="display:flex;"><span>$policyDefinitionName = (Split-Path $policyDefinitionFile -LeafBase)
+</span></span><span style="display:flex;"><span>$tenantRootManagementGroupName = (Get-AzManagementGroup | Where-Object { $_.DisplayName <span style="color:#f92672">-eq</span> <span style="color:#e6db74">&#34;Tenant Root Group&#34;</span> }).Name
+</span></span><span style="display:flex;"><span>New-AzPolicyDefinition -Name $policyDefinitionName -Policy $policyDefinitionFile -ManagementGroupName $tenantRootManagementGroupName
+</span></span></code></pre></div></div>
+<div class="footer"><div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/governance/">Governance</a><a href="https://www.thedevopsjedi.co.uk/tags/policy/">Policy</a><a href="https://www.thedevopsjedi.co.uk/tags/powershell/">PowerShell</a></div>
+        </div></div>
+</article>
+</div><div id="comments-container"></div></div><footer>
+    <div class="container"><div class="recent-posts">
+            <strong>Latest Posts</strong>
+            <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">Modifying An Existing Azure Policy</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/">How I Minimise Terraform Admin Effort &amp; Manage The Constant Change</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/">Use Of Terraform Child Modules</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/">How To Generate JSON With Terraform Without Using Heredoc Strings</a>
+                    </li></ul>
+        </div><div class="right"><div class="external-profiles">
+                <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
+            </div><div class="archive"><a href="https://www.thedevopsjedi.co.uk/archive/"><strong>Archive</strong></a></div></div>
+    </div>
+</footer><div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
+                &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
+            </a></div>
+        <div class="disclaimer">
+            <a href="/disclaimer">Disclaimer</a>
+        </div>
+    </div>
+</div>
+
+
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-RKD17G86VJ');
+        }
+      </script>
+    
+  
+
+<script src="https://www.thedevopsjedi.co.uk/theme.js"></script><script src="https://www.thedevopsjedi.co.uk/cookieconsent.min.js" type="application/javascript"></script><script src="https://www.thedevopsjedi.co.uk/init-cookieconsent.js" type="application/javascript"></script><div id="activate-algolia-search" class="hidden">
+  <input type="hidden" id="algolia-search-appId" value="XRNYV3MMH2">
+  <input type="hidden" id="algolia-search-apiKey" value="5ba5776bc76690c95b70fcfe58371072">
+  <input type="hidden" id="algolia-search-indexName" value="www.thedevopsjedi.co.uk">
+  <input type="hidden" id="algolia-search-noSearchResults" value="Nothing Found..."><input type="hidden" id="algolia-search-currentLanguageOnly"></div>
+
+</body>
+
+</html>
