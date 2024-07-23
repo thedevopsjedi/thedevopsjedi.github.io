@@ -63,7 +63,22 @@ I plan to capture my thoughts on technologies I use in my day job, and those I e
 </article>
 </div>
         
-    <div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">
+    <div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article"><div class="content">
+    <h1 class="article-title">
+        <a href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/">Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!</a>
+    </h1>
+
+    <div class="meta"><span class="date moment">2024-07-23</span><span class="readingTime">15 min read</span><span class="categories"><a href="https://www.thedevopsjedi.co.uk/categories/governance/">Governance</a></span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div>I have recently been working with an organisation who wanted to improve their security posture in Azure by using Azure Policy to configure Diagnostic Settings for their Azure resources at scale.  They wanted to make use of Category Groups to dynamically collect all available logs and metrics and simplify the policy logic so it could be reused across multiple resources.  I thought &lsquo;<em>that sounds simple enough as there will be a built in policy that does all that</em>&rsquo;, but there wasn&rsquo;t, so I set to work.<a href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/" class="more">Continue Reading...</a></div>
+<div class="footer"><div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/ai/">AI</a><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/governance/">Governance</a><a href="https://www.thedevopsjedi.co.uk/tags/policy/">Policy</a><a href="https://www.thedevopsjedi.co.uk/tags/powershell/">PowerShell</a></div>
+        </div></div>
+</article>
+</div><div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">
     <i class="fas fa-fw fa-pencil-alt"></i>
 </a>
 
@@ -178,25 +193,12 @@ The root module consists of resources defined in the main working directory (whi
             <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/hashicorp/">HashiCorp</a><a href="https://www.thedevopsjedi.co.uk/tags/iac/">IaC</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a></div>
         </div></div>
 </article>
-</div><div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/">
-    <i class="fas fa-fw fa-pencil-alt"></i>
-</a>
-
-<article class="default article"><div class="content">
-    <h1 class="article-title">
-        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/">How I Keep Terraform Simple</a>
-    </h1>
-
-    <div class="meta"><span class="date moment">2023-01-08</span><span class="readingTime">4 min read</span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div>When writing a Terraform configuration, you want to keep all elements readable so whoever needs to interpret it in the future can easily understand the outcome the configuration deploys.  This is how I do it.<a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/" class="more">Continue Reading...</a></div>
-<div class="footer"><div class="tags">
-            <i class="fa fa-tags"></i>
-            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/hashicorp/">HashiCorp</a><a href="https://www.thedevopsjedi.co.uk/tags/iac/">IaC</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a></div>
-        </div></div>
-</article>
 </div><div class="paginator"><a href="/page/2/" class="older"><i class="fa fa-angle-double-left"></i>Older Posts</a></div></div><footer>
     <div class="container"><div class="recent-posts">
             <strong>Latest Posts</strong>
             <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/">Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!</a>
+                    </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">Modifying An Existing Azure Policy</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
@@ -208,8 +210,6 @@ The root module consists of resources defined in the main working directory (whi
                         <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/">How I Minimise Terraform Admin Effort &amp; Manage The Constant Change</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/">Use Of Terraform Child Modules</a>
-                    </li><li>
-                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/">How To Generate JSON With Terraform Without Using Heredoc Strings</a>
                     </li></ul>
         </div><div class="right"><div class="external-profiles">
                 <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>

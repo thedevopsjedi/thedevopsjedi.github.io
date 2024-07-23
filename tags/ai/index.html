@@ -7,12 +7,12 @@
     <meta name="author" content="thedevopsjedi">
     <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
     <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
-    <meta name="generator" content="Hugo 0.128.2"><title>Iacs&nbsp;&vert;&nbsp;The DevOps Jedi</title>
-    <meta itemprop="name" content="Iacs">
-    <meta itemprop="description" content="Iacs - The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
-    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/iac/">
+    <meta name="generator" content="Hugo 0.128.2"><title>AI&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta itemprop="name" content="AI">
+    <meta itemprop="description" content="AI - The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
+    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/tags/ai/">
   <meta property="og:site_name" content="The DevOps Jedi">
-  <meta property="og:title" content="Iacs">
+  <meta property="og:title" content="AI">
   <meta property="og:description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
   <meta property="og:locale" content="en">
   <meta property="og:type" content="website">
@@ -24,9 +24,9 @@
 <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
 <meta name="msapplication-TileColor" content="#da532c">
 <meta name="theme-color" content="#ffffff">
-<script src="/modernizr-simple.js"></script><link href="https://www.thedevopsjedi.co.uk/iac/index.xml" rel="alternate" type="application/rss+xml" title="The DevOps Jedi" />
-    <link href="https://www.thedevopsjedi.co.uk/iac/index.xml" rel="feed" type="application/rss+xml" title="The DevOps Jedi" />
-    <link rel="canonical" href="https://www.thedevopsjedi.co.uk/iac/"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/theme.css"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/cookieconsent.min.css">
+<script src="/modernizr-simple.js"></script><link href="https://www.thedevopsjedi.co.uk/tags/ai/index.xml" rel="alternate" type="application/rss+xml" title="The DevOps Jedi" />
+    <link href="https://www.thedevopsjedi.co.uk/tags/ai/index.xml" rel="feed" type="application/rss+xml" title="The DevOps Jedi" />
+    <link rel="canonical" href="https://www.thedevopsjedi.co.uk/tags/ai/"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/theme.css"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/cookieconsent.min.css">
 </head>
 
 <body class="bilberry-hugo-theme">
@@ -48,55 +48,19 @@
             </div>
     </div>
 </header>
-<div class="main container"><div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">
+<div class="main container"><div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/">
     <i class="fas fa-fw fa-pencil-alt"></i>
 </a>
 
 <article class="default article"><div class="content">
     <h1 class="article-title">
-        <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
+        <a href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/">Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!</a>
     </h1>
 
-    <div class="meta"><span class="date moment">2024-03-12</span><span class="readingTime">4 min read</span><span class="categories"><a href="https://www.thedevopsjedi.co.uk/categories/iac/">IaC</a></span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><!-- Summary of Article (70 Words)  
-
-# Table Of Contents  
-
-<nav id="TableOfContents"></nav>  
- -->
-<p>I&rsquo;ve been working with Management Groups a lot recently in my day job and have really seen the benefit of being able to enforce governance by assigning RBAC roles and policies once, and have all new subscriptions inherit them. However, I soon realised there was no way in the Azure Portal or the native Azure RM Terraform provider to export the Activity Logs to a Log Analytics Workspace for use with Sentinel, so I decided to figure out a solution to this.</p><a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/" class="more">Continue Reading...</a></div>
+    <div class="meta"><span class="date moment">2024-07-23</span><span class="readingTime">15 min read</span><span class="categories"><a href="https://www.thedevopsjedi.co.uk/categories/governance/">Governance</a></span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div>I have recently been working with an organisation who wanted to improve their security posture in Azure by using Azure Policy to configure Diagnostic Settings for their Azure resources at scale.  They wanted to make use of Category Groups to dynamically collect all available logs and metrics and simplify the policy logic so it could be reused across multiple resources.  I thought &lsquo;<em>that sounds simple enough as there will be a built in policy that does all that</em>&rsquo;, but there wasn&rsquo;t, so I set to work.<a href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/" class="more">Continue Reading...</a></div>
 <div class="footer"><div class="tags">
             <i class="fa fa-tags"></i>
-            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/governance/">Governance</a><a href="https://www.thedevopsjedi.co.uk/tags/hashicorp/">HashiCorp</a><a href="https://www.thedevopsjedi.co.uk/tags/iac/">IaC</a><a href="https://www.thedevopsjedi.co.uk/tags/security/">Security</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a></div>
-        </div></div>
-</article>
-</div><div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">
-    <i class="fas fa-fw fa-pencil-alt"></i>
-</a>
-
-<article class="default article"><div class="content">
-    <h1 class="article-title">
-        <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
-    </h1>
-
-    <div class="meta"><span class="date moment">2023-09-10</span><span class="readingTime">7 min read</span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><p>This is a post I’ve wanted to write for a while, but was one of those side projects I’ve picked up and put down a few times due to other priorities getting in the way.  This idea came about because I wrote a PowerShell script to perform some housekeeping actions in Azure and I wanted it to run unattended on a scheduled basis.</p><a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/" class="more">Continue Reading...</a></div>
-<div class="footer"><div class="tags">
-            <i class="fa fa-tags"></i>
-            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/hashicorp/">HashiCorp</a><a href="https://www.thedevopsjedi.co.uk/tags/iac/">IaC</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a><a href="https://www.thedevopsjedi.co.uk/tags/function/">Function</a><a href="https://www.thedevopsjedi.co.uk/tags/powershell/">PowerShell</a></div>
-        </div></div>
-</article>
-</div><div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool/">
-    <i class="fas fa-fw fa-pencil-alt"></i>
-</a>
-
-<article class="default article"><div class="content">
-    <h1 class="article-title">
-        <a href="https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool/">How I Chose An Infrastructure As Code Tool</a>
-    </h1>
-
-    <div class="meta"><span class="date moment">2023-01-06</span><span class="readingTime">11 min read</span><span class="categories"><a href="https://www.thedevopsjedi.co.uk/categories/iac/">IaC</a></span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div>This post looks into how, and why, I selected my current Infrastructure as Code tool of choice for my organisation.<a href="https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool/" class="more">Continue Reading...</a></div>
-<div class="footer"><div class="tags">
-            <i class="fa fa-tags"></i>
-            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/arm-templates/">ARM Templates</a><a href="https://www.thedevopsjedi.co.uk/tags/aws/">AWS</a><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/cloudformation/">CloudFormation</a><a href="https://www.thedevopsjedi.co.uk/tags/hashicorp/">HashiCorp</a><a href="https://www.thedevopsjedi.co.uk/tags/iac/">IaC</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a></div>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/ai/">AI</a><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/governance/">Governance</a><a href="https://www.thedevopsjedi.co.uk/tags/policy/">Policy</a><a href="https://www.thedevopsjedi.co.uk/tags/powershell/">PowerShell</a></div>
         </div></div>
 </article>
 </div><div class="paginator"></div></div><footer>
@@ -127,7 +91,7 @@
             <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
                 &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
             </a>-
-            <a href="https://www.thedevopsjedi.co.uk/iac/index.xml">rss</a></div>
+            <a href="https://www.thedevopsjedi.co.uk/tags/ai/index.xml">rss</a></div>
         <div class="disclaimer">
             <a href="/disclaimer">Disclaimer</a>
         </div>

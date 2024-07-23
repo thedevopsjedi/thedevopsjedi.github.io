@@ -1,0 +1,568 @@
+<!DOCTYPE html><html itemscope itemtype="https://schema.org/WebPage" class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="siteBaseUrl" content="https://www.thedevopsjedi.co.uk/">
+    <meta name="author" content="thedevopsjedi">
+    <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
+    <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
+    <meta name="generator" content="Hugo 0.128.2"><title>Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta itemprop="name" content="Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!">
+    <meta itemprop="description" content="In this post I show you how I created an Azure Policy to configure modern Diagnostic Settings for an Azure resource from scratch as Generative couldn&#39;t - yet!">
+    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/">
+  <meta property="og:site_name" content="The DevOps Jedi">
+  <meta property="og:title" content="Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!">
+  <meta property="og:description" content="In this post I show you how I created an Azure Policy to configure modern Diagnostic Settings for an Azure resource from scratch as Generative couldn&#39;t - yet!">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="governance">
+    <meta property="article:published_time" content="2024-07-23T17:00:00+01:00">
+    <meta property="article:modified_time" content="2024-07-23T17:00:00+01:00">
+    <meta property="article:tag" content="AI">
+    <meta property="article:tag" content="Azure">
+    <meta property="article:tag" content="Governance">
+    <meta property="article:tag" content="Policy">
+    <meta property="article:tag" content="PowerShell">
+
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+<link rel="manifest" href="/favicon/site.webmanifest">
+<link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<script src="/modernizr-simple.js"></script><link rel="canonical" href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/theme.css"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/cookieconsent.min.css">
+</head>
+
+<body class="bilberry-hugo-theme">
+<nav><div class="container">
+        <ul class="topnav"><li><a href="/about" target="">About</a></li></ul><div id="search-box" class="search">
+                <i class="fas fa-search"></i>
+                <input id="search" type="text" placeholder="Search ...">
+            </div></div>
+</nav>
+<header><div class="container">
+        <div class="logo">
+            <a href="/" class="logo"><img src="/images/LinkedIn.jpeg" alt=""><span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title">
+                <a href="/">The DevOps Jedi</a>
+            </h3><span class="subtitle">Taking the cloud by storm one line of code at a time....</span></div><div class="toggler"><i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+    </div>
+</header>
+<div class="main container"><div class="article-wrapper u-cf single"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article"><div class="content">
+    <h1 class="article-title">
+        <a href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/">Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!</a>
+    </h1>
+
+    <div class="meta"><span class="date moment">2024-07-23</span><span class="readingTime">15 min read</span><span class="categories"><a href="https://www.thedevopsjedi.co.uk/categories/governance/">Governance</a></span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><h1 id="background">Background</h1>
+<p>Before diving into the detail I think it&rsquo;s important to set the context here as all environments are different and every not everyone&rsquo;s requirements are the same.  This particular organisation had a large enterprise environment that was aligned to 
+<a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#azure-landing-zone-architecture"target="_blank" rel="nofollow noopener noreferrer">Microsoft&rsquo;s Cloud Adoption Framework Landing Zone Design</a>
+, so they had multiple Subscriptions under a number of well structured Management Groups and wanted to leverage 
+<a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-principles#policy-driven-governance"target="_blank" rel="nofollow noopener noreferrer">Policy Driven Governance</a>
+ to ensure consistency.</p>
+<p>A centralised Log Analytics Workspace had been deployed in a Management Subscription which was to be used for Azure Monitor, and would receive diagnostic logs for all available resources configured via their Diagnostic Settings.</p>
+<h1 id="requirements">Requirements</h1>
+<p>The requirements for the policy to collect diagnostic data for Azure Monitor were as follows:</p>
+<ul>
+<li>All available Logs must be collected using Category Groups</li>
+<li>All Category Groups must be enabled and the policy configured to allow for new Category groups being added in the future</li>
+<li>All Metrics must be collected</li>
+<li>All Diagnostic data must be sent to the centralised Log Analytics Workspace</li>
+<li>Where the resources support it, all diagnostic data must be sent to the &lsquo;Resource Specific&rsquo; Log Analytics Destination Table</li>
+</ul>
+<p>If you haven&rsquo;t come across 
+<a href="https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/resource-logs#resource-specific"target="_blank" rel="nofollow noopener noreferrer">Resource Specific</a>
+ tables in Log Analytics before, they store data in dedicated tables which makes querying the data a lot simpler, and has the added benefit of being able to fine tune data retention values at the table level.</p>
+<h1 id="engineering-approach">Engineering Approach</h1>
+<p>To see what was required to be configured in a policy, I decided to reverse engineer the solution by configuring the desired settings in the portal in my own Azure tenant, then viewing the resulting JSON.  This is a technique I use a lot to automate the configuration of Azure resources, ensuring consistent results whether I’m configuring them via code or through the portal.</p>
+<p>Below is an example of a Service Bus resource that has been configured to meet the requirements, and has the option selected to send logs to the &lsquo;Resource Specific&rsquo; destination table in Log Analytics.</p>
+<p><img alt="Configured Service Bus Diagnostics Portal View" src="/images/creating-an-azure-diagnostics-policy/diags-policy-01.png" title="Configured Service Bus Diagnostics Portal View"></p>
+<p>Once the settings had been configured, I clicked the <em><strong>JSON View</strong></em> link to display the resulting JSON.</p>
+<p><img alt="Configured Service Bus Diagnostics JSON View" src="/images/creating-an-azure-diagnostics-policy/diags-policy-02.png" title="Configured Service Bus Diagnostics JSON View"></p>
+<p>You can see I have highlighted a few sections of the JSON that became relevant during the creation and testing process, so let me explain these further:</p>
+<ul>
+<li><strong>API version</strong> - this is the version of the API the portal used to provision the diagnostic settings</li>
+<li><strong>categoryGroup</strong> - there are separate Category Groups defined for both <code>allLogs</code> and <code>audit</code>, and the <code>category</code> for these is defined and set to <code>null</code></li>
+<li><strong>AllMetrics</strong> - this still uses <code>category</code> and there is no <code>categoryGroup</code> defined</li>
+<li><strong>logAnalyticsDestinationType</strong> - this is set to <code>Dedicated</code></li>
+</ul>
+<p>The resulting JSON was formatted as follows:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#e6db74">&#34;/subscriptions/SUBSCRIPTION-GUID/resourceGroups/RESOURCEGROUP-NAME/providers/Microsoft.ServiceBus/namespaces/RESOURCE-NAME/providers/microsoft.insights/diagnosticSettings/DIAGNOSTIC-SETTING-NAME&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;setByPolicy&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;properties&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;logs&#34;</span>: [
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;category&#34;</span>: <span style="color:#66d9ef">null</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;categoryGroup&#34;</span>: <span style="color:#e6db74">&#34;allLogs&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;retentionPolicy&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;days&#34;</span>: <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;category&#34;</span>: <span style="color:#66d9ef">null</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;categoryGroup&#34;</span>: <span style="color:#e6db74">&#34;audit&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">false</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;retentionPolicy&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;days&#34;</span>: <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        ],
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;metrics&#34;</span>: [
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;retentionPolicy&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;days&#34;</span>: <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>                },
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;category&#34;</span>: <span style="color:#e6db74">&#34;AllMetrics&#34;</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        ],
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;workspaceId&#34;</span>: <span style="color:#e6db74">&#34;/subscriptions/SUBSCRIPTION-GUID/resourceGroups/RESOURCEGROUP-NAME/providers/Microsoft.OperationalInsights/workspaces/LOG-ANALTYICS-WORKSPACE-RESOURCE-NAME&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;logAnalyticsDestinationType&#34;</span>: <span style="color:#e6db74">&#34;Dedicated&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="checking-for-existing-policies">Checking For Existing Policies</h1>
+<p>I didn&rsquo;t want to have to create a custom policy, and before going down this route it&rsquo;s important to ensure there isn&rsquo;t already a policy created by Microsoft that provides this functionality.  To do this I used the excellent 
+<a href="https://www.azadvertizer.net/azpolicyadvertizer_all.html"target="_blank" rel="nofollow noopener noreferrer">AzAdvertizer</a>
+ website.  I chose this resource because it allowed me to search for policies based on their content as opposed to just their name.</p>
+<p>My initial search is always based on the policy definition and I do this by entering a search string in the <code>Policy definition compressed</code> column.  This is great because any whitespace is removed from the JSON string which ensures you get all relevant results and avoid any human errors in the JSON definition.</p>
+<p>I started by searching for <code>&quot;categoryGroup&quot;:&quot;allLogs&quot;</code> which brought back hundreds of results.  I then filtered this down further by clicking the funnel filter icon selecting <code>AND Contains</code> and entering <code>&quot;category&quot;:&quot;AllMetrics&quot;</code>.  This brought back over 30 results so clicked the filter icon again and added another <code>AND Contains</code> search for <code>&quot;logAnalyticsDestinationType&quot;:&quot;Dedicated&quot;</code>.</p>
+<p><img alt="AzAdvertizer Search" src="/images/creating-an-azure-diagnostics-policy/diags-policy-03.png" title="AzAdvertizer Search"></p>
+<p>This returned no results at all.  Suspecting I&rsquo;d made a typo, or just got the search logic wrong, I tried searching just for policies that contained <code>&quot;logAnalyticsDestinationType&quot;:&quot;Dedicated&quot;</code>.  Only 1 policy was returned.</p>
+<p>At this point I knew I was going to have to create a custom policy to meet the requirements.</p>
+<h1 id="calling-ai---your-partner-in-problem-solving">Calling AI - &lsquo;Your Partner In Problem Solving&rsquo;</h1>
+<p>They say that &lsquo;a problem shared is a problem halved` so I decided to try and get AI to generate me a policy I could use instead of creating one from scratch.</p>
+<p>Now before I dive into how I used AI for this, I have to state I am a big fan of Generative AI.  It can save a lot of time and effort and really help enhance solutions.  However it is not always right, and you should always validate and test its output.</p>
+<p>There is a lot of hype around AI and Prompt Engineering at present and I don&rsquo;t want to make this post all about that, so I will just share the prompt I used with Microsoft Copilot, ChatGPT &amp; Google Gemini.</p>
+<p><em><strong>Act as an Azure Expert.</strong></em></p>
+<p><em><strong>You have a requirement to ensure &ldquo;Diagnostic Settings&rdquo; are configured on all Azure &ldquo;Service Bus&rdquo; instances.</strong></em></p>
+<p><em><strong>You need to ensure the &ldquo;Category Groups&rdquo; for &ldquo;allLogs&rdquo;, &ldquo;audit&rdquo; and &ldquo;AllMetrics&rdquo; are selected to &ldquo;Send to Log Analytics Workspace&rdquo; and use the &ldquo;Resource Specific&rdquo; destination table.</strong></em></p>
+<p><em><strong>Please generate a policy definition to achieve this.  The policy must check that the correct log analytics workspace ID is configured and not just that category groups are enabled.</strong></em></p>
+<p><em><strong>The ID of the log analytics workspace will be provided by the user when assigning the policy at the Management Group level so should not be specified in the definition.</strong></em></p>
+<p><em><strong>Any remediation should be carried out using the built in &ldquo;Log Analytics Contributor&rdquo; role to configure the settings, custom roles are not to be used.</strong></em></p>
+<p><em><strong>Before generating the policy definition please ask any questions that will help you produce a more accurate response.</strong></em></p>
+<p>Now there are a couple of things to note from this prompt.  Firstly I made an error in stating &ldquo;AllMetrics&rdquo; is a Category Group, it is a Category as we have seen before.  Secondly I added an extra requirement to ensure the policy checks that the correct Log Analytics Workspace is configured.  I did this after inspecting existing policies and discovered they check that Logs and Metrics are enabled, but don&rsquo;t validate where they are sending them to which seemed pointless to me.</p>
+<p>All 3 Bots asked similar questions and came pretty close to giving me what I needed.  However none were 100% accurate.</p>
+<h1 id="the-policy-definition">The Policy Definition</h1>
+<p>I took the base policy definition Copilot generated and stripped it back to only include only the information I was interested in.  I also didn&rsquo;t want any logic defined in the policy I didn&rsquo;t fully understand.  I won&rsquo;t go through all the settings that were incorrect, but I will now break down the sections of my final working policy definition further.</p>
+<h2 id="the-properties-object">The <code>properties</code> Object</h2>
+<p>This is fairly self explanatory and contains the following:</p>
+<ul>
+<li><strong>displayName</strong> - the name of the policy displayed in the Azure portal</li>
+<li><strong>policyType</strong> - the type of the policy which is always <code>Custom</code> for policies not created by Microsoft</li>
+<li><strong>mode</strong> - this is set to <code>All</code> as per 
+<a href="https://learn.microsoft.com/en-us/azure/governance/policy/concepts/definition-structure-basics#policy-type:~:text=We%20recommend%20that%20you%20set%20mode%20to%20all%20in%20most%20cases"target="_blank" rel="nofollow noopener noreferrer">Microsoft&rsquo;s recommendation</a>
+ and specifies that the policy applies to all resource types</li>
+<li><strong>description</strong> - the description of the policy as displayed in the Azure portal</li>
+<li><strong>metadata</strong> - the metadata object stores information about the policy definition</li>
+<li><strong>parameters</strong> - the parameters object stores and validates information passed to the policy when it is assigned and can be used to set default values</li>
+<li><strong>policyRule</strong> - the policyRule object is the conditional logic that needs to be matched for the policy to apply</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;properties&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;displayName&#34;</span>: <span style="color:#e6db74">&#34;Deploy Diagnostic Settings - Service Bus - Azure Monitor&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;policyType&#34;</span>: <span style="color:#e6db74">&#34;Custom&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;mode&#34;</span>: <span style="color:#e6db74">&#34;All&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Configures diagnostic logs for the category groups &#39;allLogs&#39; and &#39;audit&#39; as well as the category &#39;AllMetrics&#39; for a Service Bus resource to send to a Log Analytics workspace for use with Azure Monitor. The diagnostic logs are sent to the &#39;Resource Specific&#39; Destination Table. NOTE: The identity carrying out remediation tasks requires the &#39;Log Analytics Contributor&#39; role to be assigned on both the resource and the Log Analytics Workspace.&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;metadata&#34;</span>: {
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;parameters&#34;</span>: {
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;policyRule&#34;</span>: {
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The main focus of this post will be on the <code>policyRule</code> object as the <code>metadata</code> and <code>parameters</code> objects are kept simple.</p>
+<h2 id="the-metadata-object">The <code>metadata</code> Object</h2>
+<p>The <code>metadata</code> object stores extra data about the policy definition that you want to add in addition to Azures default values.  Here we are just setting the <code>version</code> and the <code>category</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;metadata&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;version&#34;</span>: <span style="color:#e6db74">&#34;1.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;category&#34;</span>: <span style="color:#e6db74">&#34;Monitoring&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="the-parameters-object">The <code>parameters</code> Object</h2>
+<p>The <code>parameters</code> object makes policy definitions more flexible and reusable as they allow you to define values that can be customised when the policy is assigned.  Here we are setting the <code>logAnalytics</code> Workspace Resource ID.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;parameters&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;logAnalytics&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;String&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;metadata&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;displayName&#34;</span>: <span style="color:#e6db74">&#34;Log Analytics Workspace Resource ID&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Specifies the resource ID of Log Analytics workspace to send logs to.&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="the-policyrule-object">The <code>policyRule</code> Object</h2>
+<p>The policy rule object is made up of <code>if</code> and <code>then</code> objects. In the <code>if</code> object you set conditional logic that determines when the policy should be applied. In the <code>then</code> object you specify the action or effect that occurs when the conditions in the <code>if</code> object are true.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;policyRule&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;if&#34;</span>: {
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;then&#34;</span>: {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="the-if-object">The <code>if</code> Object</h3>
+<p>The <code>if</code> object specifies conditional logic that needs to be met in order for the policy to apply.  In this case, the <code>type</code> of resource needs to match <code>&quot;Microsoft.ServiceBus/namespaces&quot;</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;if&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;type&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;equals&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.ServiceBus/namespaces&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="the-then-object">The <code>then</code> Object</h3>
+<p>The <code>then</code> object is what happens when the <code>if</code> condition has been met.  It contains the following:</p>
+<ul>
+<li><strong>effect</strong> - the effect determines what action is taken if the compliance criteria are not met.  In this case, the <code>effect</code> is set to <code>deployIfNotExists</code> which will automatically deploy an Azure Resource Manager (ARM) template</li>
+<li><strong>details</strong> - the details object provides additional information and parameters</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;then&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;effect&#34;</span>: <span style="color:#e6db74">&#34;deployIfNotExists&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;details&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Insights/diagnosticSettings&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;existenceCondition&#34;</span>: {
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;roleDefinitionIds&#34;</span>: [
+</span></span><span style="display:flex;"><span>        ],
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;deployment&#34;</span>: {
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="the-details-object">The <code>details</code> Object</h4>
+<p>For this example the <code>details</code> object contains the following:</p>
+<ul>
+<li><strong>type</strong> - the type of resource that the policy will be targeting</li>
+<li><strong>existenceCondition</strong> - the compliance criteria that must be met</li>
+<li><strong>roleDefinitionIds</strong> - a list of RBAC role(s) required to be assigned to perform the deployment</li>
+<li><strong>deployment</strong> - the ARM template to be deployed</li>
+</ul>
+<h4 id="the-existencecondition-object">The <code>existenceCondition</code> Object</h4>
+<p>The <code>existenceCondition</code> object is key, as this is where the compliance of the policy will be determined.  Think of this as all the things that need to be true for the policy to be considered compliant.  This section needs extra consideration as it evaluates conditional logic for <em><strong>both deployment and compliance</strong></em>.  I say this because after creating the policy and watching it successfully apply, it was marked as non compliant.</p>
+<p>Let me explain further.</p>
+<p>I initially used the logic from the JSON created when the settings were configured via the portal which has separate objects for the <code>allLogs</code> and <code>audit</code> category groups.  Part of the <code>existenceCondition</code> object looked like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;existenceCondition&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;allOf&#34;</span>: [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.ServiceBus/namespaces/diagnosticSettings[*].logs[*].categoryGroup&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;contains&#34;</span>: <span style="color:#e6db74">&#34;allLogs&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.ServiceBus/namespaces/diagnosticSettings[*].logs[*].categoryGroup&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;contains&#34;</span>: <span style="color:#e6db74">&#34;audit&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>From reading this I can see that <code>categoryGroup</code> needs to contain both <code>allLogs</code> and <code>audit</code> to be considered compliant, and this works perfectly for deployment.</p>
+<p>However when I checked the compliance of the policy I discovered it used different logic to check these settings.</p>
+<p><img alt="Compliance Check Logic" src="/images/creating-an-azure-diagnostics-policy/diags-policy-04.png" title="Compliance Check Logic"></p>
+<p>I wasn&rsquo;t sure how to fix this one so I turned to Copilot again and asked:</p>
+<p><em><strong>Act as an Azure Expert.</strong></em></p>
+<p><strong><em>You have created a policy as defined below but compliance fails as it sees properties.logs[</em>].categoryGroup&rsquo; as &lsquo;[&ldquo;allLogs&rdquo;,&ldquo;audit&rdquo;]&rsquo;  the definition is below, how do I fix this?</strong>*</p>
+<p>Copilot replied with the following:</p>
+<p><em><strong>The issue you&rsquo;re facing is likely due to the way the policy is checking for the <code>categoryGroup</code> in the <code>existenceCondition</code>. The policy is currently checking for <code>allLogs</code> and <code>audit</code> separately, but the compliance check is seeing them together as <code>[&quot;allLogs&quot;,&quot;audit&quot;]</code>.</strong></em></p>
+<p><em><strong>To fix this, you can modify the <code>existenceCondition</code> to check if both <code>allLogs</code> and <code>audit</code> are in the <code>categoryGroup</code> array. Here&rsquo;s how you can modify it:</strong></em></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;existenceCondition&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;allOf&#34;</span>: [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;equals&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Insights/diagnosticSettings/logs.enabled&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;in&#34;</span>: [<span style="color:#e6db74">&#34;allLogs&#34;</span>, <span style="color:#e6db74">&#34;audit&#34;</span>],
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;microsoft.insights/diagnosticSettings/logs[*].categoryGroup&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;equals&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Insights/diagnosticSettings/metrics.enabled&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Insights/diagnosticSettings/workspaceId&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;matchInsensitively&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;logAnalytics&#39;)]&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;equals&#34;</span>: <span style="color:#e6db74">&#34;Dedicated&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Insights/diagnosticSettings/logAnalyticsDestinationType&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><em><strong>In this modification, I replaced the separate checks for <code>allLogs</code> and <code>audit</code> with a single check using the <code>in</code> operator. This checks if the <code>categoryGroup</code> array contains both <code>allLogs</code> and <code>audit</code>.</strong></em></p>
+<p><em><strong>Please try this modification and see if it resolves the compliance issue. If the issue persists, please let me know so we can investigate further.</strong></em></p>
+<p>I implemented the changes as I understood exactly what it was suggesting, and sure enough compliance was happy.  Go Copilot!!!</p>
+<p>You will notice from the JSON above that there are additional settings in the <code>existenceCondition</code> object that I supplied to Copilot to meet our requirements:</p>
+<ul>
+<li>There is a check to ensure that both <code>logs</code> and <code>metrics</code> are enabled</li>
+<li>There is a check to ensure that the configured <code>workspaceId</code> matches the <code>logAnalytics</code> parameter specified when the policy is assigned</li>
+<li>The <code>logAnalyticsDestinationType </code> is set to <code>Dedicated</code> which we saw from the JSON the portal produced earlier</li>
+</ul>
+<h4 id="the-roledefinitionids-object">The <code>roleDefinitionIds</code> Object</h4>
+<p>The <code>roleDefinitionIds</code> object is a list of RBAC roles that the identity performing the remediation will need to be assigned for a successful deployment to take place.  In this case there is only one role that is required, which is <code>Log Analytics Contributor</code> and this is specified by its ID of <code>92aaf0da-9dab-42b6-94a3-d43ce8d16293</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;roleDefinitionIds&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> [
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;/providers/Microsoft.Authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293&#34;</span>
+</span></span><span style="display:flex;"><span>]
+</span></span></code></pre></div><h4 id="the-deployment-object">The <code>deployment</code> Object</h4>
+<p>The <code>deployment</code> object is the ARM template that is deployed when the <code>effect</code> is set to <code>deployIfNotExists</code>.  I&rsquo;ve used ARM templates in the past and can understand them, but don&rsquo;t consider myself an expert by any means.  However I was able to use some of the JSON generated by Copilot as starter code and modify it accordingly:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;deployment&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;properties&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;mode&#34;</span>: <span style="color:#e6db74">&#34;Incremental&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;template&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;parameters&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;name&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>
+</span></span><span style="display:flex;"><span>                },
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;logAnalytics&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;resources&#34;</span>: [
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.ServiceBus/namespaces/providers/diagnosticSettings&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;[concat(parameters(&#39;name&#39;), &#39;/Microsoft.Insights/setByPolicy&#39;)]&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;2021-05-01-preview&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;properties&#34;</span>: {
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;workspaceId&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;logAnalytics&#39;)]&#34;</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;logAnalyticsDestinationType&#34;</span>: <span style="color:#e6db74">&#34;Dedicated&#34;</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;logs&#34;</span>: [
+</span></span><span style="display:flex;"><span>                            {
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;categoryGroup&#34;</span>: <span style="color:#e6db74">&#34;allLogs&#34;</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                            },
+</span></span><span style="display:flex;"><span>                            {
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;categoryGroup&#34;</span>: <span style="color:#e6db74">&#34;audit&#34;</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                            }
+</span></span><span style="display:flex;"><span>                        ],
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;metrics&#34;</span>: [
+</span></span><span style="display:flex;"><span>                            {
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;category&#34;</span>: <span style="color:#e6db74">&#34;AllMetrics&#34;</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                            }
+</span></span><span style="display:flex;"><span>                        ]
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            ]
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;parameters&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;name&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;[field(&#39;name&#39;)]&#34;</span>
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;logAnalytics&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;logAnalytics&#39;)]&#34;</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The key changes I had to make as I went along were in the <code>resources</code> object where I changed the following:</p>
+<ul>
+<li>The <code>name</code> was updated to <code>setByPolicy</code> to align with other diagnostic settings that had been deployed via policies elsewhere within the tenant</li>
+<li>The <code>apiVersion</code> was updated to match the version that was used in the portal when configuring the settings as this version introduced support for the <code>categoryGroup</code> attribute</li>
+<li>The <code>logAnalyticsDestinationType</code> was set to <code>Dedicated</code></li>
+<li>In the list of <code>logs</code> I had to update <code>category</code> to <code>categoryGroup</code></li>
+</ul>
+<h1 id="putting-it-all-together">Putting It All Together</h1>
+<p>When comparing the final JSON file to the content in this post you may notice a few of the fields appear in a different order to that shown earlier.  This is because I like any JSON I write to be as declarative as possible.  JSON is designed to be read by machines, not humans, so it doesn&rsquo;t care what order values are specified within an object as long as it is syntactically correct.  A quick example here would be below where the <code>equals</code> is before the field:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;equals&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Insights/diagnosticSettings/logs.enabled&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This is technically the same as how I would write it, but the below makes more sense to me:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Insights/diagnosticSettings/logs.enabled&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;equals&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The finished working policy definition JSON file is below, so feel free to modify it and use within your own environments, after testing of course!</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;properties&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;displayName&#34;</span>: <span style="color:#e6db74">&#34;Deploy Diagnostic Settings - Service Bus - Azure Monitor&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;policyType&#34;</span>: <span style="color:#e6db74">&#34;Custom&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;mode&#34;</span>: <span style="color:#e6db74">&#34;All&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Configures diagnostic logs for the category groups &#39;allLogs&#39; and &#39;audit&#39; as well as the category &#39;AllMetrics&#39; for a Service Bus resource to send to a Log Analytics workspace for use with Azure Monitor. The diagnostic logs are sent to the &#39;Resource Specific&#39; Destination Table. NOTE: The identity carrying out remediation tasks requires the &#39;Log Analytics Contributor&#39; role to be assigned on both the resource and the Log Analytics Workspace.&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;metadata&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;version&#34;</span>: <span style="color:#e6db74">&#34;1.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;category&#34;</span>: <span style="color:#e6db74">&#34;Monitoring&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;parameters&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;logAnalytics&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;String&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;metadata&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;displayName&#34;</span>: <span style="color:#e6db74">&#34;Log Analytics Workspace Resource ID&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Specifies the resource ID of Log Analytics workspace to send logs to.&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;policyRule&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;if&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;type&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;equals&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.ServiceBus/namespaces&#34;</span>
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;then&#34;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;effect&#34;</span>: <span style="color:#e6db74">&#34;deployIfNotExists&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;details&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Insights/diagnosticSettings&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;existenceCondition&#34;</span>: {
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;allOf&#34;</span>: [
+</span></span><span style="display:flex;"><span>                            {
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Insights/diagnosticSettings/logs.enabled&#34;</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;equals&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>                            },
+</span></span><span style="display:flex;"><span>                            {
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;microsoft.insights/diagnosticSettings/logs[*].categoryGroup&#34;</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;in&#34;</span>: [
+</span></span><span style="display:flex;"><span>                                    <span style="color:#e6db74">&#34;allLogs&#34;</span>,
+</span></span><span style="display:flex;"><span>                                    <span style="color:#e6db74">&#34;audit&#34;</span>
+</span></span><span style="display:flex;"><span>                                ]
+</span></span><span style="display:flex;"><span>                            },
+</span></span><span style="display:flex;"><span>                            {
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Insights/diagnosticSettings/metrics.enabled&#34;</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;equals&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>                            },
+</span></span><span style="display:flex;"><span>                            {
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Insights/diagnosticSettings/workspaceId&#34;</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;matchInsensitively&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;logAnalytics&#39;)]&#34;</span>
+</span></span><span style="display:flex;"><span>                            },
+</span></span><span style="display:flex;"><span>                            {
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Insights/diagnosticSettings/logAnalyticsDestinationType&#34;</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;equals&#34;</span>: <span style="color:#e6db74">&#34;Dedicated&#34;</span>
+</span></span><span style="display:flex;"><span>                            }
+</span></span><span style="display:flex;"><span>                        ]
+</span></span><span style="display:flex;"><span>                    },
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;roleDefinitionIds&#34;</span>: [
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;/providers/Microsoft.Authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293&#34;</span>
+</span></span><span style="display:flex;"><span>                    ],
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;deployment&#34;</span>: {
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">&#34;properties&#34;</span>: {
+</span></span><span style="display:flex;"><span>                            <span style="color:#f92672">&#34;mode&#34;</span>: <span style="color:#e6db74">&#34;Incremental&#34;</span>,
+</span></span><span style="display:flex;"><span>                            <span style="color:#f92672">&#34;template&#34;</span>: {
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#&#34;</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;parameters&#34;</span>: {
+</span></span><span style="display:flex;"><span>                                    <span style="color:#f92672">&#34;name&#34;</span>: {
+</span></span><span style="display:flex;"><span>                                        <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>
+</span></span><span style="display:flex;"><span>                                    },
+</span></span><span style="display:flex;"><span>                                    <span style="color:#f92672">&#34;logAnalytics&#34;</span>: {
+</span></span><span style="display:flex;"><span>                                        <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;string&#34;</span>
+</span></span><span style="display:flex;"><span>                                    }
+</span></span><span style="display:flex;"><span>                                },
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;resources&#34;</span>: [
+</span></span><span style="display:flex;"><span>                                    {
+</span></span><span style="display:flex;"><span>                                        <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.ServiceBus/namespaces/providers/diagnosticSettings&#34;</span>,
+</span></span><span style="display:flex;"><span>                                        <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;[concat(parameters(&#39;name&#39;), &#39;/Microsoft.Insights/setByPolicy&#39;)]&#34;</span>,
+</span></span><span style="display:flex;"><span>                                        <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;2021-05-01-preview&#34;</span>,
+</span></span><span style="display:flex;"><span>                                        <span style="color:#f92672">&#34;properties&#34;</span>: {
+</span></span><span style="display:flex;"><span>                                            <span style="color:#f92672">&#34;workspaceId&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;logAnalytics&#39;)]&#34;</span>,
+</span></span><span style="display:flex;"><span>                                            <span style="color:#f92672">&#34;logAnalyticsDestinationType&#34;</span>: <span style="color:#e6db74">&#34;Dedicated&#34;</span>,
+</span></span><span style="display:flex;"><span>                                            <span style="color:#f92672">&#34;logs&#34;</span>: [
+</span></span><span style="display:flex;"><span>                                                {
+</span></span><span style="display:flex;"><span>                                                    <span style="color:#f92672">&#34;categoryGroup&#34;</span>: <span style="color:#e6db74">&#34;allLogs&#34;</span>,
+</span></span><span style="display:flex;"><span>                                                    <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                                                },
+</span></span><span style="display:flex;"><span>                                                {
+</span></span><span style="display:flex;"><span>                                                    <span style="color:#f92672">&#34;categoryGroup&#34;</span>: <span style="color:#e6db74">&#34;audit&#34;</span>,
+</span></span><span style="display:flex;"><span>                                                    <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                                                }
+</span></span><span style="display:flex;"><span>                                            ],
+</span></span><span style="display:flex;"><span>                                            <span style="color:#f92672">&#34;metrics&#34;</span>: [
+</span></span><span style="display:flex;"><span>                                                {
+</span></span><span style="display:flex;"><span>                                                    <span style="color:#f92672">&#34;category&#34;</span>: <span style="color:#e6db74">&#34;AllMetrics&#34;</span>,
+</span></span><span style="display:flex;"><span>                                                    <span style="color:#f92672">&#34;enabled&#34;</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>                                                }
+</span></span><span style="display:flex;"><span>                                            ]
+</span></span><span style="display:flex;"><span>                                        }
+</span></span><span style="display:flex;"><span>                                    }
+</span></span><span style="display:flex;"><span>                                ]
+</span></span><span style="display:flex;"><span>                            },
+</span></span><span style="display:flex;"><span>                            <span style="color:#f92672">&#34;parameters&#34;</span>: {
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;name&#34;</span>: {
+</span></span><span style="display:flex;"><span>                                    <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;[field(&#39;name&#39;)]&#34;</span>
+</span></span><span style="display:flex;"><span>                                },
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">&#34;logAnalytics&#34;</span>: {
+</span></span><span style="display:flex;"><span>                                    <span style="color:#f92672">&#34;value&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;logAnalytics&#39;)]&#34;</span>
+</span></span><span style="display:flex;"><span>                                }
+</span></span><span style="display:flex;"><span>                            }
+</span></span><span style="display:flex;"><span>                        }
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>I covered how to add the policy definition using PowerShell in my 
+<a href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">previous post</a>
+ so head over there to check that out.</p>
+</div>
+<div class="footer"><div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/ai/">AI</a><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/governance/">Governance</a><a href="https://www.thedevopsjedi.co.uk/tags/policy/">Policy</a><a href="https://www.thedevopsjedi.co.uk/tags/powershell/">PowerShell</a></div>
+        </div></div>
+</article>
+</div><div id="comments-container"></div></div><footer>
+    <div class="container"><div class="recent-posts">
+            <strong>Latest Posts</strong>
+            <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/">Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">Modifying An Existing Azure Policy</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/">How I Minimise Terraform Admin Effort &amp; Manage The Constant Change</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/">Use Of Terraform Child Modules</a>
+                    </li></ul>
+        </div><div class="right"><div class="external-profiles">
+                <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
+            </div><div class="archive"><a href="https://www.thedevopsjedi.co.uk/archive/"><strong>Archive</strong></a></div></div>
+    </div>
+</footer><div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
+                &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
+            </a></div>
+        <div class="disclaimer">
+            <a href="/disclaimer">Disclaimer</a>
+        </div>
+    </div>
+</div>
+
+
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-RKD17G86VJ');
+        }
+      </script>
+    
+  
+
+<script src="https://www.thedevopsjedi.co.uk/theme.js"></script><script src="https://www.thedevopsjedi.co.uk/cookieconsent.min.js" type="application/javascript"></script><script src="https://www.thedevopsjedi.co.uk/init-cookieconsent.js" type="application/javascript"></script><div id="activate-algolia-search" class="hidden">
+  <input type="hidden" id="algolia-search-appId" value="XRNYV3MMH2">
+  <input type="hidden" id="algolia-search-apiKey" value="5ba5776bc76690c95b70fcfe58371072">
+  <input type="hidden" id="algolia-search-indexName" value="www.thedevopsjedi.co.uk">
+  <input type="hidden" id="algolia-search-noSearchResults" value="Nothing Found..."><input type="hidden" id="algolia-search-currentLanguageOnly"></div>
+
+</body>
+
+</html>

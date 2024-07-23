@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>AI on The DevOps Jedi</title>
+    <link>https://www.thedevopsjedi.co.uk/tags/ai/</link>
+    <description>Recent content in AI on The DevOps Jedi</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 23 Jul 2024 17:00:00 +0100</lastBuildDate>
+    <atom:link href="https://www.thedevopsjedi.co.uk/tags/ai/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!</title>
+      <link>https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/</link>
+      <pubDate>Tue, 23 Jul 2024 17:00:00 +0100</pubDate>
+      <guid>https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/</guid>
+      <description>I have recently been working with an organisation who wanted to improve their security posture in Azure by using Azure Policy to configure Diagnostic Settings for their Azure resources at scale.  They wanted to make use of Category Groups to dynamically collect all available logs and metrics and simplify the policy logic so it could be reused across multiple resources.  I thought &amp;lsquo;&lt;em&gt;that sounds simple enough as there will be a built in policy that does all that&lt;/em&gt;&amp;rsquo;, but there wasn&amp;rsquo;t, so I set to work.</description>
+    </item>
+  </channel>
+</rss>
