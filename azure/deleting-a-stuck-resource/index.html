@@ -1,0 +1,183 @@
+<!DOCTYPE html><html itemscope itemtype="https://schema.org/WebPage" class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="siteBaseUrl" content="https://www.thedevopsjedi.co.uk/">
+    <meta name="author" content="thedevopsjedi">
+    <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
+    <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
+    <meta name="generator" content="Hugo 0.131.0"><title>Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta itemprop="name" content="Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status">
+    <meta itemprop="description" content="In this post I show you how I managed to delete an Azure Machine Learning Workspace resource that was stuck in a &#39;Deleting Resource&#39; status using the AZ CLI.">
+    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">
+  <meta property="og:site_name" content="The DevOps Jedi">
+  <meta property="og:title" content="Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status">
+  <meta property="og:description" content="In this post I show you how I managed to delete an Azure Machine Learning Workspace resource that was stuck in a &#39;Deleting Resource&#39; status using the AZ CLI.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="azure">
+    <meta property="article:published_time" content="2024-08-19T18:00:00+01:00">
+    <meta property="article:modified_time" content="2024-08-19T18:00:00+01:00">
+    <meta property="article:tag" content="AI">
+    <meta property="article:tag" content="Azure">
+    <meta property="article:tag" content="CLI">
+    <meta property="article:tag" content="Terraform">
+
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+<link rel="manifest" href="/favicon/site.webmanifest">
+<link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<script src="/modernizr-simple.js"></script><link rel="canonical" href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/theme.css"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/cookieconsent.min.css">
+</head>
+
+<body class="bilberry-hugo-theme">
+<nav><div class="container">
+        <ul class="topnav"><li><a href="/about" target="">About</a></li></ul><div id="search-box" class="search">
+                <i class="fas fa-search"></i>
+                <input id="search" type="text" placeholder="Search ...">
+            </div></div>
+</nav>
+<header><div class="container">
+        <div class="logo">
+            <a href="/" class="logo"><img src="/images/LinkedIn.jpeg" alt=""><span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title">
+                <a href="/">The DevOps Jedi</a>
+            </h3><span class="subtitle">Taking the cloud by storm one line of code at a time....</span></div><div class="toggler"><i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+    </div>
+</header>
+<div class="main container"><div class="article-wrapper u-cf single"><a class="bubble" href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article"><div class="content">
+    <h1 class="article-title">
+        <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
+    </h1>
+
+    <div class="meta"><span class="date moment">2024-08-19</span><span class="readingTime">4 min read</span><span class="categories"><a href="https://www.thedevopsjedi.co.uk/categories/azure/">Azure</a></span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><h1 id="background">Background</h1>
+<p>I have recently been working with deploying some of Azure&rsquo;s Artificial Intelligence (AI) resources via Terraform, and after standing them up and destroying a few times I encountered an error where an Azure Machine Learning Workspace v2 (MLW) would not delete, and the <code>terraform destroy</code> command timed out.  It had been a long time since I&rsquo;d seen this behaviour in Azure, and the previous workaround was to just delete the resource(s) via the portal.  However on this occasion this didn&rsquo;t work.  I couldn&rsquo;t find the answer online and I&rsquo;m writing this from memory, so apologies in advance if I have missed something.</p>
+<h1 id="azure-machine-learning-workspace-dependencies">Azure Machine Learning Workspace Dependencies</h1>
+<p>When building an MLW, there are a number of prerequisite resources that need to be in place:</p>
+<ul>
+<li>Application Insights (although this can be deleted after the MLW deployment)</li>
+<li>Container Registry</li>
+<li>Key Vault</li>
+<li>Log Analytics Workspace</li>
+<li>Storage Account</li>
+</ul>
+<p>In Terraform, when you link resources together via their resource type and name, an implicit dependency is automatically detected.  This helps Terraform know in what order resources must be created and deleted.  You can also add a <code>depends_on</code> argument to manually enforce dependencies between the two resources.</p>
+<p>The challenge is the Azure&rsquo;s API&rsquo;s allow resources to be created asynchronously (at the same time), but when destroying, the order can be more specific and require dependant resources to exist before allowing the deletion.  In theory this is a good thing, but if the error messages don&rsquo;t trap this then you can get stuck, which is what happened to me.</p>
+<h1 id="the-problem">The Problem</h1>
+<p>I had created these resources and tore them down numerous times in the last week without any issues.  I had completed a customer demo and decided to destroy the resources to save the ongoing cost which is when I hit the problem.</p>
+<p>Most resources in Azure aren&rsquo;t that expensive and should this happen it wouldn&rsquo;t be too much of an issue, but in this case I needed to have the most secure configuration which involved configuring &lsquo;Private with Approved Outbound&rsquo; networking.  What this meant in reality was a managed Virtual Network including an Azure Firewall instance ($$$) was provisioned which I had no control over.  By not being able to delete this resource I would incur any costs for these resources which was not good!</p>
+<h1 id="attempted-solution-1">Attempted Solution 1</h1>
+<p>When Terraform failed, I tried deleting the resource via the portal which appeared to be working:</p>
+<p><img alt="MLW Deleting Resource Portal View" src="/images/deleting-a-stuck-resource/mlw-deleting-resource-01.png" title="MLW Deleting Resource Portal View"></p>
+<p>However I left this overnight with no update or additional information to go on.</p>
+<p>When I logged back in to the portal the &lsquo;Deleting resource&rsquo; flag had gone, so I attempted to access the Machine Learning Studio to see if I could get any additional information.  I immediately got an error stating:</p>
+<p><code>&quot;WorkspaceIsDeleting: GUID Request can't be accepted while workspace is in deleting state.&quot;</code></p>
+<p>At this point I knew I had to try something else, or log a support call with Microsoft.</p>
+<h1 id="attempted-solution-2">Attempted Solution 2</h1>
+<p>Next I found 
+<a href="https://learn.microsoft.com/en-us/answers/questions/239609/i-cant-delete-azure-ml-workspace"target="_blank" rel="nofollow noopener noreferrer">this link</a>
+ which despite being over 3 years old, was from someone at Microsoft suggesting to use the AZ CLI to delete the resource.  I tried this using the command below:</p>
+<p><code>az ml workspace delete --resource-group RG_NAME --workspace-name MLW_NAME --all-resources</code></p>
+<p>I left this running, and it ran, and it ran and&hellip;. you get the idea.</p>
+<p>8 Hours had passed so I left it running overnight, during which time my Azure VM had required updates and had rebooted.</p>
+<p>Time to start over and back to square 1&hellip;.</p>
+<h1 id="how-i-found-the-problem">How I Found The Problem</h1>
+<p>Experience told me I could enable verbose logging when using the AZ CLI and checking the 
+<a href="https://learn.microsoft.com/en-us/cli/azure/ml/workspace?view=azure-cli-latest#az-ml-workspace-delete"target="_blank" rel="nofollow noopener noreferrer">updated documentation</a>
+ I saw there were a few extra arguments I wanted to try:</p>
+<ul>
+<li><code>--permanently-delete</code> - this would ensure the MLW wasn&rsquo;t placed into a soft delete state</li>
+<li><code>--yes</code> - to avoid prompting for confirmation (ideal when running via a pipeline)</li>
+<li><code>--verbose</code> - increase the logging verbosity (i.e. I would get more info)</li>
+<li><code>--no-wait</code> - do not wait for long running operations to finish (like I had previously)</li>
+</ul>
+<p>I updated my command as follows (changing the <code>--workspace-name</code> argument to just <code>--name</code> as per the updated documentation):</p>
+<p><code>az ml workspace delete --name MLW_NAME --resource-group RG_NAME --all-resources --permanently-delete --yes --verbose --no-wait</code></p>
+<p>This time command immediately failed with the error below:</p>
+<p><code>(ResourceNotFound) The Resource 'Microsoft.insights/components/APP_INSIGHTS_NAME' under resource group 'RG_NAME' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix</code></p>
+<h1 id="the-fix">The Fix</h1>
+<p>I recreated all the dependant resources via Terraform (but not the MLW itself), and re-ran the command above.  This time it sailed through in about 30 seconds, and after waiting another minute or 2 for the portal to catch up, I was able to confirm the resources had indeed been deleted.  Result!</p>
+<blockquote>
+<p><strong>Key Takeaway</strong>: When using the AZ CLI to delete resources, always use the <code>--verbose</code> argument and the <code>--no-wait</code> argument if it is available as this will give you more information than the portal or the API which is where Terraform gets it&rsquo;s errors information from.</p>
+</blockquote>
+</div>
+<div class="footer"><div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/ai/">AI</a><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/cli/">CLI</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a></div>
+        </div></div>
+</article>
+</div><div id="comments-container"></div></div><footer>
+    <div class="container"><div class="recent-posts">
+            <strong>Latest Posts</strong>
+            <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/">Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">Modifying An Existing Azure Policy</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/">How I Minimise Terraform Admin Effort &amp; Manage The Constant Change</a>
+                    </li></ul>
+        </div><div class="right"><div class="external-profiles">
+                <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
+            </div><div class="archive"><a href="https://www.thedevopsjedi.co.uk/archive/"><strong>Archive</strong></a></div></div>
+    </div>
+</footer><div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
+                &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
+            </a></div>
+        <div class="disclaimer">
+            <a href="/disclaimer">Disclaimer</a>
+        </div>
+    </div>
+</div>
+
+
+  
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-RKD17G86VJ');
+        }
+      </script>
+    
+  
+
+<script src="https://www.thedevopsjedi.co.uk/theme.js"></script><script src="https://www.thedevopsjedi.co.uk/cookieconsent.min.js" type="application/javascript"></script><script src="https://www.thedevopsjedi.co.uk/init-cookieconsent.js" type="application/javascript"></script><div id="activate-algolia-search" class="hidden">
+  <input type="hidden" id="algolia-search-appId" value="XRNYV3MMH2">
+  <input type="hidden" id="algolia-search-apiKey" value="5ba5776bc76690c95b70fcfe58371072">
+  <input type="hidden" id="algolia-search-indexName" value="www.thedevopsjedi.co.uk">
+  <input type="hidden" id="algolia-search-noSearchResults" value="Nothing Found..."><input type="hidden" id="algolia-search-currentLanguageOnly"></div>
+
+</body>
+
+</html>

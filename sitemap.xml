@@ -6,21 +6,42 @@
     <lastmod>2023-01-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/ai/</loc>
-    <lastmod>2024-07-23T17:00:00+01:00</lastmod>
+    <lastmod>2024-08-19T18:00:00+01:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/author/</loc>
-    <lastmod>2024-07-23T17:00:00+01:00</lastmod>
+    <lastmod>2024-08-19T18:00:00+01:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/azure/</loc>
-    <lastmod>2024-07-23T17:00:00+01:00</lastmod>
+    <lastmod>2024-08-19T18:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/categories/azure/</loc>
+    <lastmod>2024-08-19T18:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/azure/</loc>
+    <lastmod>2024-08-19T18:00:00+01:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/categories/</loc>
-    <lastmod>2024-07-23T17:00:00+01:00</lastmod>
+    <lastmod>2024-08-19T18:00:00+01:00</lastmod>
   </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/</loc>
-    <lastmod>2024-07-23T17:00:00+01:00</lastmod>
+    <loc>https://www.thedevopsjedi.co.uk/tags/cli/</loc>
+    <lastmod>2024-08-19T18:00:00+01:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/author/darren-johnson/</loc>
+    <lastmod>2024-08-19T18:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/</loc>
+    <lastmod>2024-08-19T18:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/</loc>
+    <lastmod>2024-08-19T18:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/terraform/</loc>
+    <lastmod>2024-08-19T18:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/</loc>
+    <lastmod>2024-08-19T18:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/</loc>
     <lastmod>2024-07-23T17:00:00+01:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/governance/</loc>
@@ -36,12 +57,6 @@
     <lastmod>2024-07-23T17:00:00+01:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/powershell/</loc>
-    <lastmod>2024-07-23T17:00:00+01:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/tags/</loc>
-    <lastmod>2024-07-23T17:00:00+01:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/</loc>
     <lastmod>2024-07-23T17:00:00+01:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/</loc>
@@ -63,9 +78,6 @@
     <lastmod>2024-03-12T06:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/security/</loc>
-    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/tags/terraform/</loc>
     <lastmod>2024-03-12T06:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/</loc>

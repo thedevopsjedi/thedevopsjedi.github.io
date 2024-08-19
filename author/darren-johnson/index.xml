@@ -6,8 +6,15 @@
     <description>Recent content in Darren Johnson on The DevOps Jedi</description>
     <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 23 Jul 2024 17:00:00 +0100</lastBuildDate>
+    <lastBuildDate>Mon, 19 Aug 2024 18:00:00 +0100</lastBuildDate>
     <atom:link href="https://www.thedevopsjedi.co.uk/author/darren-johnson/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</title>
+      <link>https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/</link>
+      <pubDate>Mon, 19 Aug 2024 18:00:00 +0100</pubDate>
+      <guid>https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/</guid>
+      <description>I have recently been working with some of Azure&amp;rsquo;s Artifical Intelligence (AI) resources, and had built out a lab in Terraform only to find when destroying it the resource was stuck in a &amp;lsquo;Deleting Resource&amp;rsquo; state.  I wasn&amp;rsquo;t able to remove it via the portal or via Terraform &amp;amp; couldn&amp;rsquo;t find a solution online either. So this post is to capture what I did in the hope it helps someone in the future.</description>
+    </item>
     <item>
       <title>Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!</title>
       <link>https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/</link>
