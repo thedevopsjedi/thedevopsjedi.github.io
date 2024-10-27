@@ -6,8 +6,15 @@
     <description>Recent content in Governance on The DevOps Jedi</description>
     <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 23 Jul 2024 17:00:00 +0100</lastBuildDate>
+    <lastBuildDate>Sun, 27 Oct 2024 06:00:12 +0000</lastBuildDate>
     <atom:link href="https://www.thedevopsjedi.co.uk/categories/governance/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Always Check The Default Parameters When Assigning An Azure Policy</title>
+      <link>https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/</link>
+      <pubDate>Sun, 27 Oct 2024 06:00:12 +0000</pubDate>
+      <guid>https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/</guid>
+      <description>In this post I explain why it is important to always check the default parameters when assigning an Azure Policy to prevent unexpected issues from occuring.</description>
+    </item>
     <item>
       <title>Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!</title>
       <link>https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/</link>

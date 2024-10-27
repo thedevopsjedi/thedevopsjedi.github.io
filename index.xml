@@ -5,10 +5,19 @@
     <description>Recent content on The DevOps Jedi</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 19 Aug 2024 18:00:00 +0100</lastBuildDate>
+    <lastBuildDate>Sun, 27 Oct 2024 06:00:12 +0000</lastBuildDate>
     
         <atom:link href="https://www.thedevopsjedi.co.uk/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Always Check The Default Parameters When Assigning An Azure Policy</title>
+      <link>https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/</link>
+      <pubDate>Sun, 27 Oct 2024 06:00:12 +0000</pubDate>
+      
+      <guid>https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/</guid>
+      <description>In this post I explain why it is important to always check the default parameters when assigning an Azure Policy to prevent unexpected issues from occuring.</description>
+    </item>
     
     <item>
       <title>Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</title>
@@ -83,9 +92,9 @@
       <pubDate>Sat, 21 Jan 2023 17:00:00 +0000</pubDate>
       
       <guid>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/</guid>
-      <description>I have already touched on the importance of Terraform state in a previous post, but I wanted to expand on this from a security perspective.
-Let&amp;rsquo;s get this out the way now, Terraform stores secrets in its state file in plain text! There I said it.
-So how do I protect against secrets being revealed that could allow an attacker to compromise my systems? Well, I use a defence in depth strategy in a number of ways.</description>
+      <description>&lt;p&gt;I have already touched on the importance of Terraform state in a previous post, but I wanted to expand on this from a security perspective.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s get this out the way now, Terraform stores secrets in its state file in plain text!  There I said it.&lt;/p&gt;
+&lt;p&gt;So how do I protect against secrets being revealed that could allow an attacker to compromise my systems?  Well, I use a defence in depth strategy in a number of ways.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -103,8 +112,10 @@ So how do I protect against secrets being revealed that could allow an attacker 
       <pubDate>Fri, 20 Jan 2023 11:00:00 +0000</pubDate>
       
       <guid>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/</guid>
-      <description>Terraform uses the construct of a module, which is defined by HashiCorp as &amp;ldquo;a set of Terraform configuration files in a single directory&amp;rdquo;.
-The root module consists of resources defined in the main working directory (which I like to refer to as the &amp;rsquo;execution folder&amp;rsquo;). However, you can also call other modules to include their configuration. These are known as child modules which can be shared and reused by multiple root module configurations.</description>
+      <description>&lt;p&gt;Terraform uses the construct of a module, which is 
+&lt;a href=&#34;https://developer.hashicorp.com/terraform/tutorials/modules/module#:~:text=A%20Terraform%20module%20is%20a%20set%20of%20Terraform%20configuration%20files%20in%20a%20single%20directory&#34;target=&#34;_blank&#34; rel=&#34;nofollow noopener noreferrer&#34;&gt;defined by HashiCorp&lt;/a&gt;
+ as &amp;ldquo;a set of Terraform configuration files in a single directory&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;root module&lt;/code&gt; consists of resources defined in the main working directory (which I like to refer to as the &amp;rsquo;execution folder&amp;rsquo;).  However, you can also call other modules to include their configuration.  These are known as &lt;code&gt;child modules&lt;/code&gt; which can be shared and reused by multiple root module configurations.  Sounds good, doesn&amp;rsquo;t it?&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -122,9 +133,13 @@ The root module consists of resources defined in the main working directory (whi
       <pubDate>Sun, 08 Jan 2023 15:00:00 +0000</pubDate>
       
       <guid>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/</guid>
-      <description>This is something I&amp;rsquo;ve only recently discovered but thought it was worth sharing here.
-I have a few configurations where I need to pass JSON to Terraform to process. The most used resource where I do this is azurerm_virtual_machine_extension. The example HashiCorp documentation still shows the use of Heredoc strings which is probably why I hadn&amp;rsquo;t picked up on it until now.
-I recently discovered a HashiCorp article where they tell you that by using the jsonencode and yamlencode functions &amp;ldquo;Terraform can be responsible for guaranteeing valid JSON or YAML syntax&amp;rdquo;.</description>
+      <description>&lt;p&gt;This is something I&amp;rsquo;ve only recently discovered but thought it was worth sharing here.&lt;/p&gt;
+&lt;p&gt;I have a few configurations where I need to pass JSON to Terraform to process.  The most used resource where I do this is azurerm_virtual_machine_extension.  The example 
+&lt;a href=&#34;https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension&#34;target=&#34;_blank&#34; rel=&#34;nofollow noopener noreferrer&#34;&gt;HashiCorp documentation&lt;/a&gt;
+ still shows the use of Heredoc strings which is probably why I hadn&amp;rsquo;t picked up on it until now.&lt;/p&gt;
+&lt;p&gt;I recently discovered a 
+&lt;a href=&#34;https://developer.hashicorp.com/terraform/language/expressions/strings#generating-json-or-yaml&#34;target=&#34;_blank&#34; rel=&#34;nofollow noopener noreferrer&#34;&gt;HashiCorp article&lt;/a&gt;
+ where they tell you that by using the jsonencode and yamlencode functions &amp;ldquo;Terraform can be responsible for guaranteeing valid JSON or YAML syntax&amp;rdquo;.  This sounded good to me as JSON syntax is not very forgiving, and it is designed to be read and processed by machines (not humans).  If you put a comma or a bracket in the wrong place, you will soon be in a whole world of pain.  The same is true for YAML and indentations.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -142,8 +157,10 @@ I recently discovered a HashiCorp article where they tell you that by using the 
       <pubDate>Sat, 07 Jan 2023 09:00:00 +0000</pubDate>
       
       <guid>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/</guid>
-      <description>When I started using Terraform in 2018 the content online was mainly written from a developer&amp;rsquo;s perspective and was based on deploying resources into AWS. This was a great starting point, but the key messages in the blogs I read were all fairly consistent and seemed to align to the excellent blog series by Yevgeniy Brikman from 2016 which is well worth a read.
-So, I read the series, took all the key messages onboard and started deploying resources into Azure.</description>
+      <description>&lt;p&gt;When I started using Terraform in 2018 the content online was mainly written from a developer&amp;rsquo;s perspective and was based on deploying resources into AWS.  This was a great starting point, but the key messages in the blogs I read were all fairly consistent and seemed to align to the excellent 
+&lt;a href=&#34;https://blog.gruntwork.io/a-comprehensive-guide-to-terraform-b3d32832baca&#34;target=&#34;_blank&#34; rel=&#34;nofollow noopener noreferrer&#34;&gt;blog series by Yevgeniy Brikman&lt;/a&gt;
+ from 2016 which is well worth a read.&lt;/p&gt;
+&lt;p&gt;So, I read the series, took all the key messages onboard and started deploying resources into Azure.  However, as our environment began to scale and more engineers came onboard, it was soon clear I needed to formalise our ways of working to ensure everyone followed a standard approach as we wouldn&amp;rsquo;t be operating the &amp;lsquo;you build it you run it&amp;rsquo; model.  This meant that once cloud services were provisioned and live, they needed to be handed over to operations who would also need to understand the Terraform configuration.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -161,9 +178,9 @@ So, I read the series, took all the key messages onboard and started deploying r
       <pubDate>Sun, 01 Jan 2023 00:00:00 +0000</pubDate>
       
       <guid>https://www.thedevopsjedi.co.uk/about/</guid>
-      <description>I&amp;rsquo;m Darren Johnson and I have been working in IT for over 20 years. I currently work as a Senior Azure Platform Consultant in the UK.
-Most of my career has been spent focusing on designing and delivering core data centre technologies and infrastructure from as far back as the Windows NT 4.0 days.
-Having spent a number of years working as a Cloud Infrastructure Architect, in 2021 I decided to pivot and move into the DevOps space.</description>
+      <description>&lt;p&gt;I&amp;rsquo;m Darren Johnson and I have been working in IT for over 20 years.  I currently work as an Azure Platform Architect in the UK.&lt;/p&gt;
+&lt;p&gt;Most of my career has been spent focusing on designing and delivering core data centre technologies and infrastructure from as far back as the Windows NT 4.0 days.&lt;/p&gt;
+&lt;p&gt;Having spent a number of years working as a Cloud Infrastructure Architect, in 2021 I decided to pivot and move into the DevOps space.  I am not an application developer by trade, but I do have a strong background in automation which has meant I have been able to apply DevOps tools and techniques to deploy and secure cloud services.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -172,9 +189,9 @@ Having spent a number of years working as a Cloud Infrastructure Architect, in 2
       <pubDate>Sun, 01 Jan 2023 00:00:00 +0000</pubDate>
       
       <guid>https://www.thedevopsjedi.co.uk/disclaimer/</guid>
-      <description>The information contained within this website is accurate to the best of my knowledge at the time of writing.
-Due to the rapid nature of technology change, capabilities are constantly added, updated and deprecated, so please always check the latest vendor documentation before making any changes to your own environment.
-Any links provided to external websites are not an endorsement of the product or company, and are there to supplement my own articles.</description>
+      <description>&lt;p&gt;The information contained within this website is accurate to the best of my knowledge at the time of writing.&lt;/p&gt;
+&lt;p&gt;Due to the rapid nature of technology change, capabilities are constantly added, updated and deprecated, so please always check the latest vendor documentation before making any changes to your own environment.&lt;/p&gt;
+&lt;p&gt;Any links provided to external websites are not an endorsement of the product or company, and are there to supplement my own articles.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -183,9 +200,13 @@ Any links provided to external websites are not an endorsement of the product or
       <pubDate>Sun, 01 Jan 2023 00:00:00 +0000</pubDate>
       
       <guid>https://www.thedevopsjedi.co.uk/privacy/</guid>
-      <description>I take data security and privacy very seriously, and I will not capture any Personally Identifiable Information (PII). I use the fantastic (and free) Google Analytics service to gain insights into the visitors on my site so I can tailor the content to what is proving popular.
-What Data Does Google Analytics Collect? Google explains how they manage EU data and privacy here .
-Key Points Google Analytics 4 does not log or store individual IP addresses.</description>
+      <description>&lt;p&gt;I take data security and privacy very seriously, and I will not capture any Personally Identifiable Information (PII).  I use the fantastic (and free) Google Analytics service to gain insights into the visitors on my site so I can tailor the content to what is proving popular.&lt;/p&gt;
+&lt;h3 id=&#34;what-data-does-google-analytics-collect&#34;&gt;What Data Does Google Analytics Collect?&lt;/h3&gt;
+&lt;p&gt;Google explains how they manage EU data and privacy 
+&lt;a href=&#34;https://support.google.com/analytics/answer/12017362&#34;target=&#34;_blank&#34; rel=&#34;nofollow noopener noreferrer&#34;&gt;here&lt;/a&gt;
+.&lt;/p&gt;
+&lt;h3 id=&#34;key-points&#34;&gt;Key Points&lt;/h3&gt;
+&lt;p&gt;Google Analytics 4 does not log or store individual IP addresses.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -194,8 +215,8 @@ Key Points Google Analytics 4 does not log or store individual IP addresses.</de
       <pubDate>Sun, 01 Jan 2023 00:00:00 +0000</pubDate>
       
       <guid>https://www.thedevopsjedi.co.uk/welcome/</guid>
-      <description>One of my goals for 2023 was to start a blog so I could keep all my notes in one place, and that would then allow me to share the content with the cloud community and hopefully benefit others who are embarking on the same journey.
-I plan to capture my thoughts on technologies I use in my day job, and those I evaluate and use in my own time.</description>
+      <description>&lt;p&gt;One of my goals for 2023 was to start a blog so I could keep all my notes in one place, and that would then allow me to share the content with the cloud community and hopefully benefit others who are embarking on the same journey.&lt;/p&gt;
+&lt;p&gt;I plan to capture my thoughts on technologies I use in my day job, and those I evaluate and use in my own time.&lt;/p&gt;</description>
     </item>
     
   </channel>

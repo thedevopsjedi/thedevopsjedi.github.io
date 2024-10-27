@@ -6,8 +6,15 @@
     <description>Recent content in Azure on The DevOps Jedi</description>
     <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 19 Aug 2024 18:00:00 +0100</lastBuildDate>
+    <lastBuildDate>Sun, 27 Oct 2024 06:00:12 +0000</lastBuildDate>
     <atom:link href="https://www.thedevopsjedi.co.uk/tags/azure/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Always Check The Default Parameters When Assigning An Azure Policy</title>
+      <link>https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/</link>
+      <pubDate>Sun, 27 Oct 2024 06:00:12 +0000</pubDate>
+      <guid>https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/</guid>
+      <description>In this post I explain why it is important to always check the default parameters when assigning an Azure Policy to prevent unexpected issues from occuring.</description>
+    </item>
     <item>
       <title>Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</title>
       <link>https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/</link>
@@ -48,7 +55,7 @@
       <link>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/</link>
       <pubDate>Sat, 21 Jan 2023 17:00:00 +0000</pubDate>
       <guid>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/</guid>
-      <description>I have already touched on the importance of Terraform state in a previous post, but I wanted to expand on this from a security perspective.&#xA;Let&amp;rsquo;s get this out the way now, Terraform stores secrets in its state file in plain text! There I said it.&#xA;So how do I protect against secrets being revealed that could allow an attacker to compromise my systems? Well, I use a defence in depth strategy in a number of ways.</description>
+      <description>&lt;p&gt;I have already touched on the importance of Terraform state in a previous post, but I wanted to expand on this from a security perspective.&lt;/p&gt;&#xA;&lt;p&gt;Let&amp;rsquo;s get this out the way now, Terraform stores secrets in its state file in plain text!  There I said it.&lt;/p&gt;&#xA;&lt;p&gt;So how do I protect against secrets being revealed that could allow an attacker to compromise my systems?  Well, I use a defence in depth strategy in a number of ways.&lt;/p&gt;</description>
     </item>
     <item>
       <title>How I Minimise Terraform Admin Effort &amp; Manage The Constant Change</title>
@@ -62,7 +69,7 @@
       <link>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/</link>
       <pubDate>Fri, 20 Jan 2023 11:00:00 +0000</pubDate>
       <guid>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/</guid>
-      <description>Terraform uses the construct of a module, which is defined by HashiCorp as &amp;ldquo;a set of Terraform configuration files in a single directory&amp;rdquo;.&#xA;The root module consists of resources defined in the main working directory (which I like to refer to as the &amp;rsquo;execution folder&amp;rsquo;). However, you can also call other modules to include their configuration. These are known as child modules which can be shared and reused by multiple root module configurations.</description>
+      <description>&lt;p&gt;Terraform uses the construct of a module, which is &#xA;&lt;a href=&#34;https://developer.hashicorp.com/terraform/tutorials/modules/module#:~:text=A%20Terraform%20module%20is%20a%20set%20of%20Terraform%20configuration%20files%20in%20a%20single%20directory&#34;target=&#34;_blank&#34; rel=&#34;nofollow noopener noreferrer&#34;&gt;defined by HashiCorp&lt;/a&gt;&#xA; as &amp;ldquo;a set of Terraform configuration files in a single directory&amp;rdquo;.&lt;/p&gt;&#xA;&lt;p&gt;The &lt;code&gt;root module&lt;/code&gt; consists of resources defined in the main working directory (which I like to refer to as the &amp;rsquo;execution folder&amp;rsquo;).  However, you can also call other modules to include their configuration.  These are known as &lt;code&gt;child modules&lt;/code&gt; which can be shared and reused by multiple root module configurations.  Sounds good, doesn&amp;rsquo;t it?&lt;/p&gt;</description>
     </item>
     <item>
       <title>How I Keep Terraform Simple</title>
@@ -76,7 +83,7 @@
       <link>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/</link>
       <pubDate>Sun, 08 Jan 2023 15:00:00 +0000</pubDate>
       <guid>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/generating-json-or-yaml/</guid>
-      <description>This is something I&amp;rsquo;ve only recently discovered but thought it was worth sharing here.&#xA;I have a few configurations where I need to pass JSON to Terraform to process. The most used resource where I do this is azurerm_virtual_machine_extension. The example HashiCorp documentation still shows the use of Heredoc strings which is probably why I hadn&amp;rsquo;t picked up on it until now.&#xA;I recently discovered a HashiCorp article where they tell you that by using the jsonencode and yamlencode functions &amp;ldquo;Terraform can be responsible for guaranteeing valid JSON or YAML syntax&amp;rdquo;.</description>
+      <description>&lt;p&gt;This is something I&amp;rsquo;ve only recently discovered but thought it was worth sharing here.&lt;/p&gt;&#xA;&lt;p&gt;I have a few configurations where I need to pass JSON to Terraform to process.  The most used resource where I do this is azurerm_virtual_machine_extension.  The example &#xA;&lt;a href=&#34;https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension&#34;target=&#34;_blank&#34; rel=&#34;nofollow noopener noreferrer&#34;&gt;HashiCorp documentation&lt;/a&gt;&#xA; still shows the use of Heredoc strings which is probably why I hadn&amp;rsquo;t picked up on it until now.&lt;/p&gt;&#xA;&lt;p&gt;I recently discovered a &#xA;&lt;a href=&#34;https://developer.hashicorp.com/terraform/language/expressions/strings#generating-json-or-yaml&#34;target=&#34;_blank&#34; rel=&#34;nofollow noopener noreferrer&#34;&gt;HashiCorp article&lt;/a&gt;&#xA; where they tell you that by using the jsonencode and yamlencode functions &amp;ldquo;Terraform can be responsible for guaranteeing valid JSON or YAML syntax&amp;rdquo;.  This sounded good to me as JSON syntax is not very forgiving, and it is designed to be read and processed by machines (not humans).  If you put a comma or a bracket in the wrong place, you will soon be in a whole world of pain.  The same is true for YAML and indentations.&lt;/p&gt;</description>
     </item>
     <item>
       <title>What I Include In Every Terraform Configuration</title>
@@ -90,14 +97,14 @@
       <link>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/</link>
       <pubDate>Sat, 07 Jan 2023 09:00:00 +0000</pubDate>
       <guid>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/</guid>
-      <description>When I started using Terraform in 2018 the content online was mainly written from a developer&amp;rsquo;s perspective and was based on deploying resources into AWS. This was a great starting point, but the key messages in the blogs I read were all fairly consistent and seemed to align to the excellent blog series by Yevgeniy Brikman from 2016 which is well worth a read.&#xA;So, I read the series, took all the key messages onboard and started deploying resources into Azure.</description>
+      <description>&lt;p&gt;When I started using Terraform in 2018 the content online was mainly written from a developer&amp;rsquo;s perspective and was based on deploying resources into AWS.  This was a great starting point, but the key messages in the blogs I read were all fairly consistent and seemed to align to the excellent &#xA;&lt;a href=&#34;https://blog.gruntwork.io/a-comprehensive-guide-to-terraform-b3d32832baca&#34;target=&#34;_blank&#34; rel=&#34;nofollow noopener noreferrer&#34;&gt;blog series by Yevgeniy Brikman&lt;/a&gt;&#xA; from 2016 which is well worth a read.&lt;/p&gt;&#xA;&lt;p&gt;So, I read the series, took all the key messages onboard and started deploying resources into Azure.  However, as our environment began to scale and more engineers came onboard, it was soon clear I needed to formalise our ways of working to ensure everyone followed a standard approach as we wouldn&amp;rsquo;t be operating the &amp;lsquo;you build it you run it&amp;rsquo; model.  This meant that once cloud services were provisioned and live, they needed to be handed over to operations who would also need to understand the Terraform configuration.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Terraform Lessons Learnt</title>
       <link>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/</link>
       <pubDate>Sat, 07 Jan 2023 08:00:00 +0000</pubDate>
       <guid>https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/</guid>
-      <description>In my previous post I explained why I chose Terraform as my IaC tool. In this series of posts I want to look at how I use Terraform and how I structure the code in a way to maximise the benefits of a declarative configuration.&#xA;Table of Contents How I Structure Terraform Folders &amp;amp; Apply Naming Standards What I Include In Every Terraform Configuration How I Keep Terraform Simple Use Of Terraform Child Modules How I Minimise Terraform Admin Effort &amp;amp; Manage The Constant Change How I Protect Secrets In Terraform Configurations </description>
+      <description>&lt;p&gt;In my &#xA;&lt;a href=&#34;https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool&#34;&gt;previous post&lt;/a&gt;&#xA; I explained why I chose Terraform as my IaC tool.  In this series of posts I want to look at how I use Terraform and how I structure the code in a way to maximise the benefits of a declarative configuration.&lt;/p&gt;&#xA;&lt;h2 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h2&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;&#xA;&lt;a href=&#34;https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/structure-and-naming-standards/&#34;&gt;How I Structure Terraform Folders &amp;amp; Apply Naming Standards&lt;/a&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;a href=&#34;https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/what-i-include-in-every-terraform-configuration/&#34;&gt;What I Include In Every Terraform Configuration&lt;/a&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;a href=&#34;https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/&#34;&gt;How I Keep Terraform Simple&lt;/a&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;a href=&#34;https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/&#34;&gt;Use Of Terraform Child Modules&lt;/a&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;a href=&#34;https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/&#34;&gt;How I Minimise Terraform Admin Effort &amp;amp; Manage The Constant Change&lt;/a&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;a href=&#34;https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/&#34;&gt;How I Protect Secrets In Terraform Configurations&lt;/a&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ol&gt;</description>
     </item>
     <item>
       <title>How I Chose An Infrastructure As Code Tool</title>

@@ -1,0 +1,169 @@
+<!DOCTYPE html><html itemscope itemtype="https://schema.org/WebPage" class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="siteBaseUrl" content="https://www.thedevopsjedi.co.uk/">
+    <meta name="author" content="thedevopsjedi">
+    <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
+    <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
+    <meta name="generator" content="Hugo 0.135.0"><title>Always Check The Default Parameters When Assigning An Azure Policy&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta itemprop="name" content="Always Check The Default Parameters When Assigning An Azure Policy">
+    <meta itemprop="description" content="In this post I explain why it is important to always check the default parameters when assigning an Azure Policy to prevent unexpected issues from occuring.">
+    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">
+  <meta property="og:site_name" content="The DevOps Jedi">
+  <meta property="og:title" content="Always Check The Default Parameters When Assigning An Azure Policy">
+  <meta property="og:description" content="In this post I explain why it is important to always check the default parameters when assigning an Azure Policy to prevent unexpected issues from occuring.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="governance">
+    <meta property="article:published_time" content="2024-10-27T06:00:12+00:00">
+    <meta property="article:modified_time" content="2024-10-27T06:00:12+00:00">
+    <meta property="article:tag" content="Azure">
+    <meta property="article:tag" content="Governance">
+    <meta property="article:tag" content="Policy">
+    <meta property="article:tag" content="Tips">
+
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+<link rel="manifest" href="/favicon/site.webmanifest">
+<link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<script src="/modernizr-simple.js"></script><link rel="canonical" href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/theme.css"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/cookieconsent.min.css">
+</head>
+
+<body class="bilberry-hugo-theme">
+<nav><div class="container">
+        <ul class="topnav"><li><a href="/about" target="">About</a></li></ul><div id="search-box" class="search">
+                <i class="fas fa-search"></i>
+                <input id="search" type="text" placeholder="Search ...">
+            </div></div>
+</nav>
+<header><div class="container">
+        <div class="logo">
+            <a href="/" class="logo"><img src="/images/LinkedIn.jpeg" alt=""><span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title">
+                <a href="/">The DevOps Jedi</a>
+            </h3><span class="subtitle">Taking the cloud by storm one line of code at a time....</span></div><div class="toggler"><i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+    </div>
+</header>
+<div class="main container"><div class="article-wrapper u-cf single"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article"><div class="content">
+    <h1 class="article-title">
+        <a href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">Always Check The Default Parameters When Assigning An Azure Policy</a>
+    </h1>
+
+    <div class="meta"><span class="date moment">2024-10-27</span><span class="readingTime">3 min read</span><span class="categories"><a href="https://www.thedevopsjedi.co.uk/categories/governance/">Governance</a></span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><!-- Summary of Article (70 Words)  
+
+# Table Of Contents  
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#the-policy">The Policy</a></li>
+    <li><a href="#the-assignment">The Assignment</a></li>
+    <li><a href="#the-available-nsg-diagnostic-settings">The Available NSG Diagnostic Settings</a></li>
+    <li><a href="#the-solution">The Solution</a></li>
+    <li><a href="#reporting-the-problem">Reporting The Problem</a></li>
+  </ul>
+</nav>  
+ -->
+<p>This week I was helping a colleague with troubleshooting an Azure policy deployment that appeared successful but wasn&rsquo;t taking effect, and I thought I&rsquo;d share a tip with you that I passed on during the process.</p>
+<h1 id="the-problem">The Problem</h1>
+<p>A colleague approached me as they were having issues with a policy not deploying diagnostic settings to a Network Security Group (NSG) and asked if I could take a look.  They were using the portal to assign a policy for testing, and explained exactly the process they gone through which resulted in the deployment taking place but no settings getting applied.</p>
+<h2 id="the-policy">The Policy</h2>
+<p>The policy in question was a <code>BuiltIn</code> policy provided by 
+<a href="https://www.azadvertizer.net/azpolicyadvertizer/601e350d-405c-41d0-a886-72c283f8fab2.html"target="_blank" rel="nofollow noopener noreferrer">Microsoft</a>
+ named <code>Enable logging by category group for Network security groups (microsoft.network/networksecuritygroups) to Event Hub</code>.  This was the correct policy to choose, as the requirement was to send all available logs to an Event Hub for processing.</p>
+<h2 id="the-assignment">The Assignment</h2>
+<p>When assigning the policy you are presented with the <code>Basics</code> tab where you specify the scope of the assignment and any exclusions etc, then you proceed to the <code>Parameters</code> tab as per below.</p>
+<p><img alt="Parameters Requiring Input" src="/images/always-check-the-default-parameters/policy-defaults-01.png" title="Parameters Requiring Input"></p>
+<p>You can see that you are only prompted for 2 parameters, <code>Resource Location</code> and <code>Event Hub Authorization Rule Id</code>.  I don&rsquo;t have an Event Hub in my subscription, so I have this this blank just to show you the process.  Both of these had been correctly specified and the policy was assigned but no settings were applied.</p>
+<h2 id="the-available-nsg-diagnostic-settings">The Available NSG Diagnostic Settings</h2>
+<p>We headed over to the NSG resource to see exactly what settings were available:</p>
+<p><img alt="Available NSG Diagnostic Settings" src="/images/always-check-the-default-parameters/policy-defaults-02.png" title="Available NSG Diagnostic Settings"></p>
+<p>You can see there are not many options to select from, and there is only a single <code>Category Group</code> named <code>allLogs</code>.</p>
+<h2 id="the-solution">The Solution</h2>
+<p>We went back to the policy assignment and this time unchecked the <code>Only show parameters that need input or review</code> box.</p>
+<p><img alt="Additional Parameters Revealed" src="/images/always-check-the-default-parameters/policy-defaults-03a.png" title="Additional Parameters Revealed"></p>
+<p>Now you can see there are now an additional 4 parameters available.  These were hidden away as their default value had been set in the policy, and was not required in order to complete the assignment.  The root of the problem here was that the <code>Category Group</code> was set as <code>audit</code> by default and there is no <code>Category Group</code> named <code>audit</code> even available for the NSG diagnostics!  We amended this to <code>allLogs</code> and reassigned the policy and waited for the deployment to complete.  This time the diagnostic settings were applied as desired.</p>
+<h2 id="reporting-the-problem">Reporting The Problem</h2>
+<p>I knew as this was a <code>BuiltIn</code> policy other Azure customers could experience this same problem and the 
+<a href="https://github.com/Azure/azure-policy/tree/master/built-in-policies#contributing"target="_blank" rel="nofollow noopener noreferrer">documentation</a>
+ said to open an issue or a support ticket.  I didn&rsquo;t see the value in opening a support ticket, so I have logged an issue for it on GitHub 
+<a href="https://github.com/Azure/azure-policy/issues/1397"target="_blank" rel="nofollow noopener noreferrer">here</a>
+.  I&rsquo;ll be interested to follow this and see what happens.</p>
+<blockquote>
+<p><strong>Key Takeaway</strong>: Always check the default options are correct and align to what you are trying to achive when assigning a new policy for the first time as Azure is constantly evolving and settings are being deprecated all the time.</p>
+</blockquote>
+</div>
+<div class="footer"><div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/governance/">Governance</a><a href="https://www.thedevopsjedi.co.uk/tags/policy/">Policy</a><a href="https://www.thedevopsjedi.co.uk/tags/tips/">Tips</a></div>
+        </div></div>
+</article>
+</div><div id="comments-container"></div></div><footer>
+    <div class="container"><div class="recent-posts">
+            <strong>Latest Posts</strong>
+            <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">Always Check The Default Parameters When Assigning An Azure Policy</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/">Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">Modifying An Existing Azure Policy</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
+                    </li></ul>
+        </div><div class="right"><div class="external-profiles">
+                <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
+            </div><div class="archive"><a href="https://www.thedevopsjedi.co.uk/archive/"><strong>Archive</strong></a></div></div>
+    </div>
+</footer><div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
+                &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
+            </a></div>
+        <div class="disclaimer">
+            <a href="/disclaimer">Disclaimer</a>
+        </div>
+    </div>
+</div>
+
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-RKD17G86VJ');
+        }
+      </script><script src="https://www.thedevopsjedi.co.uk/theme.js"></script><script src="https://www.thedevopsjedi.co.uk/cookieconsent.min.js" type="application/javascript"></script><script src="https://www.thedevopsjedi.co.uk/init-cookieconsent.js" type="application/javascript"></script><div id="activate-algolia-search" class="hidden">
+  <input type="hidden" id="algolia-search-appId" value="XRNYV3MMH2">
+  <input type="hidden" id="algolia-search-apiKey" value="5ba5776bc76690c95b70fcfe58371072">
+  <input type="hidden" id="algolia-search-indexName" value="www.thedevopsjedi.co.uk">
+  <input type="hidden" id="algolia-search-noSearchResults" value="Nothing Found..."><input type="hidden" id="algolia-search-currentLanguageOnly"></div>
+
+</body>
+
+</html>
