@@ -7,7 +7,7 @@
     <meta name="author" content="thedevopsjedi">
     <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
     <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
-    <meta name="generator" content="Hugo 0.135.0"><title>Always Check The Default Parameters When Assigning An Azure Policy&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta name="generator" content="Hugo 0.147.3"><title>Always Check The Default Parameters When Assigning An Azure Policy&nbsp;&vert;&nbsp;The DevOps Jedi</title>
     <meta itemprop="name" content="Always Check The Default Parameters When Assigning An Azure Policy">
     <meta itemprop="description" content="In this post I explain why it is important to always check the default parameters when assigning an Azure Policy to prevent unexpected issues from occuring.">
     <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">
@@ -85,15 +85,15 @@
  named <code>Enable logging by category group for Network security groups (microsoft.network/networksecuritygroups) to Event Hub</code>.  This was the correct policy to choose, as the requirement was to send all available logs to an Event Hub for processing.</p>
 <h2 id="the-assignment">The Assignment</h2>
 <p>When assigning the policy you are presented with the <code>Basics</code> tab where you specify the scope of the assignment and any exclusions etc, then you proceed to the <code>Parameters</code> tab as per below.</p>
-<p><img alt="Parameters Requiring Input" src="/images/always-check-the-default-parameters/policy-defaults-01.png" title="Parameters Requiring Input"></p>
+<p><img src="/images/always-check-the-default-parameters/policy-defaults-01.png" alt="Parameters Requiring Input" title="Parameters Requiring Input"></p>
 <p>You can see that you are only prompted for 2 parameters, <code>Resource Location</code> and <code>Event Hub Authorization Rule Id</code>.  I don&rsquo;t have an Event Hub in my subscription, so I have this this blank just to show you the process.  Both of these had been correctly specified and the policy was assigned but no settings were applied.</p>
 <h2 id="the-available-nsg-diagnostic-settings">The Available NSG Diagnostic Settings</h2>
 <p>We headed over to the NSG resource to see exactly what settings were available:</p>
-<p><img alt="Available NSG Diagnostic Settings" src="/images/always-check-the-default-parameters/policy-defaults-02.png" title="Available NSG Diagnostic Settings"></p>
+<p><img src="/images/always-check-the-default-parameters/policy-defaults-02.png" alt="Available NSG Diagnostic Settings" title="Available NSG Diagnostic Settings"></p>
 <p>You can see there are not many options to select from, and there is only a single <code>Category Group</code> named <code>allLogs</code>.</p>
 <h2 id="the-solution">The Solution</h2>
 <p>We went back to the policy assignment and this time unchecked the <code>Only show parameters that need input or review</code> box.</p>
-<p><img alt="Additional Parameters Revealed" src="/images/always-check-the-default-parameters/policy-defaults-03a.png" title="Additional Parameters Revealed"></p>
+<p><img src="/images/always-check-the-default-parameters/policy-defaults-03a.png" alt="Additional Parameters Revealed" title="Additional Parameters Revealed"></p>
 <p>Now you can see there are now an additional 4 parameters available.  These were hidden away as their default value had been set in the policy, and was not required in order to complete the assignment.  The root of the problem here was that the <code>Category Group</code> was set as <code>audit</code> by default and there is no <code>Category Group</code> named <code>audit</code> even available for the NSG diagnostics!  We amended this to <code>allLogs</code> and reassigned the policy and waited for the deployment to complete.  This time the diagnostic settings were applied as desired.</p>
 <h2 id="reporting-the-problem">Reporting The Problem</h2>
 <p>I knew as this was a <code>BuiltIn</code> policy other Azure customers could experience this same problem and the 
@@ -102,8 +102,7 @@
 <a href="https://github.com/Azure/azure-policy/issues/1397"target="_blank" rel="nofollow noopener noreferrer">here</a>
 .  I&rsquo;ll be interested to follow this and see what happens.</p>
 <blockquote>
-<p><strong>Key Takeaway</strong>: Always check the default options are correct and align to what you are trying to achive when assigning a new policy for the first time as Azure is constantly evolving and settings are being deprecated all the time.</p>
-</blockquote>
+<p><strong>Key Takeaway</strong>: Always check the default options are correct and align to what you are trying to achive when assigning a new policy for the first time as Azure is constantly evolving and settings are being deprecated all the time.</p></blockquote>
 </div>
 <div class="footer"><div class="tags">
             <i class="fa fa-tags"></i>
@@ -114,6 +113,8 @@
     <div class="container"><div class="recent-posts">
             <strong>Latest Posts</strong>
             <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">From Years to Days: Preparing For The Future of TLS Certificates</a>
+                    </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">Always Check The Default Parameters When Assigning An Azure Policy</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
@@ -125,8 +126,6 @@
                         <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
-                    </li><li>
-                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
                     </li></ul>
         </div><div class="right"><div class="external-profiles">
                 <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
@@ -136,7 +135,7 @@
     <div class="container">
         <div class="copyright">
             <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
-                &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
+                &copy;&nbsp;2025&nbsp;The DevOps Jedi&nbsp;
             </a></div>
         <div class="disclaimer">
             <a href="/disclaimer">Disclaimer</a>

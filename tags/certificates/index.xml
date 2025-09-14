@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Certificates on The DevOps Jedi</title>
+    <link>https://www.thedevopsjedi.co.uk/tags/certificates/</link>
+    <description>Recent content in Certificates on The DevOps Jedi</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 14 Sep 2025 14:00:00 +0100</lastBuildDate>
+    <atom:link href="https://www.thedevopsjedi.co.uk/tags/certificates/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>From Years to Days: Preparing For The Future of TLS Certificates</title>
+      <link>https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/</link>
+      <pubDate>Sun, 14 Sep 2025 14:00:00 +0100</pubDate>
+      <guid>https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/</guid>
+      <description>&lt;p&gt;Public TLS certificates have been reducing in lifetime over the past decade. What was once a three, or even five year certificate is now valid for little over a year. The next major step will be far more dramatic: certificate lifetimes are set to reduce to &lt;strong&gt;just 47 days&lt;/strong&gt; by 2029, with the first reductions beginning in 2026.&lt;/p&gt;&#xA;&lt;p&gt;For cloud, product, and security teams, this is not just an incremental policy change — it will fundamentally reshape how certificates are managed, deployed, and renewed across internal and external services. Manual processes will no longer be sustainable, and automation will become a compliance necessity.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

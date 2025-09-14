@@ -7,7 +7,7 @@
     <meta name="author" content="thedevopsjedi">
     <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
     <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
-    <meta name="generator" content="Hugo 0.135.0"><title>How I Protect Secrets In Terraform Configurations&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta name="generator" content="Hugo 0.147.3"><title>How I Protect Secrets In Terraform Configurations&nbsp;&vert;&nbsp;The DevOps Jedi</title>
     <meta itemprop="name" content="How I Protect Secrets In Terraform Configurations">
     <meta itemprop="description" content="How do I protect against secrets being revealed that could allow an attacker to compromise my systems? Well, I use a defence (defense) in depth strategy in a number of ways.">
     <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">
@@ -81,8 +81,7 @@
 terraform show -json ./myplanfile &gt;&gt;planfiledecoded.json
 </code></pre><p>If you then inspect the contents of plan file, you will see everything listed in plain text locally.  What&rsquo;s worse is that some people check the plan file into their source control to ensure their CI/CD pipeline deploys exactly what is expected without realising how easily this can be decoded.</p>
 <blockquote>
-<p><strong>Key Takeaway</strong>: Never add secrets to your code in plain text, always reference them from a key vault or similar solution.  Be aware of what data is checked into source control as once secrets are checked in they will need to be changed immediately to prevent being hacked.</p>
-</blockquote>
+<p><strong>Key Takeaway</strong>: Never add secrets to your code in plain text, always reference them from a key vault or similar solution.  Be aware of what data is checked into source control as once secrets are checked in they will need to be changed immediately to prevent being hacked.</p></blockquote>
 </div>
 <div class="footer"><div class="tags">
             <i class="fa fa-tags"></i>
@@ -93,6 +92,8 @@ terraform show -json ./myplanfile &gt;&gt;planfiledecoded.json
     <div class="container"><div class="recent-posts">
             <strong>Latest Posts</strong>
             <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">From Years to Days: Preparing For The Future of TLS Certificates</a>
+                    </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">Always Check The Default Parameters When Assigning An Azure Policy</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
@@ -104,8 +105,6 @@ terraform show -json ./myplanfile &gt;&gt;planfiledecoded.json
                         <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
-                    </li><li>
-                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
                     </li></ul>
         </div><div class="right"><div class="external-profiles">
                 <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
@@ -115,7 +114,7 @@ terraform show -json ./myplanfile &gt;&gt;planfiledecoded.json
     <div class="container">
         <div class="copyright">
             <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
-                &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
+                &copy;&nbsp;2025&nbsp;The DevOps Jedi&nbsp;
             </a></div>
         <div class="disclaimer">
             <a href="/disclaimer">Disclaimer</a>

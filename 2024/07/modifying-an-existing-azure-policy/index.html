@@ -7,7 +7,7 @@
     <meta name="author" content="thedevopsjedi">
     <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
     <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
-    <meta name="generator" content="Hugo 0.135.0"><title>Modifying An Existing Azure Policy&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta name="generator" content="Hugo 0.147.3"><title>Modifying An Existing Azure Policy&nbsp;&vert;&nbsp;The DevOps Jedi</title>
     <meta itemprop="name" content="Modifying An Existing Azure Policy">
     <meta itemprop="description" content="In this post I explain how to duplicate and modify a BuiltIn Azure Policy to enhance its functionality and add the capability to exclude resources via tags.">
     <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">
@@ -85,15 +85,13 @@
 <h1 id="modifying-an-existing-policy">Modifying An Existing Policy</h1>
 <p>I&rsquo;m going to modify a fairly simple policy named <code>Storage accounts should restrict network access</code> to <code>Deny</code> the creation of storage accounts that do not have the firewall enabled.  I want to add the capability to exclude resources from this policy via tags if unknown internet endpoints need to access the storage account, for example if I was hosting a static website.</p>
 <blockquote>
-<p>NOTE: The <strong>Deny</strong> effect applies when attempting to create a new uncompliant resource, therefore preventing it&rsquo;s creation, but also when attempting to modify an uncompliant resource, therefore preventing its modification.  If you have a resource that cannot be made compliant without redeploying the resource don&rsquo;t get caught out by this.  Always remember to test ANY policy throughly at a narrowed scope before deploying wider.</p>
-</blockquote>
+<p>NOTE: The <strong>Deny</strong> effect applies when attempting to create a new uncompliant resource, therefore preventing it&rsquo;s creation, but also when attempting to modify an uncompliant resource, therefore preventing its modification.  If you have a resource that cannot be made compliant without redeploying the resource don&rsquo;t get caught out by this.  Always remember to test ANY policy throughly at a narrowed scope before deploying wider.</p></blockquote>
 <h2 id="source-policy-definition-id">Source Policy Definition ID</h2>
 <p>The source policy has the Definition ID of <code>/providers/Microsoft.Authorization/policyDefinitions/34c877ad-507e-4c82-993e-3452a6e0ad3c</code>.  It is important to note the structure of Definition ID, as this tells us where in Azure the policy is defined.  The fact that neither <code>managementGroups</code> or <code>subscriptions</code> are present in it&rsquo;s path tells me this is a BuiltIn policy created by Microsoft.  This is important as this means the policy can be assigned anywhere within the tenant.</p>
 <blockquote>
 <p><strong>Key Takeaway</strong>: Ensure you are only defining your policy once within your tenant. If you have followed 
 <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-management-groups#:~:text=Configure%20a%20default%2C%20dedicated%20management%20group%20for%20new%20subscriptions"target="_blank" rel="nofollow noopener noreferrer">Microsoft&rsquo;s Management Group Recommendations</a>
- and configured a dedicated management group under the <code>Tenant Root Group</code> for all new subscriptions, then configure all policies there so they can be used anywhere within the tenant.  If not, then configure them at the <code>Tenant Root Group</code> level as policies can only be assigned underneath where they have been defined.</p>
-</blockquote>
+ and configured a dedicated management group under the <code>Tenant Root Group</code> for all new subscriptions, then configure all policies there so they can be used anywhere within the tenant.  If not, then configure them at the <code>Tenant Root Group</code> level as policies can only be assigned underneath where they have been defined.</p></blockquote>
 <h2 id="duplicating-the-policy-to-be-modified">Duplicating The Policy To Be Modified</h2>
 <p>You cannot modify BuiltIn policies, so you need to duplicate them first.  In the portal I selected the policy and clicked <code>Duplicate Definition</code>.  Lets have a look at the JSON it generated:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
@@ -142,8 +140,7 @@
 <a href="https://learn.microsoft.com/en-us/azure/governance/policy/concepts/definition-structure-policy-rule"target="_blank" rel="nofollow noopener noreferrer">Microsoft Docs</a>
  covers this well.  For this policy, the resource <em>type</em> needs to be equal to <code>Microsoft.Storage/storageAccounts</code> and the <code>networkAcls.defaultAction</code> must not equal <em>Deny</em>.  This means the Firewall on the storage account is Disabled and access is permitted from all networks, including the internet.</p>
 <blockquote>
-<p>NOTE: With this configuration any changes that are made at the <code>Microsoft.Storage/storageAccounts</code> level will be Denied if the Firewall hasn&rsquo;t been enabled!</p>
-</blockquote>
+<p>NOTE: With this configuration any changes that are made at the <code>Microsoft.Storage/storageAccounts</code> level will be Denied if the Firewall hasn&rsquo;t been enabled!</p></blockquote>
 <p>The <strong>Parameters</strong> control the <em>effect</em> of the <em>policyRule</em> which is a string that is supplied to the <em>policyRule</em> section of the definition.  However there is extra data here too.  The <em>metadata</em> controls the <em>displayName</em> and <em>description</em> of the parameter as seen in the portal.  The <em>allowedValues</em> is a list of values that the <em>parameter</em> will accept when the policy is assigned.  These values are case sensitive so be sure to be consistent when defining them in your policy.  The <em>defaultValue</em> is optional and sets the parameter if no value is specified when the policy is assigned.  When using <em>allowedValues</em> this must exactly match.</p>
 <p>The <strong>Mode</strong> is actually part of the properties section of the definition.  The properties section isn&rsquo;t required within the JSON definition, but I like to keep my configurations declarative and include as much information as possible instead of supplying it via the command line.  By populating this I can supply the policy <code>Display Name</code> and <code>Description</code> as well as including <code>metadata</code> to provide additional information about the policy.</p>
 <h2 id="modifying-the-properties">Modifying The Properties</h2>
@@ -230,8 +227,7 @@
 <p>However you may notice a couple of extra changes above.  Whilst testing both creating and assigning policies I discovered a couple of tweaks I could make to the definition.</p>
 <p>I had been looking at the <code>Temp disks and cache for agent node pools in Azure Kubernetes Service clusters should be encrypted at host</code> policy, and spotted they had updated the description to clearly articulate how the effect worked, and also they had added a <code>portalReview</code> attribute.  This meant that when the policy was assigned via the portal the person assigning it would always see the <code>Effect</code> displayed on screen.  The default behaviour is to <code>Only show parameters that need input or review</code> which I don&rsquo;t like, so I added this in.</p>
 <blockquote>
-<p>NOTE: I always set the <code>defaultValue</code> of the <code>effect</code> to <code>Audit</code> so that when the policy is assigned its takes no effect unless someone specifies a different value.  This means you have to opt in to making changes.</p>
-</blockquote>
+<p>NOTE: I always set the <code>defaultValue</code> of the <code>effect</code> to <code>Audit</code> so that when the policy is assigned its takes no effect unless someone specifies a different value.  This means you have to opt in to making changes.</p></blockquote>
 <h2 id="putting-it-all-together">Putting It All Together</h2>
 <p>I was now ready to deploy the policy so I combined the sections into a single JSON file with my actual values:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
@@ -307,8 +303,7 @@
 <p>I decided to extract the Policy Definition Name from the file name for consistency.  The BuiltIn policies normally use a GUID for this as the name forms part of the definition ID, which needs to be unique within your organisation.  The file name should not be longer than 64 characters (excluding the .json extension) and shouldn&rsquo;t contain spaces.</p>
 <p>I needed to specify the Management Group ID where the policy will be defined.  For this example I have left this as <code>Tenant Root Group</code> which actually has a GUID as it&rsquo;s ID.</p>
 <blockquote>
-<p>NOTE: The PowerShell Cmdlet Parameter is named <code>ManagementGroupName</code> but it actually requires the ID.</p>
-</blockquote>
+<p>NOTE: The PowerShell Cmdlet Parameter is named <code>ManagementGroupName</code> but it actually requires the ID.</p></blockquote>
 <p>The commands I used to define this as are follows:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>$policyDefinitionFile = <span style="color:#e6db74">&#34;./Deny-StorageAccount-WithoutFirewall-ExcludeByTag.json&#34;</span>
 </span></span><span style="display:flex;"><span>$policyDefinitionName = (Split-Path $policyDefinitionFile -LeafBase)
@@ -324,6 +319,8 @@
     <div class="container"><div class="recent-posts">
             <strong>Latest Posts</strong>
             <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">From Years to Days: Preparing For The Future of TLS Certificates</a>
+                    </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">Always Check The Default Parameters When Assigning An Azure Policy</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
@@ -335,8 +332,6 @@
                         <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
-                    </li><li>
-                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
                     </li></ul>
         </div><div class="right"><div class="external-profiles">
                 <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
@@ -346,7 +341,7 @@
     <div class="container">
         <div class="copyright">
             <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
-                &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
+                &copy;&nbsp;2025&nbsp;The DevOps Jedi&nbsp;
             </a></div>
         <div class="disclaimer">
             <a href="/disclaimer">Disclaimer</a>

@@ -5,22 +5,46 @@
     <loc>https://www.thedevopsjedi.co.uk/aboutpage/</loc>
     <lastmod>2023-01-01T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/author/</loc>
+    <lastmod>2025-09-14T14:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/categories/</loc>
+    <lastmod>2025-09-14T14:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/categories/certificates/</loc>
+    <lastmod>2025-09-14T14:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/certificates/</loc>
+    <lastmod>2025-09-14T14:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/certificates/</loc>
+    <lastmod>2025-09-14T14:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/author/darren-johnson/</loc>
+    <lastmod>2025-09-14T14:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/</loc>
+    <lastmod>2025-09-14T14:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/governance/</loc>
+    <lastmod>2025-09-14T14:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/security/</loc>
+    <lastmod>2025-09-14T14:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/</loc>
+    <lastmod>2025-09-14T14:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/</loc>
+    <lastmod>2025-09-14T14:00:00+01:00</lastmod>
+  </url><url>
+    <loc>https://www.thedevopsjedi.co.uk/tags/tls/</loc>
+    <lastmod>2025-09-14T14:00:00+01:00</lastmod>
+  </url><url>
     <loc>https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/</loc>
     <lastmod>2024-10-27T06:00:12+00:00</lastmod>
   </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/author/</loc>
-    <lastmod>2024-10-27T06:00:12+00:00</lastmod>
-  </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/azure/</loc>
-    <lastmod>2024-10-27T06:00:12+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/categories/</loc>
-    <lastmod>2024-10-27T06:00:12+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/author/darren-johnson/</loc>
-    <lastmod>2024-10-27T06:00:12+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/tags/governance/</loc>
     <lastmod>2024-10-27T06:00:12+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/categories/governance/</loc>
@@ -30,12 +54,6 @@
     <lastmod>2024-10-27T06:00:12+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/policy/</loc>
-    <lastmod>2024-10-27T06:00:12+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/tags/</loc>
-    <lastmod>2024-10-27T06:00:12+00:00</lastmod>
-  </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/</loc>
     <lastmod>2024-10-27T06:00:12+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/tags/tips/</loc>
@@ -74,16 +92,13 @@
     <loc>https://www.thedevopsjedi.co.uk/tags/hashicorp/</loc>
     <lastmod>2024-03-12T06:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/tags/iac/</loc>
-    <lastmod>2024-03-12T06:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://www.thedevopsjedi.co.uk/categories/iac/</loc>
     <lastmod>2024-03-12T06:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/iac/</loc>
+    <loc>https://www.thedevopsjedi.co.uk/tags/iac/</loc>
     <lastmod>2024-03-12T06:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://www.thedevopsjedi.co.uk/tags/security/</loc>
+    <loc>https://www.thedevopsjedi.co.uk/iac/</loc>
     <lastmod>2024-03-12T06:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/</loc>

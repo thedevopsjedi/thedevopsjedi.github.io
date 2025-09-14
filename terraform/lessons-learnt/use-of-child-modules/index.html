@@ -7,7 +7,7 @@
     <meta name="author" content="thedevopsjedi">
     <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
     <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
-    <meta name="generator" content="Hugo 0.135.0"><title>Use Of Terraform Child Modules&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta name="generator" content="Hugo 0.147.3"><title>Use Of Terraform Child Modules&nbsp;&vert;&nbsp;The DevOps Jedi</title>
     <meta itemprop="name" content="Use Of Terraform Child Modules">
     <meta itemprop="description" content="Terraform has the concept of Child Modules which allows code to be reused across different configurations.  This is why I don&#39;t use them.">
     <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/use-of-child-modules/">
@@ -101,8 +101,7 @@
 </li>
 </ul>
 <blockquote>
-<p><strong>Key Takeaway</strong>: When making changes to child modules you always introduce some risk to resources that have already been deployed.  Every root module will need to be either updated to cater for the changes or accept a default value that will apply to every resource built via the child module.  For this reason alone, I do not use child modules as part of my terraform configurations.  This has the added benefit of no code dependencies outside of the root module, and all changes are isolated to that folder only.</p>
-</blockquote>
+<p><strong>Key Takeaway</strong>: When making changes to child modules you always introduce some risk to resources that have already been deployed.  Every root module will need to be either updated to cater for the changes or accept a default value that will apply to every resource built via the child module.  For this reason alone, I do not use child modules as part of my terraform configurations.  This has the added benefit of no code dependencies outside of the root module, and all changes are isolated to that folder only.</p></blockquote>
 <p>Saying all the above I still like to standardise on code for common resources, but I do that by using template Terraform code with a PowerShell wrapper to generate the unique code required.  That is a subject for another post in itself.</p>
 </div>
 <div class="footer"><div class="tags">
@@ -114,6 +113,8 @@
     <div class="container"><div class="recent-posts">
             <strong>Latest Posts</strong>
             <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">From Years to Days: Preparing For The Future of TLS Certificates</a>
+                    </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">Always Check The Default Parameters When Assigning An Azure Policy</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
@@ -125,8 +126,6 @@
                         <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
-                    </li><li>
-                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
                     </li></ul>
         </div><div class="right"><div class="external-profiles">
                 <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
@@ -136,7 +135,7 @@
     <div class="container">
         <div class="copyright">
             <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
-                &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
+                &copy;&nbsp;2025&nbsp;The DevOps Jedi&nbsp;
             </a></div>
         <div class="disclaimer">
             <a href="/disclaimer">Disclaimer</a>

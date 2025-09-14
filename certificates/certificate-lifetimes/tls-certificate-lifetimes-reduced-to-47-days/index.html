@@ -1,0 +1,203 @@
+<!DOCTYPE html><html itemscope itemtype="https://schema.org/WebPage" class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="siteBaseUrl" content="https://www.thedevopsjedi.co.uk/">
+    <meta name="author" content="thedevopsjedi">
+    <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
+    <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
+    <meta name="generator" content="Hugo 0.147.3"><title>From Years to Days: Preparing For The Future of TLS Certificates&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta itemprop="name" content="From Years to Days: Preparing For The Future of TLS Certificates">
+    <meta itemprop="description" content="By 2029, TLS certificates will expire in just 47 days. Find out what’s changing, why it matters, and how automation keeps you secure.">
+    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">
+  <meta property="og:site_name" content="The DevOps Jedi">
+  <meta property="og:title" content="From Years to Days: Preparing For The Future of TLS Certificates">
+  <meta property="og:description" content="By 2029, TLS certificates will expire in just 47 days. Find out what’s changing, why it matters, and how automation keeps you secure.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="certificates">
+    <meta property="article:published_time" content="2025-09-14T14:00:00+01:00">
+    <meta property="article:modified_time" content="2025-09-14T14:00:00+01:00">
+    <meta property="article:tag" content="TLS">
+    <meta property="article:tag" content="Certificates">
+    <meta property="article:tag" content="Governance">
+    <meta property="article:tag" content="Security">
+
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+<link rel="manifest" href="/favicon/site.webmanifest">
+<link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<script src="/modernizr-simple.js"></script><link rel="canonical" href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/theme.css"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/cookieconsent.min.css">
+</head>
+
+<body class="bilberry-hugo-theme">
+<nav><div class="container">
+        <ul class="topnav"><li><a href="/about" target="">About</a></li></ul><div id="search-box" class="search">
+                <i class="fas fa-search"></i>
+                <input id="search" type="text" placeholder="Search ...">
+            </div></div>
+</nav>
+<header><div class="container">
+        <div class="logo">
+            <a href="/" class="logo"><img src="/images/LinkedIn.jpeg" alt=""><span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title">
+                <a href="/">The DevOps Jedi</a>
+            </h3><span class="subtitle">Taking the cloud by storm one line of code at a time....</span></div><div class="toggler"><i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+    </div>
+</header>
+<div class="main container"><div class="article-wrapper u-cf single"><a class="bubble" href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article"><div class="content">
+    <h1 class="article-title">
+        <a href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">From Years to Days: Preparing For The Future of TLS Certificates</a>
+    </h1>
+
+    <div class="meta"><span class="date moment">2025-09-14</span><span class="readingTime">5 min read</span><span class="categories"><a href="https://www.thedevopsjedi.co.uk/categories/certificates/">Certificates</a></span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><p>Public TLS certificates have been reducing in lifetime over the past decade. What was once a three, or even five year certificate is now valid for little over a year. The next major step will be far more dramatic: certificate lifetimes are set to reduce to <strong>just 47 days</strong> by 2029, with the first reductions beginning in 2026.</p>
+<p>For cloud, product, and security teams, this is not just an incremental policy change — it will fundamentally reshape how certificates are managed, deployed, and renewed across internal and external services. Manual processes will no longer be sustainable, and automation will become a compliance necessity.</p>
+<p>This post provides a <strong>clear breakdown of what’s changing, why it’s happening, and when</strong>, along with practical advice on what teams should do to prepare. By the end, you’ll understand the industry drivers behind the change, the risks of standing still, and the steps to take now to future-proof your certificate management strategy.</p>
+<h2 id="certificate-lifetime-reduction-whats-changing-why--when">Certificate Lifetime Reduction: What’s Changing, Why &amp; When</h2>
+<p>The industry is moving to significantly shorter certificate lifetimes, and this has important implications for anyone using Let’s Encrypt or other public CAs. Below is a breakdown of what is changing, why now, and what product / cloud / security teams must do to stay ahead.</p>
+<h3 id="what-the-changes-are">What The Changes Are</h3>
+<p>Following the CA/Browser Forum’s Ballot <strong>
+<a href="https://cabforum.org/2025/04/11/ballot-sc081v3-introduce-schedule-of-reducing-validity-and-data-reuse-periods/"target="_blank" rel="nofollow noopener noreferrer">SC-081v3</a>
+</strong>, the maximum validity period for public TLS (SSL) certificates, and related domain validation reuse periods, will be progressively reduced.</p>
+<p>Here’s the timeline:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Effective Date</th>
+          <th>Maximum Certificate Validity Period</th>
+          <th>Domain Control Validation (DCV) / Validation Reuse Period*</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Now until 14 March 2026</strong></td>
+          <td><em>Up to ~398 days</em></td>
+          <td>Reuse of validation data up to ~398 days</td>
+      </tr>
+      <tr>
+          <td><strong>From 15 March 2026</strong></td>
+          <td>200 days</td>
+          <td>DCV reuse also capped to 200 days</td>
+      </tr>
+      <tr>
+          <td><strong>From 15 March 2027</strong></td>
+          <td>100 days</td>
+          <td>DCV reuse to 100 days</td>
+      </tr>
+      <tr>
+          <td><strong>From 15 March 2029</strong></td>
+          <td>47 days</td>
+          <td>DCV reuse will be limited to <strong>10 days</strong></td>
+      </tr>
+  </tbody>
+</table>
+<blockquote>
+<p>*DCV reuse period means how long the CA can accept previously validated proof of domain control or IP in new certificate issuance (or renewals) without re-validating.</p></blockquote>
+<h3 id="why-these-changes-are-happening">Why These Changes Are Happening</h3>
+<p>There are several motivating factors behind this shift:</p>
+<p><strong>Reducing the Window of Risk</strong>: Longer-lived certificates mean that if a private key is compromised, or a certificate is mis-issued, there’s a larger window in which an attacker could exploit that. Shorter lifetimes reduce that risk.</p>
+<p><strong>Encouraging Frequent Validation</strong>: Cryptographic hygiene demands that assertions in certificates — domain control, organisational identity, etc. — be periodically re-checked. Reducing both certificate lifetime and validation reuse interval forces regular revalidation, keeping certificates more aligned with current reality (e.g. domain ownership changes).</p>
+<p><strong>Limitations of Revocation Mechanisms</strong>: Many revocation systems (CRL / OCSP) do not function; clients simply ignore revocation information, or there are delays. With shorter lifetimes, a compromised certificate simply expires sooner, reducing reliance on perfect revocation coverage.</p>
+<p><strong>Promoting Automation</strong>: If certificates expire every few weeks rather than every year, manual renewal becomes untenable. The policy is therefore both a driver and a requirement for robust automation in certificate management.</p>
+<p><strong>Security &amp; Compliance Pressure</strong>: Standards bodies, browser vendors, large cloud providers and others are pushing for stronger security practices. Reducing certificate lifetimes is a simple yet effective control. Organisations that lag behind may face compliance risk, auditor scrutiny, or even browser trust issues.</p>
+<h3 id="when-the-changes-take-effect">When The Changes Take Effect</h3>
+<p>As shown in the table above:</p>
+<ul>
+<li>The <strong>first phase</strong> begins on <strong>15 March 2026</strong>, lowering the max validity to ~200 days.</li>
+<li>Then another reduction on <strong>15 March 2027</strong> (100 days).</li>
+<li>Finally by <strong>15 March 2029</strong> the maximum validity period will be 47 days and DCV reuse will be down to 10 days.</li>
+</ul>
+<h3 id="why-automated-renewal-must-be-in-place-before-these-changes">Why Automated Renewal Must Be In Place Before These Changes</h3>
+<p>Given the pace and scale of these changes, there are several reasons why organisations must have automated certificate issuance / renewal strategies in place <strong>before</strong> these future dates:</p>
+<p><strong>Increased Renewal Frequency</strong>: With lifetimes dropping steeply, certificates will need to be renewed far more often. For example, moving from ~398 days to 47 days implies renewing roughly 8 times per year for a given certificate. Manual workflows will struggle to keep up.</p>
+<p><strong>Error &amp; Outage Risk</strong>: Human mistakes — missed renewals, incorrect validation, deployment lags — become much more costly when there&rsquo;s less leeway. If a certificate expires unexpectedly, it can lead to service interruption, especially for internal services, microservices, APIs, etc.</p>
+<p><strong>Operational Overhead</strong>: Manual certificate tracking, auditing, and renewal (especially in hybrid / internal + external scenarios) becomes exponentially more painful as expiry windows narrow.</p>
+<p><strong>Compliance and Audit Pressure</strong>: Organisations under ISO 27001 or other frameworks will be expected to demonstrate that certificate management is reliable, documented, and auditable. Automation eases that, manual processes increase the likelihood of non-conformance.</p>
+<p><strong>Security Practices</strong>: Automated renewals help enforce up-to-date practices (e.g. updated cipher suites, best TLS configurations), reducing risk tied to stale certs or misconfigurations.</p>
+<p><strong>Scalability</strong>: As the number of certificates in an organisation grows (across clusters, microservices, internal tools, etc.), without automation, administration becomes a bottleneck.</p>
+<h2 id="suggestions-for-preparing">Suggestions For Preparing</h2>
+<p>To ensure that your organisation is ready for the shift, here are some practical actions:</p>
+<ul>
+<li>Build or improve your <strong>certificate inventory</strong>: know what certificates you have, where they are used, who owns them.</li>
+<li>Ensure ACME-supporting clients are used (e.g. certbot, lego, Nimbus, etc.), and that they are configured to auto-renew (perhaps at a fraction of the expiry window, e.g. 33%% before expiry).</li>
+<li>Automate deployment of new certificates to services (ingress, load balancer, internal services).</li>
+<li>Add monitoring and alerting for certificate expiry and renewal failures.</li>
+<li>Test failures / renewal paths ahead of time (DNS failures, permissions issues, internal services not restarted, etc.).</li>
+<li>Ensure your operations processes / CI/CD pipeline can handle more frequent certificate rotations.</li>
+<li>For compliance, ensure that your audit trail captures renewals, validation results, issuance, deployments, etc.</li>
+</ul>
+</div>
+<div class="footer"><div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/tls/">TLS</a><a href="https://www.thedevopsjedi.co.uk/tags/certificates/">Certificates</a><a href="https://www.thedevopsjedi.co.uk/tags/governance/">Governance</a><a href="https://www.thedevopsjedi.co.uk/tags/security/">Security</a></div>
+        </div></div>
+</article>
+</div><div id="comments-container"></div></div><footer>
+    <div class="container"><div class="recent-posts">
+            <strong>Latest Posts</strong>
+            <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">From Years to Days: Preparing For The Future of TLS Certificates</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">Always Check The Default Parameters When Assigning An Azure Policy</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/">Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">Modifying An Existing Azure Policy</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
+                    </li></ul>
+        </div><div class="right"><div class="external-profiles">
+                <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
+            </div><div class="archive"><a href="https://www.thedevopsjedi.co.uk/archive/"><strong>Archive</strong></a></div></div>
+    </div>
+</footer><div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
+                &copy;&nbsp;2025&nbsp;The DevOps Jedi&nbsp;
+            </a></div>
+        <div class="disclaimer">
+            <a href="/disclaimer">Disclaimer</a>
+        </div>
+    </div>
+</div>
+
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-RKD17G86VJ');
+        }
+      </script><script src="https://www.thedevopsjedi.co.uk/theme.js"></script><script src="https://www.thedevopsjedi.co.uk/cookieconsent.min.js" type="application/javascript"></script><script src="https://www.thedevopsjedi.co.uk/init-cookieconsent.js" type="application/javascript"></script><div id="activate-algolia-search" class="hidden">
+  <input type="hidden" id="algolia-search-appId" value="XRNYV3MMH2">
+  <input type="hidden" id="algolia-search-apiKey" value="5ba5776bc76690c95b70fcfe58371072">
+  <input type="hidden" id="algolia-search-indexName" value="www.thedevopsjedi.co.uk">
+  <input type="hidden" id="algolia-search-noSearchResults" value="Nothing Found..."><input type="hidden" id="algolia-search-currentLanguageOnly"></div>
+
+</body>
+
+</html>

@@ -7,7 +7,7 @@
     <meta name="author" content="thedevopsjedi">
     <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
     <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
-    <meta name="generator" content="Hugo 0.135.0"><title>Blog&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta name="generator" content="Hugo 0.147.3"><title>Blog&nbsp;&vert;&nbsp;The DevOps Jedi</title>
     <meta itemprop="name" content="Blog">
     <meta itemprop="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
     <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/">
@@ -50,7 +50,24 @@
 </header>
 <div class="main container">
         
-    <div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/">
+    <div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article"><div class="content">
+    <h1 class="article-title">
+        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
+    </h1>
+
+    <div class="meta"><span class="date moment">2023-01-21</span><span class="readingTime">3 min read</span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><p>I have already touched on the importance of Terraform state in a previous post, but I wanted to expand on this from a security perspective.</p>
+<p>Let&rsquo;s get this out the way now, Terraform stores secrets in its state file in plain text!  There I said it.</p>
+<p>So how do I protect against secrets being revealed that could allow an attacker to compromise my systems?  Well, I use a defence in depth strategy in a number of ways.</p><a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/" class="more">Continue Reading...</a></div>
+<div class="footer"><div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/hashicorp/">HashiCorp</a><a href="https://www.thedevopsjedi.co.uk/tags/iac/">IaC</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a></div>
+        </div></div>
+</article>
+</div><div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/minimise-admin-effort/">
     <i class="fas fa-fw fa-pencil-alt"></i>
 </a>
 
@@ -152,25 +169,12 @@
             <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/hashicorp/">HashiCorp</a><a href="https://www.thedevopsjedi.co.uk/tags/iac/">IaC</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a></div>
         </div></div>
 </article>
-</div><div class="article-wrapper u-cf"><a class="bubble" href="https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool/">
-    <i class="fas fa-fw fa-pencil-alt"></i>
-</a>
-
-<article class="default article"><div class="content">
-    <h1 class="article-title">
-        <a href="https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool/">How I Chose An Infrastructure As Code Tool</a>
-    </h1>
-
-    <div class="meta"><span class="date moment">2023-01-06</span><span class="readingTime">11 min read</span><span class="categories"><a href="https://www.thedevopsjedi.co.uk/categories/iac/">IaC</a></span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div>This post looks into how, and why, I selected my current Infrastructure as Code tool of choice for my organisation.<a href="https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool/" class="more">Continue Reading...</a></div>
-<div class="footer"><div class="tags">
-            <i class="fa fa-tags"></i>
-            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/arm-templates/">ARM Templates</a><a href="https://www.thedevopsjedi.co.uk/tags/aws/">AWS</a><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/cloudformation/">CloudFormation</a><a href="https://www.thedevopsjedi.co.uk/tags/hashicorp/">HashiCorp</a><a href="https://www.thedevopsjedi.co.uk/tags/iac/">IaC</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a></div>
-        </div></div>
-</article>
-</div><div class="paginator"><a href="/" class="newer">Newer Posts<i class="fa fa-angle-double-right"></i></a></div></div><footer>
+</div><div class="paginator"><a href="/page/3/" class="older"><i class="fa fa-angle-double-left"></i>Older Posts</a><a href="/" class="newer">Newer Posts<i class="fa fa-angle-double-right"></i></a></div></div><footer>
     <div class="container"><div class="recent-posts">
             <strong>Latest Posts</strong>
             <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">From Years to Days: Preparing For The Future of TLS Certificates</a>
+                    </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">Always Check The Default Parameters When Assigning An Azure Policy</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
@@ -182,8 +186,6 @@
                         <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
-                    </li><li>
-                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
                     </li></ul>
         </div><div class="right"><div class="external-profiles">
                 <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
@@ -193,7 +195,7 @@
     <div class="container">
         <div class="copyright">
             <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
-                &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
+                &copy;&nbsp;2025&nbsp;The DevOps Jedi&nbsp;
             </a>-
             <a href="https://www.thedevopsjedi.co.uk/index.xml">rss</a></div>
         <div class="disclaimer">

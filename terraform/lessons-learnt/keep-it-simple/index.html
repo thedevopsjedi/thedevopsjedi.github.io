@@ -7,7 +7,7 @@
     <meta name="author" content="thedevopsjedi">
     <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
     <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
-    <meta name="generator" content="Hugo 0.135.0"><title>How I Keep Terraform Simple&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta name="generator" content="Hugo 0.147.3"><title>How I Keep Terraform Simple&nbsp;&vert;&nbsp;The DevOps Jedi</title>
     <meta itemprop="name" content="How I Keep Terraform Simple">
     <meta itemprop="description" content="How I structure Terraform code in a simple way to fully maximise the benefits of using a declarative configuration. The Configuration Doesn&#39;t Have To Be DRY!">
     <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/keep-it-simple/">
@@ -105,8 +105,7 @@
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>This has the benefit of keeping the configuration simple with an emphasis on readability and uses less lines of code.</p>
 <blockquote>
-<p>In the real world we wouldn&rsquo;t be building an empty resource group so I will expand on how I approach this using a simple virtual network configuration.</p>
-</blockquote>
+<p>In the real world we wouldn&rsquo;t be building an empty resource group so I will expand on how I approach this using a simple virtual network configuration.</p></blockquote>
 <p>When building multiple resources I use a variable for the resource group location, mainly because I reuse this variable elsewhere in the configuration to help dynamically build resource names. This is a subject I will cover in another post, so I won&rsquo;t include the syntax for the resource names here.</p>
 <p>To build a virtual network, the <code>azurerm_virtual_network</code> resource requires arguments for both <code>resource_group_name</code> and <code>location</code>, so instead of using the variable for location here and needing to specify a resource group name, I can simply use the attributes exported from the <code>azurerm_resource_group</code> resource and feed those values into the arguments for the virtual network resource.</p>
 <p>My code would look like this:</p>
@@ -129,8 +128,7 @@
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>This then has the benefit of only having to specify the location once and it cascading to all resources that use exported attributes.</p>
 <blockquote>
-<p><strong>Key Takeaways</strong>: Be explicit with your infrastructure code.  Think about the readability of your code, as if it is not clear, you will struggle to manage it and may fail to spot security problems.  Having to check multiple files to try and piece an abstracted configuration together over complicates the troubleshooting process and introduces unnecessary delays.</p>
-</blockquote>
+<p><strong>Key Takeaways</strong>: Be explicit with your infrastructure code.  Think about the readability of your code, as if it is not clear, you will struggle to manage it and may fail to spot security problems.  Having to check multiple files to try and piece an abstracted configuration together over complicates the troubleshooting process and introduces unnecessary delays.</p></blockquote>
 </div>
 <div class="footer"><div class="tags">
             <i class="fa fa-tags"></i>
@@ -141,6 +139,8 @@
     <div class="container"><div class="recent-posts">
             <strong>Latest Posts</strong>
             <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">From Years to Days: Preparing For The Future of TLS Certificates</a>
+                    </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">Always Check The Default Parameters When Assigning An Azure Policy</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
@@ -152,8 +152,6 @@
                         <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
-                    </li><li>
-                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
                     </li></ul>
         </div><div class="right"><div class="external-profiles">
                 <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
@@ -163,7 +161,7 @@
     <div class="container">
         <div class="copyright">
             <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
-                &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
+                &copy;&nbsp;2025&nbsp;The DevOps Jedi&nbsp;
             </a></div>
         <div class="disclaimer">
             <a href="/disclaimer">Disclaimer</a>

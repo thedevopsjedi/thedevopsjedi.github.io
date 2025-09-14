@@ -7,7 +7,7 @@
     <meta name="author" content="thedevopsjedi">
     <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
     <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
-    <meta name="generator" content="Hugo 0.135.0"><title>How I Chose An Infrastructure As Code Tool&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta name="generator" content="Hugo 0.147.3"><title>How I Chose An Infrastructure As Code Tool&nbsp;&vert;&nbsp;The DevOps Jedi</title>
     <meta itemprop="name" content="How I Chose An Infrastructure As Code Tool">
     <meta itemprop="description" content="This post looks into how, and why, I selected my current Infrastructure as Code tool of choice for my organisation.">
     <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/2023/01/how-i-chose-an-infrastructure-as-code-tool/">
@@ -105,8 +105,7 @@
 <p>Anything was on the table at this early stage, so I looked into using the native CLI options for each provider as well.</p>
 <p>Before I continue, it&rsquo;s important to point out that the engineers that would be working on this project all had traditional infrastructure backgrounds, and none of them had development skills.  Servers were built using CDs/VM images, and almost all configuration work was done using the GUI.  This meant I needed to select a tool with the right capabilities to deliver value, and the fewest blockers to adoption.</p>
 <blockquote>
-<p><strong>NOTE:</strong> In 2018 Bicep did not exist for Azure, so wasn&rsquo;t included in this process.</p>
-</blockquote>
+<p><strong>NOTE:</strong> In 2018 Bicep did not exist for Azure, so wasn&rsquo;t included in this process.</p></blockquote>
 <h3 id="imperative-vs-declarative-which-approach-was-best">Imperative vs Declarative Which Approach Was Best?</h3>
 <p>Scripting languages such as PowerShell, VBScript &amp; Python are imperative.  This means they tell you <strong>HOW</strong> they are going to get to the end result, and require a good level of understanding of the syntax and functions used in order to figure out what the end result will be.</p>
 <p>By contrast, formats such as JSON, YAML &amp; HCL are declarative.  This means they show you <strong>WHAT</strong> the end result will be, which makes them simpler to read and understand.</p>
@@ -127,8 +126,7 @@
 <li>Cook steak and chips for dinner and eat at 6pm</li>
 </ul>
 <blockquote>
-<p><strong>WINNER: Declarative Approach</strong> The declarative approach was a better fit for engineers in my organisation who didn&rsquo;t have a development background.  This meant that using the native CLI tools to provision infrastructure was ruled out.</p>
-</blockquote>
+<p><strong>WINNER: Declarative Approach</strong> The declarative approach was a better fit for engineers in my organisation who didn&rsquo;t have a development background.  This meant that using the native CLI tools to provision infrastructure was ruled out.</p></blockquote>
 <h3 id="which-file-format-was-easiest-to-understand">Which File Format Was Easiest To Understand?</h3>
 <p>With different options on the table, I wanted to investigate the pros and cons of the different file formats associated with the available tools.</p>
 <h4 id="json">JSON</h4>
@@ -179,7 +177,7 @@
 </span></span><span style="display:flex;"><span>- <span style="color:#66d9ef">true</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">command</span>: |<span style="color:#e6db74">
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  $message = &#34;Hello World&#34;
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  Write-Host $message</span>  
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  Write-Host $message</span>
 </span></span></code></pre></div><p>Note that the empty value above could also be specified as <code>emptyValue: null</code></p>
 <h4 id="hcl">HCL</h4>
 <p>HashiCorp Configuration Language (HCL) is a proprietary configuration language made up of Arguments &amp; Blocks.</p>
@@ -209,14 +207,12 @@
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>A key benefit of using HCL is that Terraform will ignore bad linting and continue to function normally if you get indentations wrong.  There is also a built in command <code>terraform fmt</code> that will automatically lint your code into the correct canonical format and style as well as removing any legacy syntax which is cool and saves valuable time!</p>
 <blockquote>
-<p><strong>NO WINNER:</strong> All 3 formats had syntax checking and tools available to lint them correctly, so I couldn&rsquo;t separate them.</p>
-</blockquote>
+<p><strong>NO WINNER:</strong> All 3 formats had syntax checking and tools available to lint them correctly, so I couldn&rsquo;t separate them.</p></blockquote>
 <h3 id="which-tool-met-the-requirements-best">Which Tool Met The Requirements Best?</h3>
 <p>Initially I didn&rsquo;t have any hard requirements to adhere to for implementing an IaC tool, other than ensuring it was secure, scalable and worked with the cloud provider we needed up selecting.  I wanted any tool to be extensible so I could use it to manage multiple cloud resource types and not just virtual machines.</p>
 <p>As we still had to complete the RFP process and select a cloud provider I couldn&rsquo;t rule out any tool based solely on requirements, but only Terraform worked across multiple providers including some on premises technologies such as VMware.</p>
 <blockquote>
-<p><strong>NO WINNER:</strong> Terraform was the leader here, but I couldn&rsquo;t rule out other tools just because of extensibility.</p>
-</blockquote>
+<p><strong>NO WINNER:</strong> Terraform was the leader here, but I couldn&rsquo;t rule out other tools just because of extensibility.</p></blockquote>
 <h3 id="which-tool-was-the-easiest-to-troubleshoot">Which Tool Was The Easiest To Troubleshoot?</h3>
 <p>I&rsquo;m not going to compare all the tools here, as we ended up selecting Azure as our cloud provider via the RFP process, so I will just compare ARM Templates against Terraform.</p>
 <p>To illustrate this, I&rsquo;ll compare the content of the files required to deploy an empty resource group named &lsquo;resourcegroupname&rsquo; in the West Europe region having a single tag of &rsquo;tagkey: tagvalue&rsquo; via both an ARM template and via a Terraform configuration.</p>
@@ -284,8 +280,7 @@
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>I hope you agree that the Terraform configuration file is a lot simpler to read and understand.  This is due to the fact that Terraform uses the concept of providers which know exactly which API has to be used, and what version it needs to be, so this extra information does not need to be specified in the configuration.  This results in the number of lines of text being far less than the JSON equivalent that is required for ARM template deployments, which get exponentially more complex as more resources are deployed.</p>
 <blockquote>
-<p><strong>WINNER: Terraform</strong>: From simply looking at the code, Terraform was the easier to understand and had a lot less text to review.  Both solutions achieved the same business outcome.</p>
-</blockquote>
+<p><strong>WINNER: Terraform</strong>: From simply looking at the code, Terraform was the easier to understand and had a lot less text to review.  Both solutions achieved the same business outcome.</p></blockquote>
 <h3 id="what-support-was-available">What Support Was Available?</h3>
 <p>This was also key to my organisation as we were starting from scratch.  I wanted to ensure when the project was complete, the engineers responsible for running the system could get access to sufficient support resources.  I also wanted to minimise any support costs.</p>
 <p>A lot of the community content around ARM templates at the time as either too basic, or super advanced, and I didn&rsquo;t feel like there was a sweet spot.  I tried deploying a few resources in ARM, and when I hit issues they took me a long time to resolve.  I&rsquo;m sure this would have got easier in time, but it felt like a steep learning curve for someone with an automation background.</p>
@@ -293,8 +288,7 @@
 <a href="https://github.com/hashicorp/terraform"target="_blank" rel="nofollow noopener noreferrer">GitHub repository</a>
  and noticed the community were very active in helping to solve issues and bugs.</p>
 <blockquote>
-<p><strong>WINNER: Terraform</strong>: Cloud enables business agility, and spending too long debugging ARM templates could slow the project down and increase the time to deliver value back to the business.</p>
-</blockquote>
+<p><strong>WINNER: Terraform</strong>: Cloud enables business agility, and spending too long debugging ARM templates could slow the project down and increase the time to deliver value back to the business.</p></blockquote>
 <h3 id="what-were-my-industry-peers-using-for-iac">What Were My Industry Peers Using For IaC?</h3>
 <p>I was fortunate enough to attend a couple of cloud conferences before we had to make a final decision, and whilst I was there I caught up with some old colleagues I hadn&rsquo;t seen for years who had been working for different companies deploying and managing cloud infrastructure using IaC.  When asking their preference on the available tools. there was one common answer - Terraform!</p>
 <p>After the conferences, I setup a couple of sessions with them and they kindly walked me through how they were managing their cloud infrastructure using Terraform and it just clicked.</p>
@@ -302,8 +296,7 @@
 <p>After gathering some material from Gartner, I made a recommendation that we adopt Terraform as our IaC tool of choice.  This was approved and we haven&rsquo;t looked back since.  I quickly built out a landing zone in Azure to enable us to prove some key design concepts, and we were able to deploy services in Azure with a consistent configuration in minutes.</p>
 <p>After working with Terraform for over 4 years now, I know I made the right choice as its capabilities have been enhanced significantly and it supports a whole range of cloud services, not just infrastructure.</p>
 <blockquote>
-<p><strong>OVERALL WINNER: Terraform</strong></p>
-</blockquote>
+<p><strong>OVERALL WINNER: Terraform</strong></p></blockquote>
 </div>
 <div class="footer"><div class="tags">
             <i class="fa fa-tags"></i>
@@ -314,6 +307,8 @@
     <div class="container"><div class="recent-posts">
             <strong>Latest Posts</strong>
             <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">From Years to Days: Preparing For The Future of TLS Certificates</a>
+                    </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">Always Check The Default Parameters When Assigning An Azure Policy</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
@@ -325,8 +320,6 @@
                         <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
-                    </li><li>
-                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
                     </li></ul>
         </div><div class="right"><div class="external-profiles">
                 <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
@@ -336,7 +329,7 @@
     <div class="container">
         <div class="copyright">
             <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
-                &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
+                &copy;&nbsp;2025&nbsp;The DevOps Jedi&nbsp;
             </a></div>
         <div class="disclaimer">
             <a href="/disclaimer">Disclaimer</a>

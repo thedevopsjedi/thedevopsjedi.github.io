@@ -7,7 +7,7 @@
     <meta name="author" content="thedevopsjedi">
     <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
     <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
-    <meta name="generator" content="Hugo 0.135.0"><title>Exporting Azure Management Group Activity Logs&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta name="generator" content="Hugo 0.147.3"><title>Exporting Azure Management Group Activity Logs&nbsp;&vert;&nbsp;The DevOps Jedi</title>
     <meta itemprop="name" content="Exporting Azure Management Group Activity Logs">
     <meta itemprop="description" content="If you use Management Groups as part of your Azure governance strategy you probably want to read this as you may be missing some key functionality.">
     <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">
@@ -75,8 +75,8 @@
 <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-management-groups#next-steps:~:text=Create%20a%20platform%20management%20group%20under%20the%20root%20management%20group%20to%20support%20common%20platform%20policy%20and%20Azure%20role%20assignment."target="_blank" rel="nofollow noopener noreferrer">Microsoft&rsquo;s recommendation</a>
  and this Management Group would be used to assign platform wide policies and role assignments.</p>
 <p>If you look in the portal at your Management Group, you&rsquo;ll notice there is an &lsquo;Export Activity Logs&rsquo; button, however upon clicking this it just shows you the resources within a selected subscription, and whether they have diagnostics enabled or not.</p>
-<p><img alt="Export Activity Logs Button" src="/images/exporting-azure-management-group-activity-logs/mgmt-logs-01.png" title="Export Activity Logs Button"></p>
-<p><img alt="Resource Diagnostics" src="/images/exporting-azure-management-group-activity-logs/mgmt-logs-02.png" title="Resource Diagnostics"></p>
+<p><img src="/images/exporting-azure-management-group-activity-logs/mgmt-logs-01.png" alt="Export Activity Logs Button" title="Export Activity Logs Button"></p>
+<p><img src="/images/exporting-azure-management-group-activity-logs/mgmt-logs-02.png" alt="Resource Diagnostics" title="Resource Diagnostics"></p>
 <p>This felt a like a big gap in Azure&rsquo;s security monitoring capability, so I checked to see if this was possible using the Azure APIs, and discovered that 
 <a href="https://learn.microsoft.com/en-us/rest/api/monitor/management-group-diagnostic-settings?view=rest-monitor-2020-01-01-preview"target="_blank" rel="nofollow noopener noreferrer">exporting the logs was supported.</a>
 </p>
@@ -174,6 +174,8 @@
     <div class="container"><div class="recent-posts">
             <strong>Latest Posts</strong>
             <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">From Years to Days: Preparing For The Future of TLS Certificates</a>
+                    </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">Always Check The Default Parameters When Assigning An Azure Policy</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
@@ -185,8 +187,6 @@
                         <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
-                    </li><li>
-                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
                     </li></ul>
         </div><div class="right"><div class="external-profiles">
                 <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
@@ -196,7 +196,7 @@
     <div class="container">
         <div class="copyright">
             <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
-                &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
+                &copy;&nbsp;2025&nbsp;The DevOps Jedi&nbsp;
             </a></div>
         <div class="disclaimer">
             <a href="/disclaimer">Disclaimer</a>

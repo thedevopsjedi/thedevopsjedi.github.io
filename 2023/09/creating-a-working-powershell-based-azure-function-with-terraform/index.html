@@ -7,7 +7,7 @@
     <meta name="author" content="thedevopsjedi">
     <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
     <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
-    <meta name="generator" content="Hugo 0.135.0"><title>Creating A Working Powershell Based Azure Function With Terraform&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta name="generator" content="Hugo 0.147.3"><title>Creating A Working Powershell Based Azure Function With Terraform&nbsp;&vert;&nbsp;The DevOps Jedi</title>
     <meta itemprop="name" content="Creating A Working Powershell Based Azure Function With Terraform">
     <meta itemprop="description" content="How I created a working Azure PowerShell Function Using Just Terraform">
     <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">
@@ -77,8 +77,7 @@
 <p>I was prompted to create a storage account, and whether I wanted to permit public network access for function.  As this function was making calls directly to Azure and had no VNet requirements, I left this enabled as I wanted to avoid the cost of the alternative which was implementing Private Link.</p>
 <p>I was then asked to create an application insights instance which I did.  Finally, I left the GitHub Actions settings as Disabled as I didn’t plan to integrate this at this time.</p>
 <blockquote>
-<p>NOTE: If you’re wondering why I chose Windows over Linux, I tested both and found little to no performance difference, and wanted to use the Microsoft recommended WEBSITE_RUN_FROM_PACKAGE value (more on this later).</p>
-</blockquote>
+<p>NOTE: If you’re wondering why I chose Windows over Linux, I tested both and found little to no performance difference, and wanted to use the Microsoft recommended WEBSITE_RUN_FROM_PACKAGE value (more on this later).</p></blockquote>
 <h2 id="reverse-engineering-the-portal-deployment">Reverse Engineering The Portal Deployment</h2>
 <p>After the resources were deployed, I compared them to a blank function app I had previously deployed via Terraform to see what the differences were.</p>
 <p>Other than the odd cosmetic setting, there was one big difference as under the App files resource menu item were now 3 new files:</p>
@@ -193,8 +192,7 @@
 <blockquote>
 <p>NOTE: When I started this project the <code>zip_deploy_file</code> wasn’t available, and I had to use curl to upload the zip.  This option was introduced in 
 <a href="https://github.com/hashicorp/terraform-provider-azurerm/blob/main/CHANGELOG-v3.md#3500-march-30-2023"target="_blank" rel="nofollow noopener noreferrer">azurerm 3.50.0</a>
- and this newer method is much slicker.</p>
-</blockquote>
+ and this newer method is much slicker.</p></blockquote>
 <p>Before I could deploy the zip file I needed to create it.  I did this by creating the required folder structure to host 2 functions <code>midday</code> &amp; <code>midnight</code>.  Multiple folders are required as a function can only have a single trigger.</p>
 <pre tabindex="0"><code>├── function
 │   ├── host.json
@@ -226,6 +224,8 @@
     <div class="container"><div class="recent-posts">
             <strong>Latest Posts</strong>
             <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">From Years to Days: Preparing For The Future of TLS Certificates</a>
+                    </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">Always Check The Default Parameters When Assigning An Azure Policy</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
@@ -237,8 +237,6 @@
                         <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
-                    </li><li>
-                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
                     </li></ul>
         </div><div class="right"><div class="external-profiles">
                 <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
@@ -248,7 +246,7 @@
     <div class="container">
         <div class="copyright">
             <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
-                &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
+                &copy;&nbsp;2025&nbsp;The DevOps Jedi&nbsp;
             </a></div>
         <div class="disclaimer">
             <a href="/disclaimer">Disclaimer</a>

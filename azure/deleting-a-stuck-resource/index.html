@@ -7,7 +7,7 @@
     <meta name="author" content="thedevopsjedi">
     <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
     <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
-    <meta name="generator" content="Hugo 0.135.0"><title>Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta name="generator" content="Hugo 0.147.3"><title>Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status&nbsp;&vert;&nbsp;The DevOps Jedi</title>
     <meta itemprop="name" content="Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status">
     <meta itemprop="description" content="In this post I show you how I managed to delete an Azure Machine Learning Workspace resource that was stuck in a &#39;Deleting Resource&#39; status using the AZ CLI.">
     <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">
@@ -80,7 +80,7 @@
 <p>Most resources in Azure aren&rsquo;t that expensive and should this happen it wouldn&rsquo;t be too much of an issue, but in this case I needed to have the most secure configuration which involved configuring &lsquo;Private with Approved Outbound&rsquo; networking.  What this meant in reality was a managed Virtual Network including an Azure Firewall instance ($$$) was provisioned which I had no control over.  By not being able to delete this resource I would incur any costs for these resources which was not good!</p>
 <h1 id="attempted-solution-1">Attempted Solution 1</h1>
 <p>When Terraform failed, I tried deleting the resource via the portal which appeared to be working:</p>
-<p><img alt="MLW Deleting Resource Portal View" src="/images/deleting-a-stuck-resource/mlw-deleting-resource-01.png" title="MLW Deleting Resource Portal View"></p>
+<p><img src="/images/deleting-a-stuck-resource/mlw-deleting-resource-01.png" alt="MLW Deleting Resource Portal View" title="MLW Deleting Resource Portal View"></p>
 <p>However I left this overnight with no update or additional information to go on.</p>
 <p>When I logged back in to the portal the &lsquo;Deleting resource&rsquo; flag had gone, so I attempted to access the Machine Learning Studio to see if I could get any additional information.  I immediately got an error stating:</p>
 <p><code>&quot;WorkspaceIsDeleting: GUID Request can't be accepted while workspace is in deleting state.&quot;</code></p>
@@ -110,8 +110,7 @@
 <h1 id="the-fix">The Fix</h1>
 <p>I recreated all the dependant resources via Terraform (but not the MLW itself), and re-ran the command above.  This time it sailed through in about 30 seconds, and after waiting another minute or 2 for the portal to catch up, I was able to confirm the resources had indeed been deleted.  Result!</p>
 <blockquote>
-<p><strong>Key Takeaway</strong>: When using the AZ CLI to delete resources, always use the <code>--verbose</code> argument and the <code>--no-wait</code> argument if it is available as this will give you more information than the portal or the API which is where Terraform gets it&rsquo;s errors information from.</p>
-</blockquote>
+<p><strong>Key Takeaway</strong>: When using the AZ CLI to delete resources, always use the <code>--verbose</code> argument and the <code>--no-wait</code> argument if it is available as this will give you more information than the portal or the API which is where Terraform gets it&rsquo;s errors information from.</p></blockquote>
 </div>
 <div class="footer"><div class="tags">
             <i class="fa fa-tags"></i>
@@ -122,6 +121,8 @@
     <div class="container"><div class="recent-posts">
             <strong>Latest Posts</strong>
             <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">From Years to Days: Preparing For The Future of TLS Certificates</a>
+                    </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">Always Check The Default Parameters When Assigning An Azure Policy</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
@@ -133,8 +134,6 @@
                         <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
                     </li><li>
                         <a href="https://www.thedevopsjedi.co.uk/2023/09/creating-a-working-powershell-based-azure-function-with-terraform/">Creating A Working Powershell Based Azure Function With Terraform</a>
-                    </li><li>
-                        <a href="https://www.thedevopsjedi.co.uk/terraform/lessons-learnt/how-i-protect-secrets/">How I Protect Secrets In Terraform Configurations</a>
                     </li></ul>
         </div><div class="right"><div class="external-profiles">
                 <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
@@ -144,7 +143,7 @@
     <div class="container">
         <div class="copyright">
             <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
-                &copy;&nbsp;2024&nbsp;The DevOps Jedi&nbsp;
+                &copy;&nbsp;2025&nbsp;The DevOps Jedi&nbsp;
             </a></div>
         <div class="disclaimer">
             <a href="/disclaimer">Disclaimer</a>
