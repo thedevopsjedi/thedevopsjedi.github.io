@@ -6,8 +6,15 @@
     <description>Recent content in Certificates on The DevOps Jedi</description>
     <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 14 Sep 2025 14:00:00 +0100</lastBuildDate>
+    <lastBuildDate>Sun, 21 Sep 2025 11:00:00 +0100</lastBuildDate>
     <atom:link href="https://www.thedevopsjedi.co.uk/tags/certificates/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Securing Internal Workloads With Let’s Encrypt &amp; Azure Public DNS</title>
+      <link>https://www.thedevopsjedi.co.uk/certificates/securing-internal-workloads-with-lets-encrypt-and-azure-public-dns/</link>
+      <pubDate>Sun, 21 Sep 2025 11:00:00 +0100</pubDate>
+      <guid>https://www.thedevopsjedi.co.uk/certificates/securing-internal-workloads-with-lets-encrypt-and-azure-public-dns/</guid>
+      <description>&lt;p&gt;Securing internal workloads with TLS encryption is no longer optional, even when services are only accessible from within private/on premises networks. Organisations in regulated sectors are increasingly seeking ways to ensure private services benefit from the same level of cryptographic assurance as public-facing workloads. One approach is to use Let’s Encrypt certificates, issued via the public certificate authority (CA), combined with Azure Public DNS to validate domain ownership while keeping workloads accessible only on private IP ranges.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>From Years to Days: Preparing For The Future of TLS Certificates</title>
       <link>https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/</link>

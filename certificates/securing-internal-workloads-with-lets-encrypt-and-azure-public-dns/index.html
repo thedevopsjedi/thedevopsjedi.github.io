@@ -1,0 +1,249 @@
+<!DOCTYPE html><html itemscope itemtype="https://schema.org/WebPage" class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="siteBaseUrl" content="https://www.thedevopsjedi.co.uk/">
+    <meta name="author" content="thedevopsjedi">
+    <meta name="description" content="The personal blog of Darren Johnson (@thedevopsjedi) where I capture my thoughts and learnings on technologies and certifications gained on my cloud journey">
+    <meta name="keywords" content="blog,personal,cloud,devops,terraform,azure,certifications,@thedevopsjedi,automation,iac,cicd">
+    <meta name="generator" content="Hugo 0.147.3"><title>Securing Internal Workloads With Let’s Encrypt &amp; Azure Public DNS&nbsp;&vert;&nbsp;The DevOps Jedi</title>
+    <meta itemprop="name" content="Securing Internal Workloads With Let’s Encrypt &amp; Azure Public DNS">
+    <meta itemprop="description" content="Learn how to secure internal workloads with Let’s Encrypt and Azure DNS. Automate TLS certificates, improve security, and simplify DNS management.">
+    <meta property="og:site_name" content="The DevOps Jedi"><meta property="og:url" content="https://www.thedevopsjedi.co.uk/certificates/securing-internal-workloads-with-lets-encrypt-and-azure-public-dns/">
+  <meta property="og:site_name" content="The DevOps Jedi">
+  <meta property="og:title" content="Securing Internal Workloads With Let’s Encrypt & Azure Public DNS">
+  <meta property="og:description" content="Learn how to secure internal workloads with Let’s Encrypt and Azure DNS. Automate TLS certificates, improve security, and simplify DNS management.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="certificates">
+    <meta property="article:published_time" content="2025-09-21T11:00:00+01:00">
+    <meta property="article:modified_time" content="2025-09-21T11:00:00+01:00">
+    <meta property="article:tag" content="Azure">
+    <meta property="article:tag" content="Terraform">
+    <meta property="article:tag" content="TLS">
+    <meta property="article:tag" content="Certificates">
+    <meta property="article:tag" content="Governance">
+    <meta property="article:tag" content="Security">
+
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+<link rel="manifest" href="/favicon/site.webmanifest">
+<link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+<script src="/modernizr-simple.js"></script><link rel="canonical" href="https://www.thedevopsjedi.co.uk/certificates/securing-internal-workloads-with-lets-encrypt-and-azure-public-dns/"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/theme.css"><link rel="stylesheet" href="https://www.thedevopsjedi.co.uk/cookieconsent.min.css">
+</head>
+
+<body class="bilberry-hugo-theme">
+<nav><div class="container">
+        <ul class="topnav"><li><a href="/about" target="">About</a></li></ul><div id="search-box" class="search">
+                <i class="fas fa-search"></i>
+                <input id="search" type="text" placeholder="Search ...">
+            </div></div>
+</nav>
+<header><div class="container">
+        <div class="logo">
+            <a href="/" class="logo"><img src="/images/LinkedIn.jpeg" alt=""><span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title">
+                <a href="/">The DevOps Jedi</a>
+            </h3><span class="subtitle">Taking the cloud by storm one line of code at a time....</span></div><div class="toggler"><i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+    </div>
+</header>
+<div class="main container"><div class="article-wrapper u-cf single"><a class="bubble" href="https://www.thedevopsjedi.co.uk/certificates/securing-internal-workloads-with-lets-encrypt-and-azure-public-dns/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article"><div class="content">
+    <h1 class="article-title">
+        <a href="https://www.thedevopsjedi.co.uk/certificates/securing-internal-workloads-with-lets-encrypt-and-azure-public-dns/">Securing Internal Workloads With Let’s Encrypt &amp; Azure Public DNS</a>
+    </h1>
+
+    <div class="meta"><span class="date moment">2025-09-21</span><span class="readingTime">8 min read</span><span class="categories"><a href="https://www.thedevopsjedi.co.uk/categories/certificates/">Certificates</a></span><span class="author"><a href="https://www.thedevopsjedi.co.uk/author/darren-johnson/">Darren Johnson</a></span></div><p>Securing internal workloads with TLS encryption is no longer optional, even when services are only accessible from within private/on premises networks. Organisations in regulated sectors are increasingly seeking ways to ensure private services benefit from the same level of cryptographic assurance as public-facing workloads. One approach is to use Let’s Encrypt certificates, issued via the public certificate authority (CA), combined with Azure Public DNS to validate domain ownership while keeping workloads accessible only on private IP ranges.</p>
+<p>This article explores why and how this approach works, with practical implementation details, security considerations, and best practices.</p>
+<h2 id="why-use-public-certificates-for-internal-services">Why Use Public Certificates For Internal Services?</h2>
+<p>Traditionally, organisations have relied on internal certificate authorities (CAs) or self-signed certificates for private workloads. However, this can create several challenges:</p>
+<ul>
+<li><strong>Trust distribution</strong>: Internal CA root certificates must be deployed and managed across all endpoints. This approach often proves brittle, especially in hybrid or BYOD environments.</li>
+<li><strong>Modern client compatibility</strong>: Third-party applications, APIs, or mobile devices will not trust internal root certificates by default. Publicly trusted certificates solve this issue.</li>
+<li><strong>Automation and cost</strong>: Let’s Encrypt offers zero-cost, automated certificate issuance and renewal, reducing administrative overhead.</li>
+<li><strong>Compliance</strong>: Frameworks such as ISO 27001 and NCSC guidance encourage minimising reliance on custom certificate trust stores and favour industry-standard PKI practices.</li>
+</ul>
+<p>By using Let’s Encrypt certificates internally, organisations can ensure trusted TLS for both end-users and machine-to-machine communication, while avoiding the complexity of managing a private PKI.</p>
+<h2 id="leveraging-azure-public-dns-for-domain-ownership">Leveraging Azure Public DNS For Domain Ownership</h2>
+<p>Let’s Encrypt validates domain ownership via challenges. The two most common are:</p>
+<ul>
+<li><strong>DNS-01 challenge</strong>: Prove you control the DNS for the domain name by creating a specific DNS TXT record.</li>
+<li><strong>HTTP-01 challenge</strong>: Prove you control the DNS for the domain name by serving a token at a public endpoint.</li>
+</ul>
+<p>For internal workloads that are not internet-facing, the DNS-01 challenge is most appropriate, and is what I will explore today. With Azure Public DNS, terraform can use the <code>acme_certificate</code> resource to automate the placement of required TXT records to prove control over a domain without ever exposing the service publicly.</p>
+<h2 id="options-for-dns-name-resolution-to-private-ip-addresses-using-cname-redirection-or-split-horizon-dns">Options For DNS Name Resolution To Private IP Addresses Using CNAME Redirection Or Split-Horizon DNS</h2>
+<p>Once Let’s Encrypt has validated ownership of the domain via Azure Public DNS, you still need to ensure that internal users and workloads resolve the service name to a private IP rather than a public endpoint. When I say a service name, I mean a Fully Qualified Domain Name (FQDN) that does not identify the host it is running on.</p>
+<p>There are two main design patterns to achieve this:</p>
+<h3 id="option-1-public-cname-redirecting-to-an-internal-only-dns-record"><strong>Option 1: Public CNAME Redirecting To An Internal-Only DNS Record</strong></h3>
+<p>In this approach, the public DNS zone (hosted in Azure Public DNS) returns a CNAME record pointing to a host record that only exists within your internal DNS infrastructure (for example, an Azure Private DNS Zone or on-premises DNS).</p>
+<ul>
+<li>The Let’s Encrypt validation succeeds because the <code>_acme-challenge</code> TXT record is published in the public zone.</li>
+<li>The application record in the public zone is a CNAME that directs resolution to an internal DNS name (e.g. <code>app.tls.internaldomain.co.uk</code>).</li>
+<li>Internal resolvers can resolve this internal DNS name to the correct private IP address (e.g. <code>192.168.100.50</code>).</li>
+<li>From the public internet, the CNAME target cannot be resolved, meaning the workload is unreachable externally.</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dns" data-lang="dns"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">#</span> <span style="color:#960050;background-color:#1e0010">Azure</span> <span style="color:#960050;background-color:#1e0010">Public</span> <span style="color:#960050;background-color:#1e0010">DNS</span> <span style="color:#960050;background-color:#1e0010">Zone</span>
+</span></span><span style="display:flex;"><span>app.tls.externaldomain.co.uk.  <span style="color:#e6db74">3600</span>  <span style="color:#66d9ef">IN</span>  <span style="color:#66d9ef">CNAME</span>  app.tls.internaldomain.co.uk.
+</span></span><span style="display:flex;"><span>_acme-challenge.tls.externaldomain.co.uk.  <span style="color:#66d9ef">IN</span>  <span style="color:#66d9ef">TXT</span>  <span style="color:#960050;background-color:#1e0010">&#34;random-token&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">#</span> <span style="color:#960050;background-color:#1e0010">Azure</span> <span style="color:#960050;background-color:#1e0010">Private</span> <span style="color:#960050;background-color:#1e0010">DNS</span> <span style="color:#960050;background-color:#1e0010">Zone</span>
+</span></span><span style="display:flex;"><span>app.tls.internaldomain.co.uk.  <span style="color:#66d9ef">IN</span>  <span style="color:#66d9ef">A</span>  <span style="color:#ae81ff">192.168.100.50</span>
+</span></span></code></pre></div><p>This option provides strict separation between public DNS validation and private resolution.  It does require maintaining both a public DNS zone and a separate internal namespace, but this can easily be achieved using Terraform.</p>
+<p>The private/internal namespace does not have to match your corporate namespace, it is just required to return a private IP address to the client.  This design keeps your corporate namespace out of DNS queries and logs.  You can even go one step further and use a neutral private/internal zone to return another CNAME record which does map to your corporate namespace, such as <code>app.adds-domain.local.</code>.</p>
+<h4 id="internal-client">Internal Client</h4>
+<p><img src="/images/securing-internal-workloads-with-lets-encrypt-and-azure-public-dns/option-1-internal-user.png" alt="Internal Client" title="Internal Client"></p>
+<ol>
+<li>Internal client sends a request for app.tls.externaldomain.co.uk to the Azure Public DNS Zone tls.externaldomain.co.uk.</li>
+<li>Azure Public DNS Zone responds with a CNAME record for app.tls.internaldomain.co.uk.</li>
+<li>Internal client sends request for app.tls.internaldomain.co.uk to the Virtual Network linked Azure Private DNS Zone tls.internaldomain.co.uk.</li>
+<li>Azure Private DNS Zone responds with an A record with the private IP address.</li>
+</ol>
+<h4 id="internet-client">Internet Client</h4>
+<p><img src="/images/securing-internal-workloads-with-lets-encrypt-and-azure-public-dns/option-1-external-user.png" alt="Internet Client" title="Internet Client"></p>
+<ol>
+<li>Internet client sends a request for app.tls.externaldomain.co.uk to the Azure Public DNS Zone tls.externaldomain.co.uk.</li>
+<li>Azure Public DNS Zone responds with a CNAME record for app.tls.internaldomain.co.uk.</li>
+<li>Internet client sends request for app.tls.internaldomain.co.uk. but this FQDN is not known to public DNS resolution, so no private IP address is returned.</li>
+</ol>
+<h3 id="option-2-split-horizon-dns-with-a-private-azure-zone"><strong>Option 2: Split-Horizon DNS With A Private Azure Zone</strong></h3>
+<p>Another common approach is to use 
+<a href="https://learn.microsoft.com/en-us/azure/dns/private-dns-scenarios#scenario-split-horizon-functionality"target="_blank" rel="nofollow noopener noreferrer">split-horizon DNS</a>
+, where the same domain (<code>tls.externaldomain.co.uk</code>) exists in both public and private DNS zones.</p>
+<ul>
+<li>The <strong>public zone</strong> (in Azure Public DNS) contains only what’s necessary for Let’s Encrypt validation, such as <code>_acme-challenge</code> TXT records.</li>
+<li>The <strong>private zone</strong> (in Azure Private DNS, linked to your Virtual Network&rsquo;s) contains the same service name (e.g. <code>app.tls.externaldomain.co.uk</code>), but resolves directly to the private IP address of the workload.</li>
+<li>Internal clients querying DNS will resolve against the private zone and reach the workload via the private IP.</li>
+<li>External queries will not return the private zone results, so workloads remain unreachable from the internet.</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dns" data-lang="dns"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">#</span> <span style="color:#960050;background-color:#1e0010">Azure</span> <span style="color:#960050;background-color:#1e0010">Public</span> <span style="color:#960050;background-color:#1e0010">DNS</span> <span style="color:#960050;background-color:#1e0010">Zone</span>
+</span></span><span style="display:flex;"><span>_acme-challenge.tls.externaldomain.co.uk.  <span style="color:#66d9ef">IN</span>  <span style="color:#66d9ef">TXT</span>  <span style="color:#960050;background-color:#1e0010">&#34;random-token&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">#</span> <span style="color:#960050;background-color:#1e0010">Azure</span> <span style="color:#960050;background-color:#1e0010">Private</span> <span style="color:#960050;background-color:#1e0010">DNS</span> <span style="color:#960050;background-color:#1e0010">Zone</span>
+</span></span><span style="display:flex;"><span>app.tls.externaldomain.co.uk.  <span style="color:#66d9ef">IN</span>  <span style="color:#66d9ef">A</span>  <span style="color:#ae81ff">192.168.100.50</span>
+</span></span></code></pre></div><p>This approach avoids the need for a separate internal namespace and keeps the service name consistent between public and private resolution.  Administrators must manage identical namespaces carefully. Administrators must also create any required public IP addresses in the Azure Private DNS Zone as this will be the only zone to respond to internal network DNS requests.</p>
+<h4 id="split-horizon-dns">Split-Horizon DNS</h4>
+<p><img src="/images/securing-internal-workloads-with-lets-encrypt-and-azure-public-dns/option-2-split-horizon-dns.png" alt="Split-Horizon DNS" title="Split-Horizon DNS"></p>
+<ol>
+<li>Internet client sends a request for app.tls.externaldomain.co.uk to the Azure Public DNS Zone tls.externaldomain.co.uk.</li>
+<li>Azure Public DNS Zone responds with a NXDOMAIN (Non-Existent Domain) code.</li>
+<li>Internal client sends request for app.tls.externaldomain.co.uk. to the Virtual Network linked Azure Private DNS Zone tls.externaldomain.co.uk.</li>
+<li>Azure Private DNS Zone responds with an A record with the private IP address.</li>
+</ol>
+<blockquote>
+<p><strong>Key Takeaway</strong>:  Both options achieve the same outcome: Let’s Encrypt can validate ownership of the domain via the public DNS, while internal clients are seamlessly directed to private IP addresses. The choice depends largely on how the organisation controls DNS management and architecture.</p></blockquote>
+<h2 id="walkthrough-issuing-a-certificate">Walkthrough: Issuing A Certificate</h2>
+<h3 id="step-1-prepare-azure-public-dns">Step 1: Prepare Azure Public DNS</h3>
+<p>Create an Azure Public DNS Zone (e.g. <code>tls.externaldomain.co.uk</code>) and delegate it 
+<a href="https://learn.microsoft.com/en-us/azure/dns/dns-delegate-domain-azure-dns"target="_blank" rel="nofollow noopener noreferrer">at your domain registrar to Azure&rsquo;s DNS name servers</a>
+.</p>
+<h3 id="step-2-automate-the-dns-challenge-certificate-request-issuance--storage">Step 2: Automate The DNS Challenge, Certificate Request, Issuance &amp; Storage</h3>
+<p>Terraform can be used to automate the DNS challenge and issue the certificate in a single configuration.</p>
+<p>The high level steps involved are:</p>
+<ul>
+<li>Create an ACME Account &amp; Private Key</li>
+<li>Create a separate dedicated Private Key for each Certificate (Best Practice)</li>
+<li>Create a Certificate Signing Request (CSR)</li>
+<li>Request the Certificate from Let&rsquo;s Encrypt using the CSR &amp; Private Key (this step includes the DNS challenge)</li>
+<li>Convert the certificate to PKCS12/PFX format &amp; import it to an Azure Key vault for storage and retrieval (not strictly required, but Best Practice for use within Azure)</li>
+</ul>
+<h3 id="step-3-redirect-internal-traffic">Step 3: Redirect Internal Traffic</h3>
+<p>Ensure internal DNS (Azure Private DNS or conditional forwarders) maps the service name to a private IP. Deploy the certificate to the internal workload, ideally directly from Key Vault.</p>
+<h2 id="security-considerations--compliance">Security Considerations &amp; Compliance</h2>
+<p>While this approach offers strong benefits, there are caveats:</p>
+<ul>
+<li><strong>Certificate transparency</strong>: Let’s Encrypt logs all issued certificates publicly. You can view these logs at 
+<a href="https://crt.sh"target="_blank" rel="nofollow noopener noreferrer">https://crt.sh</a>
+. Certificate Transparency (CT) logs may expose internal hostnames, which is why a service name should be used for the certificate. Organisations should avoid exposing sensitive naming schemes.</li>
+<li><strong>Access control</strong>: Limit who can update DNS TXT records in Azure. An attacker with compromised credentials could issue fraudulent certificates.</li>
+<li><strong>NCSC guidance</strong>: The UK NCSC encourages the use of strong, publicly trusted PKI where possible but notes risks of disclosing internal naming. Using neutral, non-sensitive service names instead of hostnames helps mitigate this.</li>
+<li><strong>ISO 27001 alignment</strong>: This approach supports Annex A.10.1 (cryptographic controls) by ensuring systems consistently apply encryption.</li>
+</ul>
+<h2 id="best-practices-for-certificate-hygiene">Best Practices For Certificate Hygiene</h2>
+<p>To maintain operational resilience and compliance, cloud security engineers should adopt the following practices:</p>
+<ol>
+<li><strong>Automate renewals</strong> – Use scheduled jobs or containerised agents to handle renewals without human intervention.</li>
+<li><strong>Monitor expiry</strong> – Integrate certificate monitoring with SIEM/SOAR to alert before expiry.</li>
+<li><strong>Avoid sensitive hostnames</strong> – Use neutral subdomains to avoid leaking internal details into CT logs.</li>
+<li><strong>Enforce strong cipher suites</strong> – Ensure internal workloads are hardened to modern TLS configurations.</li>
+<li><strong>Document and audit</strong> – Keep records of certificate issuance and DNS automation as part of ISO 27001 audit trails.</li>
+<li><strong>Regular reviews</strong> – Periodically assess whether internal CA or managed private PKI services (e.g. Azure Key Vault Certificates) may be more appropriate.</li>
+</ol>
+<h2 id="conclusion">Conclusion</h2>
+<p>Let’s Encrypt, combined with Azure Public DNS, provides a practical, automated method of securing internal workloads with publicly trusted certificates. By leveraging DNS-01 challenges and carefully configuring DNS resolution, organisations can balance security, compliance, and usability across hybrid and regulated environments.</p>
+<p>When implemented with appropriate safeguards, this approach simplifies certificate management, improves interoperability, and ensures that encryption standards are aligned with industry best practice.</p>
+</div>
+<div class="footer"><div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links"><a href="https://www.thedevopsjedi.co.uk/tags/azure/">Azure</a><a href="https://www.thedevopsjedi.co.uk/tags/terraform/">Terraform</a><a href="https://www.thedevopsjedi.co.uk/tags/tls/">TLS</a><a href="https://www.thedevopsjedi.co.uk/tags/certificates/">Certificates</a><a href="https://www.thedevopsjedi.co.uk/tags/governance/">Governance</a><a href="https://www.thedevopsjedi.co.uk/tags/security/">Security</a></div>
+        </div></div>
+</article>
+</div><div id="comments-container"></div></div><footer>
+    <div class="container"><div class="recent-posts">
+            <strong>Latest Posts</strong>
+            <ul><li>
+                        <a href="https://www.thedevopsjedi.co.uk/certificates/securing-internal-workloads-with-lets-encrypt-and-azure-public-dns/">Securing Internal Workloads With Let’s Encrypt &amp; Azure Public DNS</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/certificates/certificate-lifetimes/tls-certificate-lifetimes-reduced-to-47-days/">From Years to Days: Preparing For The Future of TLS Certificates</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/10/always-check-the-default-parameters-when-assigning-an-azure-policy/">Always Check The Default Parameters When Assigning An Azure Policy</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/azure/deleting-a-stuck-resource/">Deleting An Azure Resource That Is Stuck In A &#39;Deleting Resource&#39; Status</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/07/creating-a-modern-azure-diagnostics-policy-that-generative-ai-couldnt-yet/">Creating A Modern Azure Diagnostics Policy That Generative AI Couldn&#39;t - Yet!</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/07/modifying-an-existing-azure-policy/">Modifying An Existing Azure Policy</a>
+                    </li><li>
+                        <a href="https://www.thedevopsjedi.co.uk/2024/03/exporting-azure-management-group-activity-logs/">Exporting Azure Management Group Activity Logs</a>
+                    </li></ul>
+        </div><div class="right"><div class="external-profiles">
+                <strong>Where You Can Find Me</strong><a href="https://www.linkedin.com/in/darren-johnson" target="_blank" rel="nofollow noopener noreferrer" rel="me"><em class="fab fa-linkedin-in"></em></a><a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel=""><em class="fab fa-github"></em></a><br><br><a href="https://www.buymeacoffee.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer" rel="me"><img src="/images/bmc_qr.png" width="85px" height="85px" alt="Buy Me A Coffee"></a>
+            </div><div class="archive"><a href="https://www.thedevopsjedi.co.uk/archive/"><strong>Archive</strong></a></div></div>
+    </div>
+</footer><div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/thedevopsjedi" target="_blank" rel="nofollow noopener noreferrer">
+                &copy;&nbsp;2025&nbsp;The DevOps Jedi&nbsp;
+            </a></div>
+        <div class="disclaimer">
+            <a href="/disclaimer">Disclaimer</a>
+        </div>
+    </div>
+</div>
+
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-RKD17G86VJ"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-RKD17G86VJ');
+        }
+      </script><script src="https://www.thedevopsjedi.co.uk/theme.js"></script><script src="https://www.thedevopsjedi.co.uk/cookieconsent.min.js" type="application/javascript"></script><script src="https://www.thedevopsjedi.co.uk/init-cookieconsent.js" type="application/javascript"></script><div id="activate-algolia-search" class="hidden">
+  <input type="hidden" id="algolia-search-appId" value="XRNYV3MMH2">
+  <input type="hidden" id="algolia-search-apiKey" value="5ba5776bc76690c95b70fcfe58371072">
+  <input type="hidden" id="algolia-search-indexName" value="www.thedevopsjedi.co.uk">
+  <input type="hidden" id="algolia-search-noSearchResults" value="Nothing Found..."><input type="hidden" id="algolia-search-currentLanguageOnly"></div>
+
+</body>
+
+</html>
